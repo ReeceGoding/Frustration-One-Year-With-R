@@ -75,7 +75,7 @@ This isn’t an attack on R or a pitch for anything else. It is only an
 account of what I’ve found to be right and wrong with the language.
 Although the length of my list of what is wrong far exceeds that of what
 is right, that may be my failing rather than R’s. I suspect that my list
-of what R does right will grow as learn other languages and begin to
+of what R does right will grow as I learn other languages and begin to
 miss some of R’s benefits. I welcome any attempts to correct that and
 any other errors that you see. Some major errors will have slipped in
 somewhere or other.
@@ -156,7 +156,7 @@ this review of it.
 ## Ignorance
 
 Of course, I am not an R expert. I freely admit that I am lacking in the
-follow regards:
+following regards:
 
 -   You can never have done enough statistics with R. Personally, I’ve
     mostly used R as a programming language rather than a statistics
@@ -2984,7 +2984,7 @@ issues:
         ## function (n, expr, simplify = "array") 
         ## sapply(integer(n), eval.parent(substitute(function(...) expr)), 
         ##     simplify = simplify)
-        ## <bytecode: 0x55b78031d640>
+        ## <bytecode: 0x562d5d24a640>
         ## <environment: namespace:base>
         ```
 
@@ -3006,7 +3006,7 @@ issues:
         ##         X <- as.list(X)
         ##     .Internal(lapply(X, FUN))
         ## }
-        ## <bytecode: 0x55b77f743f10>
+        ## <bytecode: 0x562d5c670f10>
         ## <environment: namespace:base>
         ```
 
@@ -4254,7 +4254,7 @@ Some things seems obviously missing from R:
     a[-4.8]
     ## [1]  1  2  3  5  6  7  8  9 10
     sample(4.8)
-    ## [1] 2 1 4 3
+    ## [1] 2 1 3 4
     ```
 
     The pattern is that [R silently truncates the numeric index of
