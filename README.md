@@ -2984,7 +2984,7 @@ issues:
         ## function (n, expr, simplify = "array") 
         ## sapply(integer(n), eval.parent(substitute(function(...) expr)), 
         ##     simplify = simplify)
-        ## <bytecode: 0x55da9bfb7f40>
+        ## <bytecode: 0x55b78031d640>
         ## <environment: namespace:base>
         ```
 
@@ -3006,7 +3006,7 @@ issues:
         ##         X <- as.list(X)
         ##     .Internal(lapply(X, FUN))
         ## }
-        ## <bytecode: 0x55da9b455f10>
+        ## <bytecode: 0x55b77f743f10>
         ## <environment: namespace:base>
         ```
 
@@ -4254,7 +4254,7 @@ Some things seems obviously missing from R:
     a[-4.8]
     ## [1]  1  2  3  5  6  7  8  9 10
     sample(4.8)
-    ## [1] 1 4 2 3
+    ## [1] 2 1 4 3
     ```
 
     The pattern is that [R silently truncates the numeric index of
