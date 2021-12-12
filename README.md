@@ -450,7 +450,7 @@ miss in other languages.
 -   `magrittr`: It sold me on pipes. I’d say that any package that makes
     you consider changing your programming style is automatically
     outstanding. However, the real reason why I love it is because
-    whenever I’ve ran `bigLongExpression()` in my console and decided
+    whenever I’ve run `bigLongExpression()` in my console and decided
     that I really wanted `foo()` of it, it’s so much easier to press the
     up arrow and type CTRL+SHIFT+M+“foo” than it is to do anything that
     results in `foo(bigLongExpression())` appearing. Maybe there’s a
@@ -2984,7 +2984,7 @@ issues:
         ## function (n, expr, simplify = "array") 
         ## sapply(integer(n), eval.parent(substitute(function(...) expr)), 
         ##     simplify = simplify)
-        ## <bytecode: 0x562d5d24a640>
+        ## <bytecode: 0x55881c092640>
         ## <environment: namespace:base>
         ```
 
@@ -3006,7 +3006,7 @@ issues:
         ##         X <- as.list(X)
         ##     .Internal(lapply(X, FUN))
         ## }
-        ## <bytecode: 0x562d5c670f10>
+        ## <bytecode: 0x55881b4b8f10>
         ## <environment: namespace:base>
         ```
 
