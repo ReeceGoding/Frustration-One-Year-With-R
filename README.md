@@ -1117,7 +1117,7 @@ use R.
 
 R has some strange ideas about switch statements:
 
--   It’s not a special form of any sort; Its syntax is that of a normal
+-   It’s not a special form of any kind; Its syntax is that of a normal
     function call. If I’m being consistent in my formatting, then I
     should be calling it “*R’s `switch()` function*”.
 
@@ -1177,7 +1177,7 @@ cover some more general points:
     can be found about the `apply` family.
 
 -   The `[[` operator has been accused of inconsistent behaviour.
-    [Advanced R summaries this better than I
+    [*Advanced R* covers this better than I
     could](https://adv-r.hadley.nz/subsetting.html#subsetting-oob). The
     short version is that it sometimes returns `NULL` and other times
     throws an error. Personally, I’ve never noticed these because I’ve
@@ -2732,8 +2732,8 @@ are vectorized.
     `strsplit("Alice", "l")` to give the same output. If you think that
     they don’t, you’re wrong. If you expected the first option to warn
     you about the `"c"` part not being used, you’re sane, but wrong. If
-    you want to see what how the second argument is supposed to work,
-    re-run the earlier code with `c("Alice", "Boblice")` as your first
+    you want to see how the second argument is supposed to work, re-run
+    the earlier code with `c("Alice", "Boblice")` as your first
     argument.
 
     ``` r
@@ -2984,7 +2984,7 @@ issues:
         ## function (n, expr, simplify = "array") 
         ## sapply(integer(n), eval.parent(substitute(function(...) expr)), 
         ##     simplify = simplify)
-        ## <bytecode: 0x55881c092640>
+        ## <bytecode: 0x556a37f2d640>
         ## <environment: namespace:base>
         ```
 
@@ -3006,7 +3006,7 @@ issues:
         ##         X <- as.list(X)
         ##     .Internal(lapply(X, FUN))
         ## }
-        ## <bytecode: 0x55881b4b8f10>
+        ## <bytecode: 0x556a37353f10>
         ## <environment: namespace:base>
         ```
 
@@ -3992,7 +3992,8 @@ to sections.
     ## "example"    "text" "example"
     ```
 
-    Where possible, I try to stick to `setNames()`.
+    This is probably the result that you guessed, but syntax shouldn’t
+    leave you guessing. Where possible, I try to stick to `setNames()`.
 
 -   The syntactic sugar sometimes leads to surprising syntax. For
     example `names(output[2]) <- "foo"` doesn’t work, but
@@ -4254,7 +4255,7 @@ Some things seems obviously missing from R:
     a[-4.8]
     ## [1]  1  2  3  5  6  7  8  9 10
     sample(4.8)
-    ## [1] 2 1 3 4
+    ## [1] 2 3 1 4
     ```
 
     The pattern is that [R silently truncates the numeric index of
