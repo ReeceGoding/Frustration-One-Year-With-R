@@ -65,19 +65,19 @@ Reece Goding
 # Introduction
 
 What follows is an account of my experiences from about one year of
-roughly daily R use. It started out as a list of things that I liked and
-disliked about the language, but eventually grew to be something huge.
-Once the list exceeded ten thousand words, I knew that it must be
+roughly daily R usage. It started out as a list of things that I liked
+and disliked about the language, but eventually grew to be something
+huge. Once the list exceeded ten thousand words, I knew that it must be
 published. By the time I was done, it had nearly tripled in length. It
-took five months just to get it all in R Markdown.
+took five months of weekends just to get it all in R Markdown.
 
 This isn’t an attack on R or a pitch for anything else. It is only an
 account of what I’ve found to be right and wrong with the language.
 Although the length of my list of what is wrong far exceeds that of what
 is right, that may be my failing rather than R’s. I suspect that my list
 of what R does right will grow as I learn other languages and begin to
-miss some of R’s benefits. I welcome any attempts to correct that and
-any other errors that you see. Some major errors will have slipped in
+miss some of R’s benefits. I welcome any attempts to correct this or any
+other errors that you find. Some major errors will have slipped in
 somewhere or other.
 
 ## Length
@@ -86,9 +86,9 @@ To start, I must issue a warning: This document is **huge**. I have
 tried to keep everything contained in small sections, such that the
 reader has plenty of points where they can pause and return to the
 document later, but the word count is still far higher than I’m happy
-with. I have tried to not be too petty, but every point in here comes
-from an honest position of frustration. There are some things that I
-really love about R, I’ve even devoted [an entire section to
+with. I have tried to not be too petty, but every negative point in here
+comes from an honest position of frustration. There are some things that
+I really love about R, I’ve even devoted [an entire section to
 them](#what-r-does-right). However, if there is one point that I really
 want this document to get across, it’s that R is filled to the brim with
 small madnesses. Although I can name a few major issues with R, its
@@ -105,8 +105,9 @@ to open all of your links in a new tab/window.
 Before I say anything nasty about R, a show of good faith is in order.
 In my year with R, I have done the following:
 
--   Added almost 100 R solutions to [Rosetta
-    Code](https://rosettacode.org/wiki/Rosetta_Code).
+-   Added almost 100 [R
+    solutions](https://github.com/ReeceGoding/Rosetta-Code-Submissions)
+    to [Rosetta Code](https://rosettacode.org/wiki/Rosetta_Code).
 -   Asked over 100 Stack Overflow R questions.
 -   Read both editions of [*Advanced R*](https://adv-r.hadley.nz/) from
     cover to cover. I didn’t do the exercises, but I’d recommend the
@@ -155,8 +156,8 @@ this review of it.
 
 ## Ignorance
 
-Of course, I am not an R expert. I freely admit that I am lacking in the
-following regards:
+I am not an R expert. I freely admit that I am lacking in the following
+regards:
 
 -   You can never have done enough statistics with R. Personally, I’ve
     mostly used R as a programming language rather than a statistics
@@ -193,9 +194,9 @@ following regards:
     R’s clear Scheme inspiration makes Lisp books a lot less fun to
     read; It’s like I’ve already been spoiled on some of the best bits.
 -   I haven’t done enough OOP in R. My only real experience of it is
-    with S3. I do not expect that I will ever correct this. However, S4
-    looks enough like CLOS that I expect that I will go back to it at
-    some point after picking up Common Lisp.
+    with S3. S4 looks enough like CLOS that I expect that I will go back
+    to it at some point after picking up Common Lisp, but that will just
+    be to play around.
 -   I have never made a package for R and have no experience with the
     ecosystem surrounding that (e.g. `roxygen2`). I have no plans for
     this.
@@ -204,10 +205,11 @@ following regards:
     use of its OOP. I do not expect this to change.
 
 The above list is unlikely to be exhaustive. I’m not against reading
-another book about R as a programming language, but *Advanced R* seems
-to be the only one that anyone ever mentions. For the foreseeable
-future, the main thing that I plan to do to improve my evaluation of R
-is to learn Python. I’ll probably read a book on it.
+another book about R as a programming language, but [*Advanced
+R*](https://adv-r.hadley.nz/) seems to be the only one that anyone ever
+mentions. For the foreseeable future, the main thing that I plan to do
+to improve my evaluation of R is to learn Python. I’ll probably read a
+book on it.
 
 ## Assumed Knowledge
 
@@ -231,9 +233,9 @@ own. If you spot any plagiarism, let me know.
 # General Feelings
 
 My overall feelings about R are tough to quantify. As I mentioned near
-the start, the ultimate problem with R is the sum of its little
-problems. However, if I must speak generally, then I think that the
-problem with R is that it’s always some mix of the following:
+the start, its ultimate problem is the sum of its little problems.
+However, if I must speak generally, then I think that the problem with R
+is that it’s always some mix of the following:
 
 1.  A statistics language with countless useful libraries and an
     excellent collection of mathematical tools.
@@ -255,11 +257,11 @@ equally little doubt that R can be a very good tool.
 
 # What R Does Right
 
-As a final show of good faith, here is an entire section on what I think
-R does right. In summary, along with having some great functional
-programming toys, R has some domain-specific tools that can work
-excellently when they’re in their element. Whatever the faults of R,
-it’s always going to be my first choice for some problems.
+As a final show of good faith, here is what I think R does right. In
+summary, along with having some great functional programming toys, R has
+some domain-specific tools that can work excellently when they’re in
+their element. Whatever the faults of R, it’s always going to be my
+first choice for some problems.
 
 ## Mathematics and Statistics
 
@@ -275,9 +277,9 @@ Some examples:
     like `colSums()`, `table()`, `cor()`, or `summary()`.
 
 -   R is **the** language of research-level statistics. If it’s stats, R
-    either has it built-in or a library for it. It’s impossible to visit
-    a statistics Q&A website and not see R code. For this reason alone,
-    R will never truly die.
+    either has it built-in or a has library for it. It’s impossible to
+    visit a statistics Q&A website and not see R code. For this reason
+    alone, R will never truly die.
 
 -   The generic functions in the base stats library work magic. Whenever
     you try to print or summarise a model from there, you’re going to
@@ -286,7 +288,7 @@ Some examples:
     example
 
     ``` r
-    model <- lm(mpg ~ wt, data=mtcars)
+    model <- lm(mpg ~ wt, data = mtcars)
     print(model)
     ## 
     ## Call:
@@ -323,7 +325,7 @@ Some examples:
 
 -   The rules for subsetting data, although requiring mastery, are
     extremely expressive. Coupled with sub-assignment tricks like
-    `result[which(result<0.5)] <- 0`, which often do exactly what you
+    `result[which(result < 0.5)] <- 0`, which often do exactly what you
     think they will, you can really save yourself a lot of work. Being
     able to demand precisely what parts of your data that you want to
     see or change is a really great feature.
@@ -362,10 +364,9 @@ Some examples:
 
 ## Names and Data Frames
 
-These seem like trivial features, but the deep integration of data
-frames and the names mechanisms in to the language are extremely
-beneficial for manipulating and presenting your data. They assist
-subsetting, variable creation, plotting, printing, and even
+These seem like trivial features, but the language’s deep integration of
+them is extremely beneficial for manipulating and presenting your data.
+They assist subsetting, variable creation, plotting, printing, and even
 [metaprogramming](#first-class-environments).
 
 -   The ability to name the components of vectors,
@@ -373,7 +374,7 @@ subsetting, variable creation, plotting, printing, and even
     syntax is used to much greater effect with lists, data frames, and
     S4 objects. However, it’s good to show how far you can get with even
     the most basic case. Here’s my submission for a [General
-    FizzBuzz](https://rosettacode.org/wiki/General_FizzBuzz) task
+    FizzBuzz](https://rosettacode.org/wiki/General_FizzBuzz) task:
 
     ``` r
     namedGenFizzBuzz <- function(n, namedNums)
@@ -401,9 +402,9 @@ subsetting, variable creation, plotting, printing, and even
 
 -   I like how data frames are constructed. Even if you don’t know any R
     at all, it’s pretty obvious what
-    `data.frame(who=c("Alice", "Bob"),  height = c(1.2, 2.3))` produces
-    and what adding the `row.names=c("1st subject", "2nd subject")`
-    argument would do.
+    `data.frame(who = c("Alice", "Bob"),  height = c(1.2, 2.3))`
+    produces and what adding the
+    `row.names = c("1st subject", "2nd subject")` argument would do.
 
 -   As a non-trivial example of how far these features can get you, I’ve
     had some good fun making alists out of syntactically valid
@@ -436,17 +437,17 @@ subsetting, variable creation, plotting, printing, and even
 ## Outstanding Packages
 
 [I’ve already admitted a great deal of ignorance of this
-topic](ignorance), but there are some parts of R’s ecosystem that I’m
+topic](#ignorance), but there are some parts of R’s ecosystem that I’m
 happy to call outstanding. The below are all things that I’m sure to
 miss in other languages.
 
--   `corrplot`: has less than ten functions, but it only needed one to
-    blow my mind. Once you’ve even as much as read [the
+-   `corrplot`: It has less than ten functions, but it only needed one
+    to blow my mind. Once you’ve even as much as read [the
     introduction](https://cran.r-project.org/web/packages/corrplot/vignettes/corrplot-intro.html),
     you will never try to read a correlation matrix again.
 -   `ggplot2`: I’m not experienced enough to know what faults it has,
     but it’s fun to use. That single fact makes it blow any other
-    graphing software that I’ve used out the water: **It’s fun**.
+    graphing software that I’ve used out of the water: **It’s fun**.
 -   `magrittr`: It sold me on pipes. I’d say that any package that makes
     you consider changing your programming style is automatically
     outstanding. However, the real reason why I love it is because
@@ -461,7 +462,10 @@ miss in other languages.
     buggier than I’d like, rarely has helpful error messages, and does
     things that I can’t explain or fix even after setting a bounty on
     Stack Overflow, but it’s still a great way to make a document
-    from R. It’s the closest thing that I know to an R user’s LaTeX.
+    from R. It’s the closest thing that I know of to an R user’s LaTeX.
+    As soon as [this
+    bug](https://github.com/rstudio/rmarkdown/pull/2093) is fixed, I’ll
+    be numbering my sections.
 
 ## Vectorization
 
@@ -469,8 +473,8 @@ miss in other languages.
 vectorization can be the best thing about the language:
 
 -   The vector recycling rules are powerful when mastered. Expressions
-    like `c("x", "y")[rep(c(1, 2), times=4)]` let you do a lot with only
-    a little work. My favourite ever FizzBuzz could well be
+    like `c("x", "y")[rep(c(1, 2), times = 4)]` let you do a lot with
+    only a little work. My favourite ever FizzBuzz could well be
 
     ``` r
     x <- paste0(rep("", 100), c("", "", "Fizz"), c("", "", "", "", "Buzz"))
@@ -481,12 +485,12 @@ vectorization can be the best thing about the language:
     old version of [this page](https://rosettacode.org/wiki/FizzBuzz#R)
     and improved it a little.
 
--   Basically everything is a vector, so we get some really cool stuff
-    like `ifelse()` (as seen above) or how easy it is to use a function
-    on an entire collection. Can you believe that `mtcars / 20` actually
-    works?
+-   Basically everything is a vector, so R comes with some really cool
+    vector-manipulation tools like `ifelse()` (as seen above) and makes
+    it very easy to use a function on an entire collection. Can you
+    believe that `mtcars / 20` actually works?
 
--   Tricks like `array/seq_along(array)` save a lot of loop writing.
+-   Tricks like `array / seq_along(array)` save a lot of loop writing.
 
 -   Even simple things like being able to subtract a vector from a
     constant (e.g. `10 - 1:5`) and get a sensible result are a gift when
@@ -553,14 +557,14 @@ you’re not familiar with the below, look it up. You will not regret it.
     fix. Ad-hoc namespaces are an amazing thing to have, particularly
     when using functions that don’t have a `data` argument
     (e.g. `plot()`).
--   The `subset()` function uses the data-masking facilities that I’ve
-    just described, as do modelling functions like `lm()`. This saves
-    incredible amounts of typing and massively increases the readability
-    of your stats code. For example,
+-   Modelling functions like `lm()` use the data-masking facilities that
+    I’ve just described, as do handy functions like `subset()`. This
+    saves incredible amounts of typing and massively increases the
+    readability of your stats code. For example,
     `aggregate(mpg ~ cyl + gear, mtcars, mean)` returns very similar
     output to my above calls to `tapply()` without needing the
-    complexity of using `with`. It also allows for ridiculously concise
-    code like `aggregate(. ~ cyl + gear, mtcars, mean)`.
+    complexity of using `with()`. It also allows for ridiculously
+    concise code like `aggregate(. ~ cyl + gear, mtcars, mean)`.
 -   You can write your own data-masking functions. Doing so relies on
     controlling the non-standard evaluation of some of your arguments.
     It’s the closest thing that R has to metaprogramming. The names
@@ -571,6 +575,9 @@ you’re not familiar with the below, look it up. You will not regret it.
     Being able to do all of that in one line is outstanding. Without R
     allowing developers to add new functions like this, the Tidyverse
     would’ve been impossible.
+
+You might have spotted a pattern by now. R often lets you do very much
+with very little.
 
 ### Generic Functions
 
@@ -584,10 +591,10 @@ positives of R’s approach are:
     `plot()`, and `summary()` almost always tell me everything that I
     wanted to know and tell me them with great clarity.
 
--   When you’re not trapped by the technicalities, S3 is an
-    outstandingly simple tool that does exactly what R needs it to do.
-    Have a look at all of the methods that the pre-loaded libraries
-    define for `plot()`
+-   When you’re not trapped by [the
+    technicalities](#generic-functions-again), S3 is an outstandingly
+    simple tool that does exactly what R needs it to do. Have a look at
+    all of the methods that the pre-loaded libraries define for `plot()`
 
     ``` r
     methods(plot)
@@ -613,9 +620,9 @@ positives of R’s approach are:
     try it yourself!
 
 -   S3 generics and objects are very easy to write. The trade-off is
-    that they don’t do anything to protect you from yourself. Then
-    again, being able to tell R to shut up and do what I want it to a
-    nice part of S3.
+    that they don’t do anything to protect you from yourself. However,
+    being able to tell R to shut up and do what I want it to a nice part
+    of S3.
 
 -   I like the idea of S3’s group generics, but I don’t like not being
     able to make my own. However, I think that you can do it for S4.
@@ -648,10 +655,9 @@ Some of the syntax is nice:
     particularly when you’re playing around with anonymous functions.
 -   Because of `repeat` loops, you never need to write `while(TRUE)`.
 -   [Although I have major issues with them](#subsetting), the rules for
-    accessing array elements sometimes give nice results. For example
+    accessing elements sometimes give nice results. For example
     `array[c(i, j)] <- array[c(j, i)]` swaps elements `i` and `j` in a
-    very clean way. In fact, it’s so general that it’ll even work on a
-    matrix.
+    very clean way.
 -   It’s nice to be able to do many variable assignments in one line
     e.g. `Alice <- Bob <- "Married"`. The best examples are when you do
     something like
@@ -680,7 +686,7 @@ Some of the syntax is nice:
 -   The built-in vectors `letters` and `LETTERS` come in handy
     surprisingly often. You’ll see me use them a lot.
 -   The base library surprises me from time to time. It’s always worth
-    putting what you want in to a search engine: Sometimes, you’ll find
+    putting what you want in to a search engine; Sometimes, you’ll find
     it. My most recent surprises were `findInterval()` and `cut()`.
 -   The `na.print` argument to `print()`, trivial as it is, can be a
     thing of beauty.
@@ -1411,7 +1417,7 @@ cover some more general points:
     elements within a vector. For example, try finding if/where the
     unbroken vector `1:3` has occurred in
     `sample(6, 100, replace = TRUE)`. You’re best off just writing the
-    for loop.
+    `for` loop.
 
 ### Combining Operators
 
@@ -2984,7 +2990,7 @@ issues:
         ## function (n, expr, simplify = "array") 
         ## sapply(integer(n), eval.parent(substitute(function(...) expr)), 
         ##     simplify = simplify)
-        ## <bytecode: 0x556a37f2d640>
+        ## <bytecode: 0x5569c05a26d8>
         ## <environment: namespace:base>
         ```
 
@@ -3006,7 +3012,7 @@ issues:
         ##         X <- as.list(X)
         ##     .Internal(lapply(X, FUN))
         ## }
-        ## <bytecode: 0x556a37353f10>
+        ## <bytecode: 0x5569bf9cbf10>
         ## <environment: namespace:base>
         ```
 
@@ -3536,13 +3542,13 @@ neither be found inside or outside of R.
     documentation is clearly inferior to the Python equivalent, despite
     the gap in functionality not being as wide.
 -   R’s functional programming aspects are so strong that loops,
-    particularly for loops, are considered a code smell. This goes
+    particularly `for` loops, are considered a code smell. This goes
     double in the Tidyverse, with the *R for Data Science* book not even
     introducing them until chapter 21 (of 30). There are practical
     reasons for this, mostly in relation to the apply family’s code
     being written in C and therefore being faster than most R loops.
     However, it encourages you to do some silly things. For example, you
-    have to make a judgement call between writing a for loop that is
+    have to make a judgement call between writing a `for` loop that is
     inherently fast but slowed down by being written in R or writing an
     `sapply()` that ought to be slow but is speeded up due to `sapply()`
     calling C code. This issue also affects how you present your code.
@@ -4020,15 +4026,15 @@ to sections.
     `sapply()`/`lapply()`/`mapply()`/`Filter()`/`Map()`… (not to mention
     their various arguments, which I still can’t claim to totally
     understand, e.g. `mapply()`’s `MoreArgs`) when I really should’ve
-    just written the for loop. This is more my fault than it is R’s, but
-    it’s a curse that every intermediate R user will suffer from. It’s a
-    price that any R expert will tell you was worth it in the end.
-    However, it’s still a price that I don’t enjoy paying. It wouldn’t
-    be so bad if R had less such functions, better error messages, or
-    more consistency between these functions, but we’ve already
-    discussed that can of worms. Don’t think that I’m advocating for
-    `purrr` here. It has so many functional programming tools that it
-    arguably makes the situation worse. I’ll cover its costs and
+    just written the `for` loop. This is more my fault than it is R’s,
+    but it’s a curse that every intermediate R user will suffer from.
+    It’s a price that any R expert will tell you was worth it in the
+    end. However, it’s still a price that I don’t enjoy paying. It
+    wouldn’t be so bad if R had less such functions, better error
+    messages, or more consistency between these functions, but we’ve
+    already discussed that can of worms. Don’t think that I’m advocating
+    for `purrr` here. It has so many functional programming tools that
+    it arguably makes the situation worse. I’ll cover its costs and
     benefits [later](#purrr).
 
 ### Sequences
@@ -4195,7 +4201,7 @@ Some things seems obviously missing from R:
     there’s no way to be many loops deep and break out of them all with
     one command.
 
--   R has no do-while loop. It’s never bothered me, but I think that’s
+-   R has no `do-while` loop. It’s never bothered me, but I think that’s
     because I’ve never used one in any language. I can see it bothering
     others, but if I need one, then I’m pretty sure that they’re trivial
     to make from a repeat loop.
@@ -4214,7 +4220,7 @@ Some things seems obviously missing from R:
     environments from scratch isn’t as nice as its syntax for creating
     lists. You have to name and assign each element individually,
     e.g. `e <- new.env(); e$a <- 1;  e$b <- 2;  e$c <- 3`, rather than
-    just `l <- list(a=1, b=2, c=3)`. And if you’re going to use a
+    just `l <- list(a = 1, b = 2, c = 3)`. And if you’re going to use a
     package to fix this syntax issue, then you might as well just use
     one that gives you actual hash tables.
 
@@ -4255,7 +4261,7 @@ Some things seems obviously missing from R:
     a[-4.8]
     ## [1]  1  2  3  5  6  7  8  9 10
     sample(4.8)
-    ## [1] 2 3 1 4
+    ## [1] 4 3 2 1
     ```
 
     The pattern is that [R silently truncates the numeric index of
@@ -4273,9 +4279,10 @@ And now for everything that I’ve got left in the bag.
     a package that lets R talk to C++. Julia claims to have solved this.
     I don’t know if I believe it.
 
--   The index in a for loop uses the same environment as its caller, so
-    loops like `for(i in 1:10)` will overwrite any variable called `i`
-    in the parent environment and set it to `10` when the loop finishes.
+-   The index in a `for` loop uses the same environment as its caller,
+    so loops like `for(i in 1:10)` will overwrite any variable called
+    `i` in the parent environment and set it to `10` when the loop
+    finishes.
 
     ``` r
     i <- 2000
@@ -4286,10 +4293,10 @@ And now for everything that I’ve got left in the bag.
 
     This sounds awful, but I’ve never encountered it in practice. After
     all, it sounds like bad practice to use the same variable name for
-    two different things. Apparently the for loops also like to strip
+    two different things. Apparently the `for` loops also like to strip
     attributes, breaking S3 objects, but again, I’ve never encountered
     this. After all, idiomatic R it to prefer functions like `sapply()`
-    to for loops.
+    to `for` loops.
 
 -   *Advanced R* claims that R is a great language to metaprogram. I
     cannot deny that the Tidyverse is very strong evidence for that, but
