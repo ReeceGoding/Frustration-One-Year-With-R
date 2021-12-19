@@ -277,7 +277,7 @@ Some examples:
     like `colSums()`, `table()`, `cor()`, or `summary()`.
 
 -   R is **the** language of research-level statistics. If it’s stats, R
-    either has it built-in or a has library for it. It’s impossible to
+    either has it built-in or has a library for it. It’s impossible to
     visit a statistics Q&A website and not see R code. For this reason
     alone, R will never truly die.
 
@@ -831,6 +831,13 @@ frequently a special case that you can rarely avoid.
     were matrices. Coercing these unwanted outputs in to what you
     actually wanted is often harder than it has any right to be.
 
+I think that the ultimate problem with lists is that the right way to
+use them is not easy to guess from your knowledge of the language’s
+other constructs. If everything in R worked like lists do, or if lists
+weren’t so common, then you wouldn’t really mind. As it is, you’ll often
+make mistakes with lists and have to guess your way through correcting
+them. This isn’t terrible. It’s just annoying.
+
 ## Strings
 
 R’s strings suck. The overarching problem is that because there is no
@@ -840,7 +847,7 @@ you want to do with a string needs to be done by knowing the right
 function to use (rather than by using R’s ordinary syntax). I find that
 the correct functions can be hard to find and use. Although it doesn’t
 fix many of these issues, the common sentiment of “*just use
-stringr/stringi*” is difficult to dismiss.
+`stringr`/`stringi`*” is difficult to dismiss.
 
 -   Technically, R doesn’t even have a type for strings. You would want
     a string to be a vector of characters, but R’s characters are
@@ -888,7 +895,7 @@ stringr/stringi*” is difficult to dismiss.
         at.
 
 -   Even once you have found the right function for the job, it can be
-    tough to use. Compare the stringr answer to [this
+    tough to use. Compare the `stringr` answer to [this
     question](https://stackoverflow.com/questions/12427385/) to the base
     R answers. Or better yet, use `gregexpr()` or `gregexec()` for any
     task and then tell me with a straight face that you both understand
@@ -1072,8 +1079,8 @@ use R.
     argument in an anonymous function.
 
 -   The idiomatic way to add an item to the end of a collection is
-    `a[length(a) + 1] <- "foo"`. This is rather verbose, and [a bit
-    unpredictable when adding a collection to a list](#lists).
+    `a[length(a) + 1] <- "foo"`. This is rather verbose. It’s also [a
+    bit unpredictable when adding a collection to a list](#lists).
 
 -   A quote from [the language
     definition](https://cran.r-project.org/doc/manuals/r-release/R-lang.html#Argument-evaluation):
@@ -1086,9 +1093,9 @@ use R.
 
     ``` r
     x <- 1
-    (function(x) eval(quote(x+1)))(100)
+    (function(x) eval(quote(x + 1)))(100)
     ## [1] 101
-    (function(x) eval(quote(x+1), envir = parent.frame()))(100)
+    (function(x) eval(quote(x + 1), envir = parent.frame()))(100)
     ## [1] 2
     ```
 
@@ -1099,16 +1106,16 @@ use R.
 -   Variable names can be partially matched. See
     <https://rosettacode.org/wiki/Named_parameters#R> for some examples.
     I can’t tell if it’s disgusting or awesome, but it’s definitely
-    dangerous. If I called `f(n=1)`, I probably didn’t mean
-    `f(nukeEarth=1)`! At least it throws an error if it fails to
+    dangerous. If I called `f(n = 1)`, I probably didn’t mean
+    `f(nukeEarth = 1)`! At least it throws an error if it fails to
     partially match (e.g. if there were multiple valid partial matches).
     More on that [when I cover the `$` operator](#dangers-of-), which
     usually has the same issue.
 
 -   The `...` argument doesn’t make its users throw errors when they’ve
     been called with arguments that they don’t have or, even worse,
-    those that they do have, but you misspelled. Advanced R has a great
-    example in [its Functions
+    those that they do have, but you misspelled. *Advanced R* has a
+    great example in [its Functions
     chapter](https://adv-r.hadley.nz/functions.html#exercises-17). Would
     you have guessed that `sum(1, 2, 3, na.omit = TRUE)` returns `7`,
     not `6`? Similarly, [the Functionals
@@ -1176,11 +1183,11 @@ cover some more general points:
     or a function like `subset()`, `which()`, `Find()`, `Position()`, or
     `match()`. R’s operators make this even more of mess. You either
     want `$`, `[`, `@` or even `[[`. Making the wrong choice of `[x]`,
-    `[x,]`, `[,x]` or `[[x]]` is a frequent source of error. You will
-    get used to it eventually, but your hair will not survive the
+    `[x,]`, `[,x]` or `[[x]]` is another frequent source of error. You
+    will get used to it eventually, but your hair will not survive the
     journey. [Similar
     stories](https://www.talyarkoni.org/blog/2012/06/08/r-the-master-troll-of-statistical-languages/)
-    can be found about the `apply` family.
+    can be found about the apply family.
 
 -   The `[[` operator has been accused of inconsistent behaviour.
     [*Advanced R* covers this better than I
@@ -1193,7 +1200,7 @@ cover some more general points:
     vector was named. For example:
 
     ``` r
-    a <- c(Alice=1, Bob=2)
+    a <- c(Alice = 1, Bob = 2)
     a["Alice"]
     ## Alice 
     ##     1
@@ -1247,13 +1254,13 @@ cover some more general points:
     to keep them?
 
     ``` r
-    data.frame(x=1:3, x=11:13)
+    data.frame(x = 1:3, x = 11:13)
     ##   x x.1
     ## 1 1  11
     ## 2 2  12
     ## 3 3  13
-    # Notice the x.1? You didn't ask for that. To get x twice, you need this:
-    correctNames <- data.frame(x=1:3, x=11:13, check.names = FALSE)
+    #Notice the x.1? You didn't ask for that. To get x twice, you need this:
+    correctNames <- data.frame(x = 1:3, x = 11:13, check.names = FALSE)
     correctNames
     ##   x  x
     ## 1 1 11
@@ -1277,13 +1284,13 @@ cover some more general points:
 
     ``` r
     library(tibble)
-    #We can't repeat our original first line, because tibble(x=1:5, x=11:15) throws an error:
-    ## > tibble(x=1:5, x=11:15)
+    #We can't repeat our original first line, because tibble(x = 1:5, x = 11:15) throws an error:
+    ## > tibble(x = 1:5, x = 11:15)
     ## Error: Column name `x` must not be duplicated.
     ## Use .name_repair to specify repair.
     #We follow the error's advice.
     #The .name_repair argument provides a few useful options, so we must pick one.
-    correctNames <- tibble(x=1:5, x=11:15, .name_repair = "minimal")
+    correctNames <- tibble(x = 1:5, x = 11:15, .name_repair = "minimal")
     correctNames
     ## # A tibble: 5 × 2
     ##       x     x
@@ -1322,6 +1329,9 @@ cover some more general points:
      as.data.frame(list(1, 2, 3, 4, 5), col.names = paste("foo=bar", 6:10))
     ##   foo.bar.6 foo.bar.7 foo.bar.8 foo.bar.9 foo.bar.10
     ## 1         1         2         3         4          5
+     as.data.frame(list(1, 2, 3, 4, 5), col.names = paste("foo=bar", 6:10), check.names = FALSE)
+    ##   foo=bar 6 foo=bar 7 foo=bar 8 foo=bar 9 foo=bar 10
+    ## 1         1         2         3         4          5
     ```
 
     As far as I can tell, it’s doing this in order to make the names
@@ -1333,8 +1343,8 @@ cover some more general points:
     it. You could perhaps argue that duplicated names are the user’s
     fault and they deserve what they get, but that argument falls apart
     for non-syntactic names. Who hasn’t put a space or an equals sign in
-    to their column names before? Mind, tibbles aren’t much better when
-    it comes to non-syntactic names. Neither `tibble("Example col" = 4)`
+    their column names before? Mind, tibbles aren’t much better when it
+    comes to non-syntactic names. Neither `tibble("Example col" = 4)`
     nor `data.frame("Example col" = 4)` warn you of the name change.
 
 -   For what I believe to be memory reasons, objects of greater than one
@@ -1361,9 +1371,9 @@ cover some more general points:
 
 -   There is no nice way to access the last element of a vector. Of all
     things, the idiomatic way is `x[length(x)]`. The only good part of
-    this is that `x[length(x)-0:n]` is a very nice way to get the last
-    `n` elements. You could use `tail()`, but Stack Overflow tells me
-    it’s very slow.
+    this is that `x[length(x) - 0:n]` is a very nice way to get the last
+    `n + 1` elements. You could use `tail()`, but Stack Overflow tells
+    me it’s very slow.
 
 -   The `sort()` and `order()` functions are the main ways to sort stuff
     in R. If you’re trying to sort some data by a particular variable,
@@ -2990,7 +3000,7 @@ issues:
         ## function (n, expr, simplify = "array") 
         ## sapply(integer(n), eval.parent(substitute(function(...) expr)), 
         ##     simplify = simplify)
-        ## <bytecode: 0x5569c05a26d8>
+        ## <bytecode: 0x56155b3ddfd0>
         ## <environment: namespace:base>
         ```
 
@@ -3012,7 +3022,7 @@ issues:
         ##         X <- as.list(X)
         ##     .Internal(lapply(X, FUN))
         ## }
-        ## <bytecode: 0x5569bf9cbf10>
+        ## <bytecode: 0x56155a80df10>
         ## <environment: namespace:base>
         ```
 
@@ -4261,7 +4271,7 @@ Some things seems obviously missing from R:
     a[-4.8]
     ## [1]  1  2  3  5  6  7  8  9 10
     sample(4.8)
-    ## [1] 4 3 2 1
+    ## [1] 1 3 2 4
     ```
 
     The pattern is that [R silently truncates the numeric index of
