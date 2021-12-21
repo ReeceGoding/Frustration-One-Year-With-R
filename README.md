@@ -1478,28 +1478,27 @@ Now for the serious stuff…
 ### Removing Dimensions
 
 This issue is notorious: R likes to remove unnecessary dimensions from
-your data in ways that are not easily predicted without spending what
-should be unnecessary effort to prevent them. Rumour has it that it can
-be blamed on the fact that S was originally intended as a calculator
-rather than a programming language. I can’t cite that, but I find it
-quite easy to believe. No programmer would include any of the below in a
-programming language.
+your data in ways that are not easily predicted, forcing you to waste
+time preventing them. Rumour has it that this can be blamed on S being
+designed as a calculator rather than as a programming language. I can’t
+cite that, but it’s easy to believe. No programmer would include any of
+the below in a programming language.
 
--   Unless you add `, drop=FALSE` to all of your data selection or
-    deletion lines, you run the risk of having all of your code that
-    expects the data to have a particular structure unexpectedly break.
-    You do not even get any errors or warnings. Compare:
+-   Unless you add `, drop=FALSE` to all of your data selection/deletion
+    lines, you run the risk of having all of your code that expects your
+    data to have a particular structure unexpectedly break. This gives
+    no errors or warnings. Compare:
 
     ``` r
-    (a <- cbind(1:4, 4:1))
+    (mat <- cbind(1:4, 4:1))
     ##      [,1] [,2]
     ## [1,]    1    4
     ## [2,]    2    3
     ## [3,]    3    2
     ## [4,]    4    1
-    a[, -1]
+    mat[, -1]
     ## [1] 4 3 2 1
-    a[, -1, drop=FALSE]
+    mat[, -1, drop=FALSE]
     ##      [,1]
     ## [1,]    4
     ## [2,]    3
@@ -1511,22 +1510,22 @@ programming language.
     the same issue unless you do all of your subsetting in a 1D form.
 
     ``` r
-    a <- cbind(1:4, 4:1)
-    (d <- as.data.frame(a))
+    mat <- cbind(1:4, 4:1)
+    (frame <- as.data.frame(mat))
     ##   V1 V2
     ## 1  1  4
     ## 2  2  3
     ## 3  3  2
     ## 4  4  1
-    d[, -1]
+    frame[, -1]
     ## [1] 4 3 2 1
-    d[, -1, drop=FALSE]
+    frame[, -1, drop=FALSE]
     ##   V2
     ## 1  4
     ## 2  3
     ## 3  2
     ## 4  1
-    d[-1]#1D subsetting
+    frame[-1]#1D subsetting
     ##   V2
     ## 1  4
     ## 2  3
@@ -1538,8 +1537,8 @@ programming language.
 
     ``` r
     library(tibble)
-    a <- cbind(1:4, 4:1)
-    (t <- as_tibble(a))
+    mat <- cbind(1:4, 4:1)
+    (tib <- as_tibble(mat))
     ## Warning: The `x` argument of `as_tibble.matrix()` must have unique column names if `.name_repair` is omitted as of tibble 2.0.0.
     ## Using compatibility `.name_repair`.
     ## This warning is displayed once every 8 hours.
@@ -1551,7 +1550,7 @@ programming language.
     ## 2     2     3
     ## 3     3     2
     ## 4     4     1
-    t[, -1]
+    tib[, -1]
     ## # A tibble: 4 × 1
     ##      V2
     ##   <int>
@@ -1559,7 +1558,7 @@ programming language.
     ## 2     3
     ## 3     2
     ## 4     1
-    t[, -1, drop=FALSE]
+    tib[, -1, drop=FALSE]
     ## # A tibble: 4 × 1
     ##      V2
     ##   <int>
@@ -1567,7 +1566,7 @@ programming language.
     ## 2     3
     ## 3     2
     ## 4     1
-    t[-1]
+    tib[-1]
     ## # A tibble: 4 × 1
     ##      V2
     ##   <int>
@@ -1575,14 +1574,14 @@ programming language.
     ## 2     3
     ## 3     2
     ## 4     1
-    t[, -1, drop=TRUE]
+    tib[, -1, drop=TRUE]
     ## [1] 4 3 2 1
     ```
 
-    You can think of tibbles as always using the `drop=FALSE` argument
-    of `[`. I really cannot explain why that is not base R’s default.
-    It’s got to either be some sort of compromise for matrix algebra or
-    for making working in your console nicer.
+    You can think of tibbles as having `drop=FALSE` as their default. I
+    can’t explain why base R doesn’t do the same. It’s got to either be
+    some sort of compromise for matrix algebra or for making working in
+    your console nicer.
 
 -   The `drop` argument is even stranger than I’m letting on. Its
     defaults differ depending on whether there may only be one column
@@ -1602,10 +1601,10 @@ programming language.
 -   As you can tell by taking a close look at the documentation for `[`
     and that of `[.data.frame`, the `drop` argument does not do the same
     thing for arrays and matrices as it does for data frames. This means
-    that my earlier example comparing tibbles to a matrix could be
-    dishonest. However, the confusion that you would need to overcome in
-    order to check for if I’ve been dishonest is so great that it proves
-    that there’s definitely something wrong with the `drop` argument.
+    that my earlier example could be dishonest. However, the confusion
+    that you would need to overcome in order to check for if I’ve been
+    dishonest is so great that it proves that there’s definitely
+    something wrong with the `drop` argument.
 
 -   You may think that `object` and `object[,]` are the same thing. They
     are not. You would expect and get an error if `object` is
@@ -1615,57 +1614,57 @@ programming language.
 
     ``` r
     library(tibble)
-    a <- matrix(1:3)
-    a
+    colMatrix <- matrix(1:3)
+    colMatrix
     ##      [,1]
     ## [1,]    1
     ## [2,]    2
     ## [3,]    3
-    a[,]
+    colMatrix[,]
     ## [1] 1 2 3
-    b <- matrix(1:3, ncol = 3)
-    b
+    rowMatrix <- matrix(1:3, ncol = 3)
+    rowMatrix
     ##      [,1] [,2] [,3]
     ## [1,]    1    2    3
-    b[,]
+    rowMatrix[,]
     ## [1] 1 2 3
-    c <- as.data.frame(a)
-    c
+    colFrame <- as.data.frame(colMatrix)
+    colFrame
     ##   V1
     ## 1  1
     ## 2  2
     ## 3  3
-    c[,]
+    colFrame[,]
     ## [1] 1 2 3
-    d <- as.data.frame(b)
-    d
+    rowFrame <- as.data.frame(rowMatrix)
+    rowFrame
     ##   V1 V2 V3
     ## 1  1  2  3
-    d[,]
+    rowFrame[,]
     ##   V1 V2 V3
     ## 1  1  2  3
-    e <- as_tibble(a)
-    e
+    colTib <- as_tibble(colMatrix)
+    colTib
     ## # A tibble: 3 × 1
     ##      V1
     ##   <int>
     ## 1     1
     ## 2     2
     ## 3     3
-    e[,]
+    colTib[,]
     ## # A tibble: 3 × 1
     ##      V1
     ##   <int>
     ## 1     1
     ## 2     2
     ## 3     3
-    f <- as_tibble(b)
-    f
+    rowTib <- as_tibble(rowMatrix)
+    rowTib
     ## # A tibble: 1 × 3
     ##      V1    V2    V3
     ##   <int> <int> <int>
     ## 1     1     2     3
-    f[,]
+    rowTib[,]
     ## # A tibble: 1 × 3
     ##      V1    V2    V3
     ##   <int> <int> <int>
@@ -1690,7 +1689,7 @@ programming language.
     your data’s life and death. This is made even worse by the syntax
     for `[` occasionally needing stray commas. Expressions like
     `data[4,]` are commonplace in R, so it’s far too easy to forget that
-    you needed the extra comma for the drop argument.
+    you needed the extra comma for the `drop` argument.
 
 ### Dangers of $
 
@@ -1706,8 +1705,8 @@ The `$` operator is both silently hazardous and redundant:
     library(tibble)
     list(Bob = 5, Dobby = 7)$B
     ## [1] 5
-    e <- list2env(list(Bob = 5, Dobby = 7))
-    e$B
+    env <- list2env(list(Bob = 5, Dobby = 7))
+    env$B
     ## NULL
     data.frame(Bob = 5, Dobby = 7)$B
     ## [1] 5
@@ -1723,8 +1722,8 @@ The `$` operator is both silently hazardous and redundant:
     library(tibble)
     list(Bob = 5, Bobby = 7)$B
     ## NULL
-    e <- list2env(list(Bob = 5, Bobby = 7))
-    e$B
+    env <- list2env(list(Bob = 5, Bobby = 7))
+    env$B
     ## NULL
     data.frame(Bob = 5, Bobby = 7)$B
     ## NULL
@@ -1733,16 +1732,15 @@ The `$` operator is both silently hazardous and redundant:
     ## NULL
     ```
 
-    Admittedly, `[` and `[[` are also S3 generics and therefore should
-    share this issue in theory. In practice, I rarely notice such
+    In theory, I should note that `[` and `[[` are also S3 generics and
+    therefore should share this issue. In practice, I rarely notice such
     misbehaviour.
 
 -   Consistency aside, partial matching is inherently dangerous.
     `data$Pen` might give the `Penetration` column if you forgot that
-    you removed the `Pen` column. R does not provide you an warnings
-    when this happens (e.g. there’s no “*Warning: `data$foo` was matched
-    to `data$foobar`*”), so you won’t have any idea that you got the
-    wrong column.
+    you removed the `Pen` column. By default, R does not give you any
+    warnings when partial matches happen, so you won’t have any idea
+    that you got the wrong column.
 
 -   The documentation for `$` points out its redundancy in base R:
     “*`x$name` is equivalent to `x[["name", exact = FALSE]]`*”. In other
@@ -1779,19 +1777,19 @@ The `$` operator is both silently hazardous and redundant:
 
     ``` r
     library(tibble)
-    mt <- as_tibble(mtcars)
-    mt$di
+    mtTib <- as_tibble(mtcars)
+    mtTib$di
     ## Warning: Unknown or uninitialised column: `di`.
     ## NULL
-    mt$dr
+    mtTib$dr
     ## Warning: Unknown or uninitialised column: `dr`.
     ## NULL
-    mt$d
+    mtTib$d
     ## Warning: Unknown or uninitialised column: `d`.
     ## NULL
     mtcars[["d", exact = FALSE]]
     ## NULL
-    mt[["d", exact = FALSE]]
+    mtTib[["d", exact = FALSE]]
     ## Warning: `exact` ignored.
     ## NULL
     ```
@@ -1876,15 +1874,6 @@ The `$` operator is both silently hazardous and redundant:
     example, there is no way to combine `$` with operators like `-` and
     there’s no way to pass arguments like `drop=FALSE` to it.
 
--   Once you know the difference between `["colname"]` and
-    `[, "colname"]`, `$` is only useful if it’s making your code
-    cleaner, saving you typing, or if you actually want the partial
-    matching. Personally, I’m uncomfortable with the inherent risks of
-    partial matching, so `$` is only really useful for interactive use
-    and the prompts that my IDE gives me when I use it. That might even
-    be its intended job. But if that is the case, nobody warns you of
-    it.
-
 -   `$` is not allowed for atomic vectors like `c(fizz=3, buzz=5)`,
     unlike `[` and `[[`. This is particularly annoying when dealing with
     named matrices because you end up having to use `mat[, "x"]` where
@@ -1899,6 +1888,14 @@ The `$` operator is both silently hazardous and redundant:
     `?Extract` mentions it twice – but I challenge you to find it. I can
     see why it would be difficult to make a `$<-` with partial matching,
     but making `$<-`inconsistent with `$` is just laughable.
+
+In conclusion, once you know the difference between `["colname"]` and
+`[, "colname"]`, `$` is only useful if it’s making your code cleaner,
+saving you typing, or if you actually want the partial matching.
+Personally, I’m uncomfortable with the inherent risks of partial
+matching, so `$` is only really useful for interactive use and my IDE’s
+auto-completion. That might even be its intended job. But if that is the
+case, nobody warns you of it.
 
 ### Indistinguishable Errors
 
@@ -3000,7 +2997,7 @@ issues:
         ## function (n, expr, simplify = "array") 
         ## sapply(integer(n), eval.parent(substitute(function(...) expr)), 
         ##     simplify = simplify)
-        ## <bytecode: 0x56155b3ddfd0>
+        ## <bytecode: 0x5581ce4c4150>
         ## <environment: namespace:base>
         ```
 
@@ -3022,7 +3019,7 @@ issues:
         ##         X <- as.list(X)
         ##     .Internal(lapply(X, FUN))
         ## }
-        ## <bytecode: 0x56155a80df10>
+        ## <bytecode: 0x5581cd8f5f10>
         ## <environment: namespace:base>
         ```
 
@@ -4271,7 +4268,7 @@ Some things seems obviously missing from R:
     a[-4.8]
     ## [1]  1  2  3  5  6  7  8  9 10
     sample(4.8)
-    ## [1] 1 3 2 4
+    ## [1] 4 1 3 2
     ```
 
     The pattern is that [R silently truncates the numeric index of
