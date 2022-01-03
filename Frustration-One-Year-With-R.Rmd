@@ -581,7 +581,7 @@ This list also reveals another issue with subsetting: There's too many ways to d
   colnames(mtcars)
   identical(names(mtcars), colnames(mtcars))
   ```
-  So what happens when you give an atomic vector plain old names rather than colnames? For a non-matrix, it works fine (see the `named <- setNames(letters, LETTERS)` example above). For a matrix - and presumably for any array, but let's not get in to that distinction - it's a little bit more complicated.
+  So what happens when you give an atomic vector plain old names rather than colnames? For a non-matrix, it works fine (see the `named <- setNames(letters, LETTERS)` example above). For a matrix - and presumably for any array, but let's not get in to that distinction - it's a little bit more complicated. Look closely at this output before reading further.
   ```{r, echo = TRUE}
   a <- diag(3)
   (a <- setNames(a, LETTERS[1:3]))

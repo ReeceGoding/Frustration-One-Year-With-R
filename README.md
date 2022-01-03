@@ -2048,7 +2048,8 @@ matrices).
     rather than colnames? For a non-matrix, it works fine (see the
     `named <- setNames(letters, LETTERS)` example above). For a matrix -
     and presumably for any array, but let’s not get in to that
-    distinction - it’s a little bit more complicated.
+    distinction - it’s a little bit more complicated. Look closely at
+    this output before reading further.
 
     ``` r
     a <- diag(3)
@@ -3037,7 +3038,7 @@ issues:
         ## function (n, expr, simplify = "array") 
         ## sapply(integer(n), eval.parent(substitute(function(...) expr)), 
         ##     simplify = simplify)
-        ## <bytecode: 0x55eb163cb010>
+        ## <bytecode: 0x55ea9bb6c010>
         ## <environment: namespace:base>
         ```
 
@@ -3059,7 +3060,7 @@ issues:
         ##         X <- as.list(X)
         ##     .Internal(lapply(X, FUN))
         ## }
-        ## <bytecode: 0x55eb159ddf10>
+        ## <bytecode: 0x55ea9b17ef10>
         ## <environment: namespace:base>
         ```
 
@@ -4308,7 +4309,7 @@ Some things seems obviously missing from R:
     a[-4.8]
     ## [1]  1  2  3  5  6  7  8  9 10
     sample(4.8)
-    ## [1] 3 1 2 4
+    ## [1] 4 1 2 3
     ```
 
     The pattern is that [R silently truncates the numeric index of
