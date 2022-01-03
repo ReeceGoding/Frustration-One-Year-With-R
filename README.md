@@ -2024,11 +2024,8 @@ matrices).
     ## [1] NA
     ```
 
-    Confused yet? Why does asking for a column that we don’t have gives
-    identical results to asking for one that we do have? And shouldn’t
-    at least one of these give and error/warning rather than just
-    spitting out `NA`? Long story short, named atomic vectors make a
-    distinction between names and colnames that data frames do not.
+    Long story short, named atomic vectors make a distinction between
+    names and colnames that data frames do not.
 
     ``` r
     a <- diag(3)
@@ -3039,7 +3036,7 @@ issues:
         ## function (n, expr, simplify = "array") 
         ## sapply(integer(n), eval.parent(substitute(function(...) expr)), 
         ##     simplify = simplify)
-        ## <bytecode: 0x555e02443c58>
+        ## <bytecode: 0x5598ebb03de0>
         ## <environment: namespace:base>
         ```
 
@@ -3061,7 +3058,7 @@ issues:
         ##         X <- as.list(X)
         ##     .Internal(lapply(X, FUN))
         ## }
-        ## <bytecode: 0x555e01a56f10>
+        ## <bytecode: 0x5598eb116f10>
         ## <environment: namespace:base>
         ```
 

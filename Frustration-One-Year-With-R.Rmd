@@ -571,7 +571,7 @@ This list also reveals another issue with subsetting: There's too many ways to d
   a["A"]
   a["Z"]
   ```
-  Confused yet? Why does asking for a column that we don't have gives identical results to asking for one that we do have? And shouldn't at least one of these give and error/warning rather than just spitting out `NA`? Long story short, named atomic vectors make a distinction between names and colnames that data frames do not.
+  Long story short, named atomic vectors make a distinction between names and colnames that data frames do not.
   ```{r, echo = TRUE}
   a <- diag(3)
   colnames(a) <- LETTERS[1:3]
