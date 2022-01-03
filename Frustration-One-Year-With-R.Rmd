@@ -588,7 +588,7 @@ This list also reveals another issue with subsetting: There's too many ways to d
   a["A"]
   a["Z"]#For a data frame, this would be an error...
   ```
-  When you try to give an atomic vector names, R will only try to name it element-by-element (even if said vector has dimensions). Data frames, on the other hand, make no distinction between names and colnames. R ultimately sees named matrices as named atomic vectors that happen to have a second dimension. This means that you can subset them with both `["name"]` and `[, "name"]` and get different results.
+  When you try to give an atomic vector ordinary names, R will only try to name it element-by-element (even if said vector has dimensions). Data frames, on the other hand, treat names as colnames. R ultimately sees named matrices as named atomic vectors that happen to have a second dimension. This means that you can subset them with both `["name"]` and `[, "name"]` and get different results.
   ```{r, echo = TRUE}
   a <- setNames(diag(3), LETTERS[1:3])
   colnames(a) <- LETTERS[1:3]

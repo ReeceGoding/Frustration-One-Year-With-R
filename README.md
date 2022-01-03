@@ -2068,9 +2068,9 @@ matrices).
     ##   NA
     ```
 
-    When you try to give an atomic vector names, R will only try to name
-    it element-by-element (even if said vector has dimensions). Data
-    frames, on the other hand, make no distinction between names and
+    When you try to give an atomic vector ordinary names, R will only
+    try to name it element-by-element (even if said vector has
+    dimensions). Data frames, on the other hand, treat names as
     colnames. R ultimately sees named matrices as named atomic vectors
     that happen to have a second dimension. This means that you can
     subset them with both `["name"]` and `[, "name"]` and get different
@@ -3038,7 +3038,7 @@ issues:
         ## function (n, expr, simplify = "array") 
         ## sapply(integer(n), eval.parent(substitute(function(...) expr)), 
         ##     simplify = simplify)
-        ## <bytecode: 0x55b93761b010>
+        ## <bytecode: 0x55c611fdd010>
         ## <environment: namespace:base>
         ```
 
@@ -3060,7 +3060,7 @@ issues:
         ##         X <- as.list(X)
         ##     .Internal(lapply(X, FUN))
         ## }
-        ## <bytecode: 0x55b936c2df10>
+        ## <bytecode: 0x55c6115eff10>
         ## <environment: namespace:base>
         ```
 
@@ -4309,7 +4309,7 @@ Some things seems obviously missing from R:
     a[-4.8]
     ## [1]  1  2  3  5  6  7  8  9 10
     sample(4.8)
-    ## [1] 1 2 4 3
+    ## [1] 3 4 2 1
     ```
 
     The pattern is that [R silently truncates the numeric index of
