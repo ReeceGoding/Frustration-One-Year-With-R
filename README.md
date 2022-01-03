@@ -19,7 +19,7 @@ Reece Goding
         -   [First-class Environments](#first-class-environments)
         -   [Generic Functions](#generic-functions)
     -   [Syntax](#syntax)
-    -   [Miscellaneous](#miscellaneous)
+    -   [Miscellaneous Positives](#miscellaneous-positives)
 -   [What R Does Wrong](#what-r-does-wrong)
     -   [Lists](#lists)
     -   [Strings](#strings)
@@ -52,7 +52,7 @@ Reece Goding
         -   [Sequences](#sequences)
         -   [Non-standard Evaluation](#non-standard-evaluation)
     -   [Missing Features](#missing-features)
-    -   [Miscellaneous](#miscellaneous-1)
+    -   [Miscellaneous Negatives](#miscellaneous-negatives)
 -   [The Tidyverse](#the-tidyverse)
     -   [Dplyr](#dplyr)
     -   [Ggplot2](#ggplot2)
@@ -681,7 +681,7 @@ Some of the syntax is nice:
     probably guess what the corresponding function for methods is
     called.
 
-## Miscellaneous
+## Miscellaneous Positives
 
 -   The built-in vectors `letters` and `LETTERS` come in handy
     surprisingly often. You’ll see me use them a lot.
@@ -705,6 +705,19 @@ Some of the syntax is nice:
     As a final point of interest, I’ve heard that R’s condition handling
     system is one of the best copies of Common Lisp’s, which I’ve heard
     awesome things about.
+-   Speaking of Lisp, [statistical Lisps used to be a
+    thing](https://en.wikipedia.org/wiki/XLispStat). I’ve heard rumours
+    of them still being used in Japan, but I can’t find anything to back
+    that up. Everything that I’ve found says that [R killed them
+    off](https://www.jstatsoft.org/article/view/v013i07/v13i07.pdf). As
+    far as I know, nobody’s tried to make another such Lisp since the
+    90’s. The fact that R can claim to have eradicated an entire
+    category of language design is a great point in its favour. It’s
+    also possible evidence that I’m correct to say that R resembling C
+    is to its benefit. However, I’d be overjoyed to hear of such Lisps
+    making a comeback. Imagine if we’re just one good Clojure library
+    away from R surrendering to its Scheme roots and birthing a modern
+    statistical Lisp.
 -   Base R is quite stable. Breaking changes are almost unheard of. I
     don’t agree that they should be trying so hard to maintain
     compatibility with S, but this is an undeniable benefit of that
@@ -1903,17 +1916,19 @@ When dealing with any sort of collection, any of the following mistakes
 can give indistinguishable results. This can make your debugging so
 messy that by the time that you’re done, you don’t know what was broken.
 
--   Trying to select an incorrect sequence of elements. For example,
-    either of `:` or `seq()` misbehaving.
+-   Trying to select an incorrect sequence of elements. This can be
+    caused by `:` or `seq()` misbehaving or by simple user error. [A
+    tiny bit more on that later](#sequences)
 
--   The vector recycling rules silently recycling the vector that you
-    used to select elements. [More on that later](#vectorization-again).
+-   The vector recycling rules silently causing the vector that you used
+    to select elements to be recycled in an undesired way. [More on that
+    later](#vectorization-again).
 
--   The subsetting rules not throwing any sort of error or warning when
-    you select an out-of-bounds value. For example, both out-of-bounds
+-   Selecting an out-of-bounds value. You almost always don’t get any
+    error or warning when you do this. For example, both out-of-bounds
     positive numbers and logical vectors that are longer than the vector
     that you’re subsetting silently return `NA` for the inappropriate
-    values. For example:
+    values.
 
     ``` r
     length(LETTERS)
@@ -1929,7 +1944,7 @@ messy that by the time that you’re done, you don’t know what was broken.
     ##  [91] NA  NA  NA  NA  NA  NA  NA  NA  NA  NA
     ```
 
-    again, as with many of the issues that we’ve mentioned recently,
+    Again, as with many of the issues that we’ve mentioned recently,
     **this happens silently**.
 
 -   Accessing/subsetting a collection in the wrong way. For example,
@@ -1943,8 +1958,8 @@ messy that by the time that you’re done, you don’t know what was broken.
 -   Any sort of off-by-one errors, e.g. a modulo mistake of any sort,
     genuine off-by-one errors, or R’s 1-indexing causing you to trip up.
 
--   A searching function like `which()`, `duplicated()`, or `match()`
-    misbehaving.
+-   Misuse of searching functions like `which()`, `duplicated()`, or
+    `match()`.
 
 This list also reveals another issue with subsetting: There’s too many
 ways to do it…
@@ -1953,8 +1968,8 @@ ways to do it…
 
 …and they don’t all work everywhere. For example, there’s a wide range
 of tools for using names to work with lists and data frames, but very
-few of them work for named atomic vectors. For those who don’t know,
-that includes (named) matrices.
+few of them work for named atomic vectors (which includes named
+matrices).
 
 -   The `$` operator simply does not work.
 
@@ -2033,7 +2048,10 @@ that includes (named) matrices.
     ```
 
     So what happens when you give an atomic vector plain old names
-    rather than colnames?
+    rather than colnames? For a non-matrix, it works fine (see the
+    `named <- setNames(letters, LETTERS)` example above). For a matrix -
+    and presumably for any array, but let’s not get in to that
+    distinction - it’s a little bit more complicated.
 
     ``` r
     a <- diag(3)
@@ -2059,7 +2077,31 @@ that includes (named) matrices.
     between names, colnames, and rownames, but the consequences are a
     damn annoyance. There really shouldn’t be much of a distinction
     between a named matrix and a data frame, but R forces you to use
-    them in different ways.
+    them in different ways. On a very deep level, R just sees named
+    matrices as named atomic vectors that happen to have a second
+    dimension.
+
+    ``` r
+    a <- setNames(diag(3), LETTERS[1:3])
+    colnames(a) <- LETTERS[1:3]
+    a
+    ##      A B C
+    ## [1,] 1 0 0
+    ## [2,] 0 1 0
+    ## [3,] 0 0 1
+    ## attr(,"names")
+    ## [1] "A" "B" "C" NA  NA  NA  NA  NA  NA
+    a["A"]
+    ## A 
+    ## 1
+    a["Z"]
+    ## <NA> 
+    ##   NA
+    a[, "A"]
+    ## [1] 1 0 0
+    #I'd love to show a[, "Z"], but it throws the error "Error in a[, "Z"] : subscript out of bounds".
+    #This is clearly consistent with a["Z"] and my earlier bits on out-of-bounds stuff not throwing errors. 
+    ```
 
 -   You cannot use named atomic vectors to generate environments. This
     means that awesome tricks like
@@ -2997,7 +3039,7 @@ issues:
         ## function (n, expr, simplify = "array") 
         ## sapply(integer(n), eval.parent(substitute(function(...) expr)), 
         ##     simplify = simplify)
-        ## <bytecode: 0x5581ce4c4150>
+        ## <bytecode: 0x555e02443c58>
         ## <environment: namespace:base>
         ```
 
@@ -3019,7 +3061,7 @@ issues:
         ##         X <- as.list(X)
         ##     .Internal(lapply(X, FUN))
         ## }
-        ## <bytecode: 0x5581cd8f5f10>
+        ## <bytecode: 0x555e01a56f10>
         ## <environment: namespace:base>
         ```
 
@@ -4201,8 +4243,8 @@ Some things seems obviously missing from R:
     optimisation or any macro system is strange. Then again, being a
     heavily functional language that looks like C is one of the best
     things about R. If it had tail call optimisation or Lisp-like
-    macros, it’d probably start to look more like a weird version of
-    Lisp.
+    macros, it’d probably start to look more like a weird statistical
+    version of Lisp.
 
 -   You can only break out of the innermost loop. Unless you refactor,
     there’s no way to be many loops deep and break out of them all with
@@ -4268,7 +4310,7 @@ Some things seems obviously missing from R:
     a[-4.8]
     ## [1]  1  2  3  5  6  7  8  9 10
     sample(4.8)
-    ## [1] 4 1 3 2
+    ## [1] 3 1 2 4
     ```
 
     The pattern is that [R silently truncates the numeric index of
@@ -4277,7 +4319,7 @@ Some things seems obviously missing from R:
 
 Admittedly, few if any of these are major, but they’re a bit annoying.
 
-## Miscellaneous
+## Miscellaneous Negatives
 
 And now for everything that I’ve got left in the bag.
 
@@ -4543,7 +4585,7 @@ that cares about the variable name of its argument. Spot the difference:
 plot(Nile)
 ```
 
-![](Frustration-One-Year-With-R_files/figure-gfm/unnamed-chunk-87-1.png)<!-- -->
+![](Frustration-One-Year-With-R_files/figure-gfm/unnamed-chunk-88-1.png)<!-- -->
 
 ``` r
 library(magrittr)
@@ -4555,13 +4597,13 @@ library(magrittr)
 Nile %>% plot()
 ```
 
-![](Frustration-One-Year-With-R_files/figure-gfm/unnamed-chunk-87-2.png)<!-- -->
+![](Frustration-One-Year-With-R_files/figure-gfm/unnamed-chunk-88-2.png)<!-- -->
 
 ``` r
 Nile |> plot() #The same as plot(Nile)
 ```
 
-![](Frustration-One-Year-With-R_files/figure-gfm/unnamed-chunk-87-3.png)<!-- -->
+![](Frustration-One-Year-With-R_files/figure-gfm/unnamed-chunk-88-3.png)<!-- -->
 
 Don’t get me wrong, I like pipes a lot. When you’re dealing with data,
 there’s sometimes no way to avoid “*do foo to my data and then do bar*”

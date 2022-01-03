@@ -195,12 +195,13 @@ Some of the syntax is nice:
 * The syntax for manipulating environments makes sense. You have to learn the difference between `<-` and `<<-` , but having environments use a subset of the list syntax was a very good idea. It was a similarly good idea to have a lot of R's internals (e.g. quoted function calls) be pairlists. This lets them be manipulated in exactly the same way as lists. The similarities between lists, pairlists, environments, and data frames go deeper than you may expect. For example, the `eval()` function lets you evaluate an expression in the specified environment, but it's happy to take any of the data types that I've just listed in place of an environment. At times, R almost lets you forget that lists and environments aren't the same thing.
 * The function names for making and manipulating S4 objects and functions are generally what you would expect them to be. For example, once you know `setClass()` and `setGeneric()`, you can probably guess what the corresponding function for methods is called.
 
-## Miscellaneous
+## Miscellaneous Positives
 
 * The built-in vectors `letters` and `LETTERS` come in handy surprisingly often. You'll see me use them a lot.
 * The base library surprises me from time to time. It's always worth putting what you want in to a search engine; Sometimes, you'll find it. My most recent surprises were `findInterval()` and `cut()`.
 * The `na.print` argument to `print()`, trivial as it is, can be a thing of beauty.
 * R's condition handling and recovery system is build atop S3, making it extremely customisable by letting you add and handle custom metadata pretty much however you want. It also has some nice built-in types of conditions like errors, warnings, and messages, as well as having `finally` blocks in `tryCatch()`. The only real oddity of the system is that its conditionals are treated as functions of the error, meaning that you will have to write strange code like `tryCatch(code, error = function(unused) "error", warning = function(unused) "warning")`. However, this is the price that you pay for being able to use code like `tryCatch(code, myError = function(e) paste0(e$message, " was triggered by ",e$call,". Try ",e$suggestion)`. As a final point of interest, I've heard that R's condition handling system is one of the best copies of Common Lisp's, which I've heard awesome things about.
+* Speaking of Lisp, [statistical Lisps used to be a thing](https://en.wikipedia.org/wiki/XLispStat). I've heard rumours of them still being used in Japan, but I can't find anything to back that up. Everything that I've found says that [R killed them off](https://www.jstatsoft.org/article/view/v013i07/v13i07.pdf). As far as I know, nobody's tried to make another such Lisp since the 90's. The fact that R can claim to have eradicated an entire category of language design is a great point in its favour. It's also possible evidence that I'm correct to say that R resembling C is to its benefit. However, I'd be overjoyed to hear of such Lisps making a comeback. Imagine if we're just one good Clojure library away from R surrendering to its Scheme roots and birthing a modern statistical Lisp.
 * Base R is quite stable. Breaking changes are almost unheard of. I don't agree that they should be trying so hard to maintain compatibility with S, but this is an undeniable benefit of that decision.
 * The fact that the Tidyverse is just an R library, rather than an entirely separate language, is a testament to R's metaprograming. I like being able to define new infix operators and replacement functions, but the Tidyverse went above and beyond. Where else do you see an entire library of pipes? Until very recently, base R didn't even have pipes!
 * The Tidyverse is proof that people are trying to fix R. Although that comes with the implication that R is broken, the fact that people are both willing and able to fix it definitely says something nice about R.
@@ -525,24 +526,24 @@ In conclusion, once you know the difference between `["colname"]` and `[, "colna
 ### Indistinguishable Errors
 When dealing with any sort of collection, any of the following mistakes can give indistinguishable results. This can make your debugging so messy that by the time that you're done, you don't know what was broken.
 
-* Trying to select an incorrect sequence of elements. For example, either of `:` or `seq()` misbehaving.
-* The vector recycling rules silently recycling the vector that you used to select elements. [More on that later](#vectorization-again).
-* The subsetting rules not throwing any sort of error or warning when you select an out-of-bounds value. For example, both out-of-bounds positive numbers and logical vectors that are longer than the vector that you're subsetting silently return `NA` for the inappropriate values. For example:
+* Trying to select an incorrect sequence of elements. This can be caused by `:` or `seq()` misbehaving or by simple user error. [A tiny bit more on that later](#sequences)
+* The vector recycling rules silently causing the vector that you used to select elements to be recycled in an undesired way. [More on that later](#vectorization-again).
+* Selecting an out-of-bounds value. You almost always don't get any error or warning when you do this. For example, both out-of-bounds positive numbers and logical vectors that are longer than the vector that you're subsetting silently return `NA` for the inappropriate values.
   ```{r, echo = TRUE}
   length(LETTERS)
   LETTERS[c(1, 5, 20, 100)]
   LETTERS[rep(TRUE, 100)]
   ```
-  again, as with many of the issues that we've mentioned recently, **this happens silently**.
+  Again, as with many of the issues that we've mentioned recently, **this happens silently**.
 * Accessing/subsetting a collection in the wrong way. For example, wrongly using any of `[c(x, y)]`, `[x, y]`, or `[cbind(x, y)]`, selecting `[x]` rather than `[x, ]`, `[[x]]`, or `[, x]`, using the wrong `rbind()/cbind()`, or an error in your call to anything like `subset()` or `within()`.
 * Selecting element 0.
 * Any sort of off-by-one errors, e.g. a modulo mistake of any sort, genuine off-by-one errors, or	R's 1-indexing causing you to trip up.
-* A searching function like `which()`, `duplicated()`, or `match()` misbehaving.
+* Misuse of searching functions like `which()`, `duplicated()`, or `match()`.
 
 This list also reveals another issue with subsetting: There's too many ways to do it...
 
 ### Named Atomic Vectors
-...and they don't all work everywhere. For example, there's a wide range of tools for using names to work with lists and data frames, but very few of them work for named atomic vectors. For those who don't know, that includes (named) matrices.
+...and they don't all work everywhere. For example, there's a wide range of tools for using names to work with lists and data frames, but very few of them work for named atomic vectors (which includes named matrices).
 
 * The `$` operator simply does not work.
 * Although `namedVector["name"]` can be used for subsetting and subassignment, `namedVector["name"] <- NULL` throws an error. For a list or data frame, this would have deleted the selected data points.
@@ -580,14 +581,24 @@ This list also reveals another issue with subsetting: There's too many ways to d
   colnames(mtcars)
   identical(names(mtcars), colnames(mtcars))
   ```
-  So what happens when you give an atomic vector plain old names rather than colnames?
+  So what happens when you give an atomic vector plain old names rather than colnames? For a non-matrix, it works fine (see the `named <- setNames(letters, LETTERS)` example above). For a matrix - and presumably for any array, but let's not get in to that distinction - it's a little bit more complicated.
   ```{r, echo = TRUE}
   a <- diag(3)
   (a <- setNames(a, LETTERS[1:3]))
   a["A"]
   a["Z"]#For a data frame, this would be an error...
   ```
-  Pretty ugly, right? However, a close look at this output gives the game away. When you try to give an atomic vector names, even if said vector has dimensions, R will only try to name it element-by-element. This is ultimately why R makes the distinction between names, colnames, and rownames, but the consequences are a damn annoyance. There really shouldn't be much of a distinction between a named matrix and a data frame, but R forces you to use them in different ways.
+  Pretty ugly, right? However, a close look at this output gives the game away. When you try to give an atomic vector names, even if said vector has dimensions, R will only try to name it element-by-element. This is ultimately why R makes the distinction between names, colnames, and rownames, but the consequences are a damn annoyance. There really shouldn't be much of a distinction between a named matrix and a data frame, but R forces you to use them in different ways. On a very deep level, R just sees named matrices as named atomic vectors that happen to have a second dimension.
+  ```{r, echo = TRUE}
+  a <- setNames(diag(3), LETTERS[1:3])
+  colnames(a) <- LETTERS[1:3]
+  a
+  a["A"]
+  a["Z"]
+  a[, "A"]
+  #I'd love to show a[, "Z"], but it throws the error "Error in a[, "Z"] : subscript out of bounds".
+  #This is clearly consistent with a["Z"] and my earlier bits on out-of-bounds stuff not throwing errors. 
+  ```
 * You cannot use named atomic vectors to generate environments. This means that awesome tricks like `within(data, remove(columnIDoNotWant, anotherColumn))` work for lists and data frames but not for named atomic vectors.
   ```{r, echo = TRUE}
   #Data frames are fine.
@@ -1171,7 +1182,7 @@ Of all the problems that I've written about, this section's is the one that prob
 ## Missing Features
 Some things seems obviously missing from R:
 
-* For a Scheme-inspired language, the lack of any tail call optimisation or any macro system is strange. Then again, being a heavily functional language that looks like C is one of the best things about R. If it had tail call optimisation or Lisp-like macros, it'd probably start to look more like a weird version of Lisp.
+* For a Scheme-inspired language, the lack of any tail call optimisation or any macro system is strange. Then again, being a heavily functional language that looks like C is one of the best things about R. If it had tail call optimisation or Lisp-like macros, it'd probably start to look more like a weird statistical version of Lisp.
 * You can only break out of the innermost loop. Unless you refactor, there's no way to be many loops deep and break out of them all with one command.
 * R has no `do-while` loop. It's never bothered me, but I think that's because I've never used one in any language. I can see it bothering others, but if I need one, then I'm pretty sure that they're trivial to make from a repeat loop.
 * Without crude `if(FALSE){}` workarounds, there's no way to comment out blocks.
@@ -1196,7 +1207,7 @@ Some things seems obviously missing from R:
 
 Admittedly, few if any of these are major, but they're a bit annoying.
 
-## Miscellaneous
+## Miscellaneous Negatives
 And now for everything that I've got left in the bag.
 
 * The two language problem: Sooner or later, you'll run in to a memory issue, go to Stack Overflow, and be told that the solution is to use a package that lets R talk to C++. Julia claims to have solved this. I don't know if I believe it.
