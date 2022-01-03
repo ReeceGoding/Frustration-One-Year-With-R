@@ -2067,16 +2067,13 @@ matrices).
     ##   NA
     ```
 
-    Pretty ugly, right? However, a close look at this output gives the
-    game away. When you try to give an atomic vector names, even if said
-    vector has dimensions, R will only try to name it
-    element-by-element. This is ultimately why R makes the distinction
-    between names, colnames, and rownames, but the consequences are a
-    damn annoyance. There really shouldn’t be much of a distinction
-    between a named matrix and a data frame, but R forces you to use
-    them in different ways. On a very deep level, R just sees named
-    matrices as named atomic vectors that happen to have a second
-    dimension.
+    When you try to give an atomic vector names, even if said vector has
+    dimensions, R will only try to name it element-by-element. Data
+    frames, on the other hand, make no distinction between names and
+    colnames. R ultimately sees named matrices as named atomic vectors
+    that happen to have a second dimension. This means that you can
+    subset them with both `["name"]` and `[, "name"]` and get different
+    results.
 
     ``` r
     a <- setNames(diag(3), LETTERS[1:3])
@@ -2099,6 +2096,10 @@ matrices).
     #I'd love to show a[, "Z"], but it throws the error "Error in a[, "Z"] : subscript out of bounds".
     #This is clearly consistent with a["Z"] and my earlier bits on out-of-bounds stuff not throwing errors. 
     ```
+
+    Of course, `["name"]` and `[, "name"]` aren’t identical for data
+    frames either, but let’s not get back in to talking about the `drop`
+    argument. Starting to see what I mean about R being inconsistent?
 
 -   You cannot use named atomic vectors to generate environments. This
     means that awesome tricks like
@@ -3036,7 +3037,7 @@ issues:
         ## function (n, expr, simplify = "array") 
         ## sapply(integer(n), eval.parent(substitute(function(...) expr)), 
         ##     simplify = simplify)
-        ## <bytecode: 0x5598ebb03de0>
+        ## <bytecode: 0x55eb163cb010>
         ## <environment: namespace:base>
         ```
 
@@ -3058,7 +3059,7 @@ issues:
         ##         X <- as.list(X)
         ##     .Internal(lapply(X, FUN))
         ## }
-        ## <bytecode: 0x5598eb116f10>
+        ## <bytecode: 0x55eb159ddf10>
         ## <environment: namespace:base>
         ```
 
