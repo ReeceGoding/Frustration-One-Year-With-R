@@ -2263,8 +2263,9 @@ silently doing what you don’t want. Let’s have a few more:
     ```
 
     By the way, `cbind()` doesn’t silently correct duplicated column
-    names. This is documented behaviour, but I don’t think that anyone
-    ever bothered to read the docs for `cbind()`.
+    names. By now, you probably expected otherwise. This is documented
+    behaviour, but I don’t think that anyone ever bothered to read the
+    docs for `cbind()`.
 
 -   Using `subset()` rather than `within()` is sometimes suggested for
     operations like what I was trying to do in the previous point. For
@@ -3001,7 +3002,7 @@ issues:
     This implies that `residuals()` does not have that same intention,
     incorrectly hinting that they might have different behaviour.
 -   In some of the standard libraries, you can find functions without
-    any documentation. For example, `MASS:as.fraction()` is totally
+    any documentation. For example, `MASS::as.fraction()` is totally
     undocumented.
 -   The [*R Language
     Definition*](https://cran.r-project.org/doc/manuals/r-release/R-lang.html)
@@ -3038,7 +3039,7 @@ issues:
         ## function (n, expr, simplify = "array") 
         ## sapply(integer(n), eval.parent(substitute(function(...) expr)), 
         ##     simplify = simplify)
-        ## <bytecode: 0x55c611fdd010>
+        ## <bytecode: 0x5580776984f8>
         ## <environment: namespace:base>
         ```
 
@@ -3060,7 +3061,7 @@ issues:
         ##         X <- as.list(X)
         ##     .Internal(lapply(X, FUN))
         ## }
-        ## <bytecode: 0x55c6115eff10>
+        ## <bytecode: 0x558076cabf10>
         ## <environment: namespace:base>
         ```
 
@@ -3088,14 +3089,18 @@ issues:
     compatibility in mind. This issue goes on to damage the
     documentation for said functions. For example, have a look at the
     docs for the `seq()` function. It won’t tell you what `seq_along()`
-    does, but it will tell you what to use `seq_along()` instead of! I
-    really don’t know why R pays this price: Who is still using S?
-    Another example is the `**` function. I’ll let the Arithmetic
-    Operators documentation speak for itself on that one. Its three
-    sentences on the topic are `**`’s only documentation. Given that you
-    shouldn’t ever really use it, it would be harsh of me to say more or
-    point out its oddities. For further reading, I will only give [this
-    link](https://rosettacode.org/wiki/Exponentiation_order#R).
+    does, but it will tell you what to use `seq_along()` instead of!
+    I’ll let [Stack
+    Overflow](https://stackoverflow.com/questions/59378862/) explain
+    `seq.int()`’s documentation issues. Said documentation is so poor
+    that I’ve been scared out of using the function. I really don’t know
+    why R pays this price: Who is still using S? Another example is the
+    `**` function. I’ll let the Arithmetic Operators documentation (try
+    `?'**'`) speak for itself on that one. Its three sentences on the
+    topic are `**`’s only documentation. Given that you shouldn’t ever
+    really use it, it would be harsh of me to say more or point out its
+    oddities. For further reading, I will only give
+    [this](https://rosettacode.org/wiki/Exponentiation_order#R).
 -   As the previous example shows, backwards compatibility is a priority
     for R. This means that its inconsistencies will almost certainly
     never be fixed. Things would be better if the docs did a better job
@@ -3411,15 +3416,20 @@ but let’s go deeper:
 
     But why did we have the learn any of this in the first place?
 
+-   Your turn: What does `seq_along(diag(3))` return? `1:3` or `1:9`?
+    What if you added a row? What if you added a column? Or is the name
+    of that function `seq.along()`? Are you sure? Tempted to check the
+    docs? Which docs? Feeling helpless? You should!
+
 -   Many functions that are designed for matrices should be forgotten
     about everywhere else. Several guides warn against using `apply()`
     on non-matrices and I wouldn’t dare use `t()` on a non-matrix (try
     `t(iris)`).
 
--   Quick, what does `seq_along(diag(3))` return? `1:3` or `1:9`? What
-    if you added a row? What if you added a column? Or is the name of
-    that function `seq.along()`? Are you sure? Tempted to check the
-    docs? Which docs? Feeling helpless? You should!
+-   On a similar note, I always expect `c()` of a matrix to work in
+    row-order. It doesn’t. However, that’s probably more the fault of
+    `c()` and I than it is of matrices. There are times when I can’t
+    explain `c(mtcars)` to myself.
 
 -   Named matrices are named atomic vectors, so they break in the ways
     [discussed earlier](#named-atomic-vectors). This puts you in a
@@ -3437,7 +3447,7 @@ awful sense of unease.
 
 ### The Error Messages
 
-Sometimes to mention while we’ve still got some bad error messages fresh
+Something to mention while we’ve still got some bad error messages fresh
 in our minds: People often say that R’s error messages aren’t very good
 and I’m starting to agree. Errors like “*`dim(X)` must have a positive
 length*” are useless when you’re not told which function in the line
@@ -3530,8 +3540,8 @@ whatever `vapply()` would consider a valid `FUN.VALUE` argument.
     `mapply()` have one.
 -   You can argue that some functions are missing in base R. For
     example, if we think of `lapply()` as “*list in, data frame out*”
-    and by as “*data frame in, list out*”, and so on for `sapply()` and
-    others, then where is the “*array in, list out*” function?
+    and `by()` as “*data frame in, list out*”, and so on for `sapply()`
+    and others, then where is the “*array in, list out*” function?
 -   This might be a repeat of my complaints about the documentation, but
     there are several apply family functions that hardly anyone uses or
     understands. Few understand `eapply()` and even fewer use it. Just
@@ -3579,8 +3589,8 @@ neither be found inside or outside of R.
     out to be the best way to use R, then you’re forced to admit that R
     is a polished turd with a fragmented community. Why would you ever
     knowingly use a polished turd? The popularity of the Tidyverse is
-    possibly the strongest piece of evidence showing that not only does
-    R suck, the community knows it.
+    possibly the strongest piece of evidence that not only does R suck,
+    the community knows it.
 -   If base R is best ignored in favour of packages, or at least if the
     community thinks so, then how are you expected to actually learn R?
     When do you stop learning the base library and move on?
@@ -4252,7 +4262,7 @@ Some things seems obviously missing from R:
 -   R has no `do-while` loop. It’s never bothered me, but I think that’s
     because I’ve never used one in any language. I can see it bothering
     others, but if I need one, then I’m pretty sure that they’re trivial
-    to make from a repeat loop.
+    to make from a `repeat` loop.
 
 -   Without crude `if(FALSE){}` workarounds, there’s no way to comment
     out blocks.
@@ -4309,7 +4319,7 @@ Some things seems obviously missing from R:
     a[-4.8]
     ## [1]  1  2  3  5  6  7  8  9 10
     sample(4.8)
-    ## [1] 3 4 2 1
+    ## [1] 4 1 2 3
     ```
 
     The pattern is that [R silently truncates the numeric index of
