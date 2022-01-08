@@ -3039,7 +3039,7 @@ issues:
         ## function (n, expr, simplify = "array") 
         ## sapply(integer(n), eval.parent(substitute(function(...) expr)), 
         ##     simplify = simplify)
-        ## <bytecode: 0x5580776984f8>
+        ## <bytecode: 0x55c878cd04f8>
         ## <environment: namespace:base>
         ```
 
@@ -3061,7 +3061,7 @@ issues:
         ##         X <- as.list(X)
         ##     .Internal(lapply(X, FUN))
         ## }
-        ## <bytecode: 0x558076cabf10>
+        ## <bytecode: 0x55c8782e3f10>
         ## <environment: namespace:base>
         ```
 
@@ -3621,26 +3621,25 @@ neither be found inside or outside of R.
 
 ## Generic Functions Again
 
-R’s generic function OOP systems are yet another source of R’s
-unpredictability and internal inconsistency. [They’re very
-cool](#generic-functions) and I must admit that I’ve not used them much,
-but what I’ve seen when trying to use them has discouraged me. Most of
-what I’m about to say is about S3, but you’ll rarely find much said
-about R’s OOP systems at all. It’s not really any surprise. S3, S4, RC,
-and any of the OOP systems that come from packages are all openly
-admitted to being bolted-on to R rather than something that was part of
-its design from the early days. Points like the below make discovering
-this fact unavoidable. Presumably, this is what the Julia fans are
-talking about when they say that they’re the only ones who have a
-generic function OOP system that is baked-in to their language. I’ve
-never used Julia or enough S4 or RC to be able to really comment, but I
-bet they’re right.
+R’s generic function OOP systems are yet another source unpredictability
+and internal inconsistency. [They’re very cool](#generic-functions) and
+I must admit that I’ve not used them much, but what I’ve seen when
+trying to use them has discouraged me. Most of what I’m about to say is
+about S3, but you’ll rarely find much said about R’s OOP systems at all.
+It’s not really any surprise. S3, S4, RC, and any of the OOP systems
+that come from packages are all openly admitted to being bolted-on to R
+rather than something that was part of its design from the early days.
+Points like the below make discovering this fact unavoidable.
+Presumably, this is what the Julia fans are talking about when they say
+that they’re the only ones who have a generic function OOP system that
+is baked-in to their language. I’ve never used Julia or enough S4 or RC
+to be able to really comment, but I bet they’re right.
 
 ### The Class System
 
 The class system is a mess and the docs do a poor job of explaining it.
 Good luck understanding it without a book like *Advanced R* and a
-package like sloop. I believe that this problem is mostly isolated to
+package like `sloop`. I believe that this problem is mostly isolated to
 S3, but I’ve not used enough S4 to be able to say that with any
 certainty. Here are some problems that you’re likely to encounter early
 on:
@@ -3650,7 +3649,7 @@ on:
     confusion. This is particularly common when reading the language
     definition; It never shuts up about the modes of things.
 
--   The *Advanced R* book makes [a strong
+-   *Advanced R* makes [a strong
     case](https://adv-r.hadley.nz/base-types.html#numeric-type) for
     `is.numeric()` being inconsistent, particularly regarding its
     interaction with S3.
@@ -4065,9 +4064,9 @@ to sections.
 
 -   As is extremely well documented, `T` and `F` can be used in place of
     `TRUE` and `FALSE`, but you should never do this because `T` and `F`
-    are just variables that can be overwritten in your code. Why let me
-    do something and then tell me that I never should? To my surprise,
-    there’s actually a sensible answer. [Section 3.3.3 of the R
+    are just variables that can be overwritten in your code. Why let us
+    do something that we never should? To my surprise, there’s actually
+    a sensible answer. [Section 3.3.3 of the R
     FAQ](https://cran.r-project.org/doc/FAQ/R-FAQ.html#Others) says that
     S had `T` and `F` as reserved words, but R changed that to allow
     variables called `"T"` and `"F"` to appear in your datasets. I can
@@ -4082,18 +4081,16 @@ to sections.
     temptation to try to use them to solve every problem is very strong.
     I’ve wasted countless hours trying to pick the right one of
     `sapply()`/`lapply()`/`mapply()`/`Filter()`/`Map()`… (not to mention
-    their various arguments, which I still can’t claim to totally
-    understand, e.g. `mapply()`’s `MoreArgs`) when I really should’ve
-    just written the `for` loop. This is more my fault than it is R’s,
-    but it’s a curse that every intermediate R user will suffer from.
-    It’s a price that any R expert will tell you was worth it in the
-    end. However, it’s still a price that I don’t enjoy paying. It
-    wouldn’t be so bad if R had less such functions, better error
-    messages, or more consistency between these functions, but we’ve
-    already discussed that can of worms. Don’t think that I’m advocating
-    for `purrr` here. It has so many functional programming tools that
-    it arguably makes the situation worse. I’ll cover its costs and
-    benefits [later](#purrr).
+    their various arguments) when I really should’ve just written the
+    `for` loop. This is more my fault than it is R’s, but it’s a curse
+    that every intermediate R user will suffer from. It’s a price that
+    any R expert will tell you was worth it in the end. However, it’s
+    still a price that I don’t enjoy paying. It wouldn’t be so bad if R
+    had less such functions, better error messages, or more consistency
+    between these functions, but we’ve already discussed that can of
+    worms. Don’t think that I’m advocating for `purrr` here. It has so
+    many functional programming tools that it arguably makes the
+    situation worse. I’ll cover its costs and benefits [later](#purrr).
 
 ### Sequences
 
@@ -4238,11 +4235,11 @@ practically and in a meta sense:
         issues](https://adv-r.hadley.nz/evaluation.html#base-evaluation),
         but the extent of them has never been completely clear to me.
 
-Of all the problems that I’ve written about, this section’s is the one
-that probably bothers me the most. So many of R’s problems could be
-sidestepped if I could fearlessly use `with()` and `subset()` at all
-times, but R’s nasty habit of not explaining the dangers that it warms
-you of leaves me in constant paranoia.
+Of all the problems that I’ve written about, this section’s probably
+bother me the most. So many of R’s problems could be sidestepped if we
+could fearlessly use `with()` and `subset()` at all times, but R’s nasty
+habit of not explaining the dangers that it warms you of leaves me in
+constant paranoia.
 
 ## Missing Features
 
@@ -4319,7 +4316,7 @@ Some things seems obviously missing from R:
     a[-4.8]
     ## [1]  1  2  3  5  6  7  8  9 10
     sample(4.8)
-    ## [1] 4 1 2 3
+    ## [1] 1 3 2 4
     ```
 
     The pattern is that [R silently truncates the numeric index of
@@ -4362,7 +4359,7 @@ And now for everything that I’ve got left in the bag.
     inconsistent as I’ve claimed R is? Certainly not me. I can’t even
     predict R’s behaviour when I’m programming it, never mind
     metaprogramming! I’ve regretted most of my attempts at doing so. I
-    usually get tripped up by some quirk of R’s string manipulation
+    usually get tripped up by some quirk of R’s string-manipulation
     facilities and how the strings get parsed as expressions.
 
 -   For a language that was inspired by Scheme, R’s metaprogramming
@@ -4380,13 +4377,13 @@ And now for everything that I’ve got left in the bag.
     environment*” is great, but it’s nowhere near what a Lisp user would
     expect.
 
--   The default `plot()` function has some strange defaults. For
-    example, you need to have a plot before you can plot points, and it
-    often doesn’t know what to do in terms of how long/wide its axes
-    should be. I also don’t like how “*predict `mpg` from `wt`*” is
-    `foo(mpg~wt)`, but “*plot `mpg` on the y-axis and `wt` on the
-    x-axis*” is `plot(wt, mpg)`. I understand why both options are the
-    way that they are, but it creates unpredictability.
+-   The `plot()` function has some strange defaults. For example, you
+    need to have a plot before you can plot points, and it often doesn’t
+    know what to do in terms of how long/wide its axes should be. I also
+    don’t like how “*predict `mpg` from `wt`*” is `foo(mpg~wt)`, but
+    “*plot `mpg` on the y-axis and `wt` on the x-axis*” is
+    `plot(wt, mpg)`. I understand why both options are the way that they
+    are, but it creates unpredictability.
 
 -   I seem to have terrible luck with the documentation for R’s
     libraries. Even when using popular packages that have been around
@@ -4420,11 +4417,11 @@ going in to the specific libraries, I’ll give some general thoughts:
     attempt to fix R’s inconsistencies by making new libraries is doomed
     to fail. Base R is inconsistent, so the only way to be consistent
     with it is to be inconsistent. For example, `as.foo()` is
-    inconsistent with R’s S3 system, but it’s what I’d expect to find if
-    there was a new class called `foo` in a library. The only solution
-    to this problem is to somehow write code that completely ignores
-    base R, but that becomes impossible as soon as you try to load
-    anyone else’s packages.
+    inconsistent with R’s S3 system, but it’s what I’d expect to find
+    with a new class called `foo` in a library. The only solution to
+    this problem is to somehow write code that completely ignores base
+    R, but that becomes impossible as soon as you try to load anyone
+    else’s packages.
 -   I’m sure that I’ve seen the main author of the Tidyverse quoted as
     saying that he didn’t want it to be a monolith. However, it
     undeniably is one. Tidyverse packages will throw errors with
@@ -4483,10 +4480,10 @@ Overall, I’m more than happy to use Tidyverse functions when I’m writing
 some run-once code or messing around in the REPL, but the unstable API
 point is a real killer for anything else. In terms of how it compares to
 base R, I’d rather use quite a few of its packages than their base R
-equivalents, but that doesn’t mean that it can actually replace base R.
-I just see it as a handy set of libraries. Nothing more.
+equivalents. However, that doesn’t mean that it can actually replace
+base R. I see it as nothing more than a handy set of libraries.
 
-Now for the specific Libraries. Assume that I’m ignorant of any that
+Now for the specific libraries. Assume that I’m ignorant of any that
 I’ve skipped.
 
 ## Dplyr
@@ -4530,18 +4527,18 @@ I’ve skipped.
 -   To repeat my earlier praise for this library, it’s fun. That’s a
     huge win.
 -   It has amazingly sane defaults. Whenever I make the same graph in
-    both this and base R’s `plot()`, ggplot’s is much better. You can
-    tell R to do stuff like include a useful legend or grid, but ggplot
-    does it by default.
+    both this and base R’s `plot()`, `ggplot2`’s is much better. You can
+    tell R to do stuff like include a useful legend or grid, but
+    `ggplot2` does it by default.
 -   I like how graphs are made by what amounts to composing functions.
     It makes it very easy to focus on one specific element of your plots
     at a time. I’d even go as far as say that it’s fun to see what
     happens when you replace a component with another valid but strange
     one. You can discover entirely new categories of graphs by accident.
--   I miss the genericness of Base R’s `plot()`. When I can’t be
+-   I miss the genericness of base R’s `plot()`. When I can’t be
     bothered to think about what sort of plot I need, `plot()` can save
     me the trouble by making a correct guess. There is no such facility
-    in ggplot.
+    in `ggplot2`.
 
 ## Lubridate
 
@@ -4563,16 +4560,16 @@ offers for the same jobs.
 
 ## Magrittr
 
-Pipes come in very handy, but even when viewing teaching examples that
-are supposed to demonstrate the superiority of the `%>%` pipes, I’ve
-never been completely sold on them. I’ll admit that there is a time and
-a place for them – e.g. printing and graphing code – but I think that
-they only really shine when you’ve abandoned base R in favour of
-`purrr`. After all, base R wasn’t built for pipes. I’d even go as far as
-to say that the people who swear by `magrittr` and `purrr` have adopted
-a completely different paradigm to those who don’t, so they end up using
-totally different tools. For example, a master of the Tidyverse finds
-[*Advanced R* chapter nine’s](https://adv-r.hadley.nz/functionals.html)
+Pipes come in very handy, but I’ve never been completely sold on them,
+even when viewing teaching examples that are supposed to demonstrate
+their superiority. I’ll admit that there is a time and a place for them
+– e.g. printing and graphing code – but I think that they only really
+shine when you’ve abandoned base R in favour of `purrr`. After all, base
+R wasn’t built for pipes. I’d even go as far as to say that the people
+who swear by `magrittr` and `purrr` have adopted a completely different
+paradigm to those who don’t, so they end up using totally different
+tools. For example, a master of the Tidyverse finds [*Advanced R*
+chapter nine’s](https://adv-r.hadley.nz/functionals.html)
 
 ``` r
 by_cyl %>% 
@@ -4615,12 +4612,12 @@ Nile |> plot() #The same as plot(Nile)
 ![](Frustration-One-Year-With-R_files/figure-gfm/unnamed-chunk-88-3.png)<!-- -->
 
 Don’t get me wrong, I like pipes a lot. When you’re dealing with data,
-there’s sometimes no way to avoid “*do foo to my data and then do bar*”
-code. However, you’d be mad to use them all of the time. For people that
-do use them, all that I can say is that you should take the time to
-learn all of them and that said time really isn’t much. None of them are
-much more complicated than `%>%` and `%$%` is a handy replacement for
-`with()`.
+there’s sometimes no way to avoid “*do `foo()` to my data and then do
+`bar()`*” code. However, you’d be mad to use them all of the time. For
+people that do use them, all that I can say is that you should take the
+time to learn all of them and that said time really isn’t much. None of
+them are much more complicated than `%>%` and `%$%` is a handy
+replacement for `with()`.
 
 As a final point, I don’t like how much trouble base R’s new `|>` pipe
 causes me. You can’t do `x |> foo`. You instead need `x |> foo()`. Also,
@@ -4637,7 +4634,7 @@ you why it’s silly, my objections to `purrr` are mostly philosophical.
 It certainly does some things much better than base R. For example, I
 really like the consistency in the map functions. They’re a breath of
 fresh air compared to base R’s apply family vs funprog mess. My code
-would probably be a lot easier to read and modify if I replaced a lot of
+would probably be a lot easier to read and modify if I replaced all of
 my apply family and funprog calls with their `purrr` equivalents.
 However, when writing the code in the first place, I’d much rather have
 the flexibility that the base R functions offer. I also like `pluck()`
@@ -4684,8 +4681,8 @@ objections:
     without the names of their functions telling the reader what they’re
     doing?
 
-Overall, I could probably be convinced that `purrr`’s way is better, but
-I doubt that this is the best way to do it.
+Overall, I could probably be convinced that `purrr`’s way is better than
+base R’s, but I doubt that `purrr`’s way is the best way.
 
 ## Stringr and Tibble
 
