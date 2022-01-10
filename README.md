@@ -3039,7 +3039,7 @@ issues:
         ## function (n, expr, simplify = "array") 
         ## sapply(integer(n), eval.parent(substitute(function(...) expr)), 
         ##     simplify = simplify)
-        ## <bytecode: 0x55c878cd04f8>
+        ## <bytecode: 0x55a628f3abb0>
         ## <environment: namespace:base>
         ```
 
@@ -3061,7 +3061,7 @@ issues:
         ##         X <- as.list(X)
         ##     .Internal(lapply(X, FUN))
         ## }
-        ## <bytecode: 0x55c8782e3f10>
+        ## <bytecode: 0x55a628550f10>
         ## <environment: namespace:base>
         ```
 
@@ -4145,6 +4145,12 @@ is to prefer the `seq()` functions to using `:`. Some quick examples:
 -   Can you guess what `data[-1:5]` returns? I can’t either, so don’t
     ever try it. If you must know, it’s actually an error.
 
+As I’ve said, `seq()` and its related functions usually fix this issue.
+The only real disappointment with `seq()` itself is that its
+documentation warns against not naming its arguments, so you’re forced
+to write the long-winded `seq(from = 0, to = 100, by = 6)` rather than
+just `seq(0, 100, 6)`.
+
 ### Non-standard Evaluation
 
 The documentation for several functions with non-standard evaluation,
@@ -4316,7 +4322,7 @@ Some things seems obviously missing from R:
     a[-4.8]
     ## [1]  1  2  3  5  6  7  8  9 10
     sample(4.8)
-    ## [1] 1 3 2 4
+    ## [1] 3 1 4 2
     ```
 
     The pattern is that [R silently truncates the numeric index of

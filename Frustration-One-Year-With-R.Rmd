@@ -1160,6 +1160,8 @@ I'll leave `-6/2:6/2` as an exercise for the reader. I'd like to keep things sim
   ```
 *	Can you guess what `data[-1:5]` returns? I can't either, so don't ever try it. If you must know, it's actually an error.
 
+As I've said, `seq()` and its related functions usually fix this issue. The only real disappointment with `seq()` itself is that its documentation warns against not naming its arguments, so you're forced to write the long-winded `seq(from = 0, to = 100, by = 6)` rather than just `seq(0, 100, 6)`.
+
 ### Non-standard Evaluation
 The documentation for several functions with non-standard evaluation, e.g. `with()` and `subset()`, explicitly warns the user to not use them when programming. This is a source of a number of problems, both practically and in a meta sense:
 
