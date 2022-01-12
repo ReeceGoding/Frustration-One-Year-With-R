@@ -3039,7 +3039,7 @@ issues:
         ## function (n, expr, simplify = "array") 
         ## sapply(integer(n), eval.parent(substitute(function(...) expr)), 
         ##     simplify = simplify)
-        ## <bytecode: 0x55a628f3abb0>
+        ## <bytecode: 0x55674fc773f8>
         ## <environment: namespace:base>
         ```
 
@@ -3061,7 +3061,7 @@ issues:
         ##         X <- as.list(X)
         ##     .Internal(lapply(X, FUN))
         ## }
-        ## <bytecode: 0x55a628550f10>
+        ## <bytecode: 0x55674f28df10>
         ## <environment: namespace:base>
         ```
 
@@ -3211,17 +3211,18 @@ of R’s functions. Neither are satisfactory.
     function, `Pos()`, should you or should you not assume that it’s an
     alias for `Position()`?
 -   There is no consistent convention for function names in the base
-    libraries, even for related functions. In fact, other than ALLCAPS,
-    I struggle to think of a function-naming scheme that isn’t found
-    somewhere in R. For example, the documentation for `mean()` links to
-    both `colMeans()` and `weighted.mean()`. Similarly, the `seq()`
-    documentation contains both `seq.int()` and `seq_len()`. I also
-    don’t like how there’s both `readline()` and `readLines()`. Or how
+    libraries, even for related functions. I struggle to think of a
+    function-naming scheme that isn’t found somewhere in R. For example,
+    the documentation for `mean()` links to both `colMeans()` and
+    `weighted.mean()`. Similarly, the `seq()` documentation contains
+    both `seq.int()` and `seq_len()`. I also don’t like how there’s both
+    `readline()` and `readLines()` or `nrow()` and `NROW()`. Or how
     about `all.equal()` and `anyDuplicated()`? There’s even all of those
     functions with leading capitals like `Vectorize()` or the funprog
-    stuff. I could go on… The issue gets even worse if we discuss
-    functions that you’d expect to exist but don’t. For example, we have
-    `write()` but not `read()` (the equivalent is probably `scan()`).
+    stuff. I could go on…
+-   The above issue gets even worse if we discuss functions that you’d
+    expect to exist but don’t. For example, we have `write()` but not
+    `read()` (the equivalent is probably `scan()`).
 -   Argument names are also inconsistent. Most of the apply family calls
     its function argument `FUN`, but `rapply()` and the funprog stuff
     use `f`.
@@ -4322,7 +4323,7 @@ Some things seems obviously missing from R:
     a[-4.8]
     ## [1]  1  2  3  5  6  7  8  9 10
     sample(4.8)
-    ## [1] 3 1 4 2
+    ## [1] 4 1 3 2
     ```
 
     The pattern is that [R silently truncates the numeric index of
