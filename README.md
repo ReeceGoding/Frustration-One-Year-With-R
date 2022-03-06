@@ -2,67 +2,73 @@ Frustration: One Year With R
 ================
 Reece Goding
 
--   [Introduction](#introduction)
-    -   [Length](#length)
-    -   [Experience](#experience)
-    -   [Ignorance](#ignorance)
-    -   [Assumed Knowledge](#assumed-knowledge)
-    -   [Disclaimer](#disclaimer)
--   [General Feelings](#general-feelings)
--   [What R Does Right](#what-r-does-right)
-    -   [Mathematics and Statistics](#mathematics-and-statistics)
-    -   [Names and Data Frames](#names-and-data-frames)
-    -   [Outstanding Packages](#outstanding-packages)
-    -   [Vectorization](#vectorization)
-    -   [Functional Programming](#functional-programming)
-        -   [First-class Functions](#first-class-functions)
-        -   [First-class Environments](#first-class-environments)
-        -   [Generic Functions](#generic-functions)
-    -   [Syntax](#syntax)
-    -   [Miscellaneous Positives](#miscellaneous-positives)
--   [What R Does Wrong](#what-r-does-wrong)
-    -   [Lists](#lists)
-    -   [Strings](#strings)
-    -   [Variable Manipulation](#variable-manipulation)
-    -   [Switch](#switch)
-    -   [Subsetting](#subsetting)
-        -   [Combining Operators](#combining-operators)
-        -   [Removing Dimensions](#removing-dimensions)
-        -   [Dangers of $](#dangers-of-)
-        -   [Indistinguishable Errors](#indistinguishable-errors)
-        -   [Named Atomic Vectors](#named-atomic-vectors)
-        -   [Silence](#silence)
-        -   [Subsetting by Predicates](#subsetting-by-predicates)
-    -   [Vectorization Again](#vectorization-again)
-    -   [R Won’t Help You](#r-wont-help-you)
-        -   [The Documentation](#the-documentation)
-        -   [The Functions](#the-functions)
-        -   [Extended Example: Matrices](#extended-example-matrices)
-        -   [The Error Messages](#the-error-messages)
-        -   [Mapply Challenge](#mapply-challenge)
-        -   [Stealing from the Tidyverse](#stealing-from-the-tidyverse)
-    -   [The Community](#the-community)
-    -   [Generic Functions Again](#generic-functions-again)
-        -   [The Class System](#the-class-system)
-        -   [Existing Functions](#existing-functions)
-        -   [Internal Generics](#internal-generics)
-        -   [S4](#s4)
-    -   [Factor Variables](#factor-variables)
-    -   [Syntactic Sugar](#syntactic-sugar)
-        -   [Sequences](#sequences)
-        -   [Non-standard Evaluation](#non-standard-evaluation)
-    -   [Missing Features](#missing-features)
-    -   [Miscellaneous Negatives](#miscellaneous-negatives)
--   [The Tidyverse](#the-tidyverse)
-    -   [Dplyr](#dplyr)
-    -   [Ggplot2](#ggplot2)
-    -   [Lubridate](#lubridate)
-    -   [Magrittr](#magrittr)
-    -   [Purrr](#purrr)
-    -   [Stringr and Tibble](#stringr-and-tibble)
--   [Conclusion](#conclusion)
+-   [1 Introduction](#1-introduction)
+    -   [1.1 Length](#11-length)
+    -   [1.2 Experience](#12-experience)
+    -   [1.3 Ignorance](#13-ignorance)
+    -   [1.4 Assumed Knowledge](#14-assumed-knowledge)
+    -   [1.5 Disclaimer](#15-disclaimer)
+-   [2 General Feelings](#2-general-feelings)
+-   [3 What R Does Right](#3-what-r-does-right)
+    -   [3.1 Mathematics and Statistics](#31-mathematics-and-statistics)
+    -   [3.2 Names and Data Frames](#32-names-and-data-frames)
+    -   [3.3 Outstanding Packages](#33-outstanding-packages)
+    -   [3.4 Vectorization](#34-vectorization)
+    -   [3.5 Functional Programming](#35-functional-programming)
+        -   [3.5.1 First-class Functions](#351-first-class-functions)
+        -   [3.5.2 First-class
+            Environments](#352-first-class-environments)
+        -   [3.5.3 Generic Functions](#353-generic-functions)
+    -   [3.6 Syntax](#36-syntax)
+    -   [3.7 Miscellaneous Positives](#37-miscellaneous-positives)
+-   [4 What R Does Wrong](#4-what-r-does-wrong)
+    -   [4.1 Lists](#41-lists)
+    -   [4.2 Strings](#42-strings)
+    -   [4.3 Variable Manipulation](#43-variable-manipulation)
+    -   [4.4 Switch](#44-switch)
+    -   [4.5 Subsetting](#45-subsetting)
+        -   [4.5.1 Combining Operators](#451-combining-operators)
+        -   [4.5.2 Removing Dimensions](#452-removing-dimensions)
+        -   [4.5.3 Dangers of $](#453-dangers-of-)
+        -   [4.5.4 Indistinguishable
+            Errors](#454-indistinguishable-errors)
+        -   [4.5.5 Named Atomic Vectors](#455-named-atomic-vectors)
+        -   [4.5.6 Silence](#456-silence)
+        -   [4.5.7 Subsetting by
+            Predicates](#457-subsetting-by-predicates)
+    -   [4.6 Vectorization Again](#46-vectorization-again)
+    -   [4.7 R Won’t Help You](#47-r-wont-help-you)
+        -   [4.7.1 The Documentation](#471-the-documentation)
+        -   [4.7.2 The Functions](#472-the-functions)
+        -   [4.7.3 Extended Example:
+            Matrices](#473-extended-example-matrices)
+        -   [4.7.4 The Error Messages](#474-the-error-messages)
+        -   [4.7.5 Mapply Challenge](#475-mapply-challenge)
+        -   [4.7.6 Stealing from the
+            Tidyverse](#476-stealing-from-the-tidyverse)
+    -   [4.8 The Community](#48-the-community)
+    -   [4.9 Generic Functions Again](#49-generic-functions-again)
+        -   [4.9.1 The Class System](#491-the-class-system)
+        -   [4.9.2 Existing Functions](#492-existing-functions)
+        -   [4.9.3 Internal Generics](#493-internal-generics)
+        -   [4.9.4 S4](#494-s4)
+    -   [4.10 Factor Variables](#410-factor-variables)
+    -   [4.11 Syntactic Sugar](#411-syntactic-sugar)
+        -   [4.11.1 Sequences](#4111-sequences)
+        -   [4.11.2 Non-standard
+            Evaluation](#4112-non-standard-evaluation)
+    -   [4.12 Missing Features](#412-missing-features)
+    -   [4.13 Miscellaneous Negatives](#413-miscellaneous-negatives)
+-   [5 The Tidyverse](#5-the-tidyverse)
+    -   [5.1 Dplyr](#51-dplyr)
+    -   [5.2 Ggplot2](#52-ggplot2)
+    -   [5.3 Lubridate](#53-lubridate)
+    -   [5.4 Magrittr](#54-magrittr)
+    -   [5.5 Purrr](#55-purrr)
+    -   [5.6 Stringr and Tibble](#56-stringr-and-tibble)
+-   [6 Conclusion](#6-conclusion)
 
-# Introduction
+# 1 Introduction
 
 What follows is an account of my experiences from about one year of
 roughly daily R usage. It started out as a list of things that I liked
@@ -80,7 +86,7 @@ miss some of R’s benefits. I welcome any attempts to correct this or any
 other errors that you find. Some major errors will have slipped in
 somewhere or other.
 
-## Length
+## 1.1 Length
 
 To start, I must issue a warning: This document is **huge**. I have
 tried to keep everything contained in small sections, such that the
@@ -89,10 +95,10 @@ document later, but the word count is still far higher than I’m happy
 with. I have tried to not be too petty, but every negative point in here
 comes from an honest position of frustration. There are some things that
 I really love about R, I’ve even devoted [an entire section to
-them](#what-r-does-right). However, if there is one point that I really
-want this document to get across, it’s that R is filled to the brim with
-small madnesses. Although I can name a few major issues with R, its
-ultimate problem is the sum of its little problems. This document
+them](#3-what-r-does-right). However, if there is one point that I
+really want this document to get across, it’s that R is filled to the
+brim with small madnesses. Although I can name a few major issues with
+R, its ultimate problem is the sum of its little problems. This document
 couldn’t be short.
 
 Also, on the topic of the sections in this document, watch out for all
@@ -100,7 +106,7 @@ of the internal links. Nothing in R Markdown makes them look distinct
 from external ones, so you might lose your place if you don’t take care
 to open all of your links in a new tab/window.
 
-## Experience
+## 1.2 Experience
 
 Before I say anything nasty about R, a show of good faith is in order.
 In my year with R, I have done the following:
@@ -125,9 +131,9 @@ In my year with R, I have done the following:
         second half. I therefore suspect that any non-novice would be
         better off finding an introduction to the relevant packages with
         their favourite search engine.
-    -   Despite my best efforts, I can find no “*Tidyverse for
-        Programmers*” book. When one is inevitably written, it will make
-        this book redundant for many potential readers.
+    -   Despite my efforts, I can find no “*Tidyverse for Programmers*”
+        book. When one is inevitably written, it will make this book
+        redundant for many potential readers.
 -   Read [*The R
     Inferno*](https://www.burns-stat.com/pages/Tutor/R_inferno.pdf) and
     some other well-known PDFs and manuals, such as [*Rtips. Revival
@@ -154,21 +160,21 @@ All that is left for me is to use the language more and more. I hope
 that this section shows that I’ve given it a good chance before writing
 this review of it.
 
-## Ignorance
+## 1.3 Ignorance
 
 I am not an R expert. I freely admit that I am lacking in the following
 regards:
 
--   You can never have done enough statistics with R. Personally, I’ve
-    mostly used R as a programming language rather than a statistics
-    tool. My arguments would certainly be stronger if I had some
-    published stats work to back them up, even just blogs. I might
-    correct this at some point.
+-   You can never have done enough statistics with R. I’ve mostly used R
+    as a programming language rather than a statistics tool. My
+    arguments would certainly be stronger if I had some published stats
+    work to back them up, even just blogs. I might correct this at some
+    point.
 -   The above point makes me more ignorant of formulae objects
     (e.g. expressions like `foo ~ log(bar) * bar^2`), the `plot()`
     function, and factor variables than I ought to be. I saw a lot of
-    them during my degree, but have long since forgotten about them and
-    have never needed to pick them back up. For similar reasons, I have
+    them during my degree, but have long since forgotten them and have
+    never needed to pick them back up. For similar reasons, I have
     nothing to say on how hard it can sometimes be to read data in to R.
 -   I haven’t used enough of the community’s favourite libraries. My
     biggest regret is my near-total ignorance of `data.table`. From
@@ -190,13 +196,13 @@ regards:
     about both languages.
 -   R’s functional aspects make me wish that I knew more Lisp. I’m
     slowly picking it up, but I’ve currently not got any further than
-    chapter 3 of *Structure and Interpretation of Computer Programs*.
+    chapter 4 of *Structure and Interpretation of Computer Programs*.
     R’s clear Scheme inspiration makes Lisp books a lot less fun to
     read; It’s like I’ve already been spoiled on some of the best bits.
 -   I haven’t done enough OOP in R. My only real experience of it is
-    with S3. S4 looks enough like CLOS that I expect that I will go back
-    to it at some point after picking up Common Lisp, but that will just
-    be to play around.
+    with S3. S4 looks enough like CLOS that I expect that I will revisit
+    it at some point after picking up Common Lisp, but that will just be
+    to play around.
 -   I have never made a package for R and have no experience with the
     ecosystem surrounding that (e.g. `roxygen2`). I have no plans for
     this.
@@ -211,26 +217,26 @@ mentions. For the foreseeable future, the main thing that I plan to do
 to improve my evaluation of R is to learn Python. I’ll probably read a
 book on it.
 
-## Assumed Knowledge
+## 1.4 Assumed Knowledge
 
 You’d be a fool to read this without some experience of R. I don’t think
 that I’ve written anything that requires an expert level of
 understanding, but you’re unlikely to get much out of this document
 without at least a basic idea of R. I’ve also mentioned the Tidyverse a
 few times without giving it much introduction, particularly its `tibble`
-package. If you care enough about R to be considering reading this
-document, then you really ought to be familiar with the most popular
-parts of the Tidyverse. It’s rare for any discussion of R to go long
-without some mention of `purrr`, `dplyr` or `magrittr`.
+package. If you care enough about R to consider reading this document,
+then you really ought to be familiar with the most popular parts of the
+Tidyverse. It’s rare for any discussion of R to go long without some
+mention of `purrr`, `dplyr` or `magrittr`.
 
-## Disclaimer
+## 1.5 Disclaimer
 
 This document started out as personal notes that I had no intention of
 publishing. There’s a good chance that I might have copy and pasted
 someone’s example from somewhere and totally forgot that it wasn’t my
 own. If you spot any plagiarism, let me know.
 
-# General Feelings
+# 2 General Feelings
 
 My overall feelings about R are tough to quantify. As I mentioned near
 the start, its ultimate problem is the sum of its little problems.
@@ -255,7 +261,7 @@ novice hellish. It gives me little doubt that R is not the ideal tool
 for many of the jobs that it wants to do, but \#1 and \#2 leave me with
 equally little doubt that R can be a very good tool.
 
-# What R Does Right
+# 3 What R Does Right
 
 As a final show of good faith, here is what I think R does right. In
 summary, along with having some great functional programming toys, R has
@@ -263,7 +269,7 @@ some domain-specific tools that can work excellently when they’re in
 their element. Whatever the faults of R, it’s always going to be my
 first choice for some problems.
 
-## Mathematics and Statistics
+## 3.1 Mathematics and Statistics
 
 R wants to be a mathematics and statistics tool. Many of its fundamental
 design choices support this. For example, vectors are primitive types
@@ -332,7 +338,8 @@ Some examples:
 
 -   The factor and ordered data types are definitely the sort of tools
     that I want to have in a stats language. [They’re a bit
-    unpredictable](#factor-variables), but they’re great when they work.
+    unpredictable](#410-factor-variables), but they’re great when they
+    work.
 
 -   It’s no surprise that an R terminal has fully replaced my OS’s
     built-in calculator. It’s my first choice for any arithmetical task.
@@ -362,12 +369,12 @@ Some examples:
 
     ![](Frustration-One-Year-With-R_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
 
-## Names and Data Frames
+## 3.2 Names and Data Frames
 
 These seem like trivial features, but the language’s deep integration of
 them is extremely beneficial for manipulating and presenting your data.
 They assist subsetting, variable creation, plotting, printing, and even
-[metaprogramming](#first-class-environments).
+[metaprogramming](#352-first-class-environments).
 
 -   The ability to name the components of vectors,
     e.g. `c(Fizz=3, Buzz=5)`, is a nice trick for toy programs. The same
@@ -434,11 +441,11 @@ They assist subsetting, variable creation, plotting, printing, and even
     in after our call to `curve()` earlier on? Finally, did you notice
     how easy it was to get such neat output?
 
-## Outstanding Packages
+## 3.3 Outstanding Packages
 
 [I’ve already admitted a great deal of ignorance of this
-topic](#ignorance), but there are some parts of R’s ecosystem that I’m
-happy to call outstanding. The below are all things that I’m sure to
+topic](#13-ignorance), but there are some parts of R’s ecosystem that
+I’m happy to call outstanding. The below are all things that I’m sure to
 miss in other languages.
 
 -   `corrplot`: It has less than ten functions, but it only needed one
@@ -457,19 +464,19 @@ miss in other languages.
     results in `foo(bigLongExpression())` appearing. Maybe there’s a
     keyboard shortcut that I never learned, but this isn’t the only
     reason why I love `magrittr`. [I’ll say more about it much
-    later](#magrittr).
+    later](#54-magrittr).
 -   `R Markdown` has served me well in writing this document. It’s
     buggier than I’d like, rarely has helpful error messages, and does
     things that I can’t explain or fix even after setting a bounty on
     Stack Overflow, but it’s still a great way to make a document
     from R. It’s the closest thing that I know of to an R user’s LaTeX.
-    As soon as [this
-    bug](https://github.com/rstudio/rmarkdown/pull/2093) is fixed, I’ll
-    be numbering my sections.
+    I had to wait on [this bug
+    fix](https://github.com/rstudio/rmarkdown/pull/2093) before I could
+    start numbering my sections. Hopefully it didn’t break anything.
 
-## Vectorization
+## 3.4 Vectorization
 
-[When it’s not causing you problems](#vectorization-again), the
+[When it’s not causing you problems](#46-vectorization-again), the
 vectorization can be the best thing about the language:
 
 -   The vector recycling rules are powerful when mastered. Expressions
@@ -501,13 +508,13 @@ vectorization can be the best thing about the language:
     one line. You’d be amazed by how often you can get away with calling
     `foo(1:100)` without needing to vectorize `foo()` yourself.
 
-## Functional Programming
+## 3.5 Functional Programming
 
 R’s done a good job of harnessing the power of functional languages
 while maintaining a C-like syntax. It makes no secret of being inspired
 by Scheme and has reaped many of its benefits.
 
-### First-class Functions
+### 3.5.1 First-class Functions
 
 It’s impossible to not notice that functions are first-class in R.
 You’re almost forced to learn functional programming idioms like mapping
@@ -536,7 +543,7 @@ users from writing loops? Some examples:
     understand, but I’d struggle to name another language that lets me
     do the same thing with so much ease.
 
-### First-class Environments
+### 3.5.2 First-class Environments
 
 Not only are functions first-class in R, environments are too. You
 therefore have lots of control over what environment an expression is
@@ -579,20 +586,21 @@ you’re not familiar with the below, look it up. You will not regret it.
 You might have spotted a pattern by now. R often lets you do very much
 with very little.
 
-### Generic Functions
+### 3.5.3 Generic Functions
 
 Generic function OO is pretty nice to have, even if I wouldn’t use
 anything more complicated than S3. Being able to call `foo(whatever)`
 and be confident that it’s going to do what I mean is always nice. Some
 positives of R’s approach are:
 
--   As mentioned [earlier on](#mathematics-and-statistics), S3 is used
-    excellently in the base R stats library. Functions like `print()`,
-    `plot()`, and `summary()` almost always tell me everything that I
-    wanted to know and tell me them with great clarity.
+-   As mentioned [earlier on](#31-mathematics-and-statistics), S3 is
+    used excellently in the base R stats library. Functions like
+    `print()`, `plot()`, and `summary()` almost always tell me
+    everything that I wanted to know and tell me them with great
+    clarity.
 
 -   When you’re not trapped by [the
-    technicalities](#generic-functions-again), S3 is an outstandingly
+    technicalities](#49-generic-functions-again), S3 is an outstandingly
     simple tool that does exactly what R needs it to do. Have a look at
     all of the methods that the pre-loaded libraries define for `plot()`
 
@@ -640,12 +648,12 @@ positives of R’s approach are:
 -   RC and the `R6` package are about as close as you’re ever going to
     get to having Java-like OOP in a mostly function language.
 
-## Syntax
+## 3.6 Syntax
 
 Some of the syntax is nice:
 
--   [It can cause you problems](#sequences), but the `:` operator is
-    handy for things like `for(i in 1:20){...}`.
+-   [It can cause you problems](#4111-sequences), but the `:` operator
+    is handy for things like `for(i in 1:20){...}`.
 -   The `for` loop syntax is always the same:
     `for(element in vector){...}`. This means that there is no
     difference between the typical “*do n times*” case like
@@ -654,8 +662,8 @@ Some of the syntax is nice:
 -   The `...` notation has a very nice “*do what I mean*” feel,
     particularly when you’re playing around with anonymous functions.
 -   Because of `repeat` loops, you never need to write `while(TRUE)`.
--   [Although I have major issues with them](#subsetting), the rules for
-    accessing elements sometimes give nice results. For example
+-   [Although I have major issues with them](#45-subsetting), the rules
+    for accessing elements sometimes give nice results. For example
     `array[c(i, j)] <- array[c(j, i)]` swaps elements `i` and `j` in a
     very clean way.
 -   It’s nice to be able to do many variable assignments in one line
@@ -681,7 +689,7 @@ Some of the syntax is nice:
     probably guess what the corresponding function for methods is
     called.
 
-## Miscellaneous Positives
+## 3.7 Miscellaneous Positives
 
 -   The built-in vectors `letters` and `LETTERS` come in handy
     surprisingly often. You’ll see me use them a lot.
@@ -737,7 +745,7 @@ Some of the syntax is nice:
 -   There is only one implementation of R that anyone’s ever heard of,
     so you never need to worry about undefined behaviour.
 
-# What R Does Wrong
+# 4 What R Does Wrong
 
 This is where this documents starts to get long. Brace yourself. I
 really don’t want to give off the impression that I hate R, but there
@@ -747,7 +755,7 @@ without compromises, but R’s choices of compromises and inconsistencies
 are utterly unpredictable. I could deal with a handful of problems like
 the many that will follow, but this is far more than a handful.
 
-## Lists
+## 4.1 Lists
 
 We’ll start gentle. R’s list type is an unavoidable part of the
 language, but it’s very strange. As the following examples show, it’s
@@ -818,15 +826,16 @@ frequently a special case that you can rarely avoid.
     ## [1] "E"
     ```
 
-    In case you were wondering, `append(list(1, 2, 3), LETTERS[1:5])`
-    has the same output. If you wanted to get
-    `list(1, 2, 3, LETTERS[1:5])` out of this, I think that the only way
-    is to do something like
-    `x <- list(1, 2, 3); x[[4]] <- LETTERS[1:5]`. Be very careful to use
-    `[[4]]` and not `[4]`. Using `[4]` gets you a warning and the output
-    `list(1, 2, 3, "A")`. The `[` version is intended for cases like
-    `x[4:8] <- LETTERS[1:5]`, which gives the same output as
-    `c(list(1, 2, 3), LETTERS[1:5])`. This is a beginner’s nightmare.
+    The same output is given by `append()`. To get
+    `list(1, 2, 3, LETTERS[1:5])`, you must do something like
+    `x <- list(1, 2, 3); x[[4]] <- LETTERS[1:5]`.
+
+-   Note the use of `[[4]]` and not `[4]` above. Using `[4]` gets you a
+    warning and the output `list(1, 2, 3, "A")`. The `[` version is
+    intended for cases like `x[4:8] <- LETTERS[1:5]`, which gives the
+    same output as `c()` did above. The `[`/`[[` distinction is a
+    beginner’s nightmare, as is R’s tendency to give you many ways to do
+    the same thing.
 
 -   Primarily due to the commonality of data frames, R has a handful of
     functions that are essentially “*foo, but the list version*”.
@@ -851,7 +860,7 @@ weren’t so common, then you wouldn’t really mind. As it is, you’ll often
 make mistakes with lists and have to guess your way through correcting
 them. This isn’t terrible. It’s just annoying.
 
-## Strings
+## 4.2 Strings
 
 R’s strings suck. The overarching problem is that because there is no
 language-level distinction between characters vectors and their
@@ -991,7 +1000,7 @@ fix many of these issues, the common sentiment of “*just use
     non-characters to characters, but R sure does know how to mess with
     your expectations.
 
-## Variable Manipulation
+## 4.3 Variable Manipulation
 
 R has some problems with its general facilities for manipulating
 variables. Some of the following will be seen **every** time that you
@@ -1093,7 +1102,7 @@ use R.
 
 -   The idiomatic way to add an item to the end of a collection is
     `a[length(a) + 1] <- "foo"`. This is rather verbose. It’s also [a
-    bit unpredictable when adding a collection to a list](#lists).
+    bit unpredictable when adding a collection to a list](#41-lists).
 
 -   A quote from [the language
     definition](https://cran.r-project.org/doc/manuals/r-release/R-lang.html#Argument-evaluation):
@@ -1117,10 +1126,10 @@ use R.
     Inferno*](https://www.burns-stat.com/pages/Tutor/R_inferno.pdf).
 
 -   Variable names can be partially matched. See
-    <https://rosettacode.org/wiki/Named_parameters#R> for some examples.
-    I can’t tell if it’s disgusting or awesome, but it’s definitely
-    dangerous. If I called `f(n = 1)`, I probably didn’t mean
-    `f(nukeEarth = 1)`! At least it throws an error if it fails to
+    <a href="https://rosettacode.org/wiki/Named_parameters\#R" class="uri">https://rosettacode.org/wiki/Named_parameters\#R</a>
+    for some examples. I can’t tell if it’s disgusting or awesome, but
+    it’s definitely dangerous. If I called `f(n = 1)`, I probably didn’t
+    mean `f(nukeEarth = 1)`! At least it throws an error if it fails to
     partially match (e.g. if there were multiple valid partial matches).
     More on that [when I cover the `$` operator](#dangers-of-), which
     usually has the same issue.
@@ -1139,7 +1148,7 @@ use R.
 -   For many other examples, see section 8 of [*The R
     Inferno*](https://www.burns-stat.com/pages/Tutor/R_inferno.pdf).
 
-## Switch
+## 4.4 Switch
 
 R has some strange ideas about switch statements:
 
@@ -1183,7 +1192,7 @@ R has some strange ideas about switch statements:
     course, you can’t do that with the numeric version, because R has a
     switch without defaults.
 
-## Subsetting
+## 4.5 Subsetting
 
 Now for the nasty stuff. R’s rules for selecting elements, deleting
 elements, and any other sort of subsetting require mastery. They’re
@@ -1375,12 +1384,13 @@ cover some more general points:
     This gives us a matrix with first row `c(1, 4, 7)`. This goes
     against the usual English convention of reading from left to right.
     It is also inconsistent with functions like `apply()`, where
-    `MARGIN=1` corresponds to their by-row version and `MARGIN=2` is for
-    by-column. This means that you can never really be sure if R is
-    working in column order or row order. This is bad enough on its own,
-    but it can also be a source of subtle bugs when working with
-    matrices. Many mathematical functions don’t see any difference
-    between a matrix and its transpose.
+    `MARGIN = 1` corresponds to their by-row version and `MARGIN = 2` is
+    for by-column (if R privileges columns, shouldn’t they be the `= 1`
+    case?). This means that you can never really be sure if R is working
+    in column order or row order. This is bad enough on its own, but it
+    can also be a source of subtle bugs when working with matrices. Many
+    mathematical functions don’t see any difference between a matrix and
+    its transpose.
 
 -   There is no nice way to access the last element of a vector. Of all
     things, the idiomatic way is `x[length(x)]`. The only good part of
@@ -1426,8 +1436,8 @@ cover some more general points:
     wanted from `lower.tri(mat)` is probably what you get from
     `mat[lower.tri(mat)]`. Also, don’t expect a helpful error message if
     your construction of `bools` is wrong. As I’ll discuss later on,
-    [the vector recycling](#vectorization-again) rules will often make
-    an incorrect construction give sensible-looking output.
+    [the vector recycling](#46-vectorization-again) rules will often
+    make an incorrect construction give sensible-looking output.
 
 -   For reasons that I cannot explain, `aperm(x, params)` is the correct
     syntax, not `x[aperm(params)]` or anything like it. I think that
@@ -1442,7 +1452,7 @@ cover some more general points:
     `sample(6, 100, replace = TRUE)`. You’re best off just writing the
     `for` loop.
 
-### Combining Operators
+### 4.5.1 Combining Operators
 
 This one isn’t too bad, but it’s worth a mention. Combining operations
 can lead to some counter-intuitive results:
@@ -1488,7 +1498,7 @@ can lead to some counter-intuitive results:
 
 Now for the serious stuff…
 
-### Removing Dimensions
+### 4.5.2 Removing Dimensions
 
 This issue is notorious: R likes to remove unnecessary dimensions from
 your data in ways that are not easily predicted, forcing you to waste
@@ -1704,7 +1714,7 @@ the below in a programming language.
     `data[4,]` are commonplace in R, so it’s far too easy to forget that
     you needed the extra comma for the `drop` argument.
 
-### Dangers of $
+### 4.5.3 Dangers of $
 
 The `$` operator is both silently hazardous and redundant:
 
@@ -1900,7 +1910,7 @@ The `$` operator is both silently hazardous and redundant:
     unlike `$`. This is actually documented behaviour – in fact,
     `?Extract` mentions it twice – but I challenge you to find it. I can
     see why it would be difficult to make a `$<-` with partial matching,
-    but making `$<-`inconsistent with `$` is just laughable.
+    but making `$<-` inconsistent with `$` is just laughable.
 
 In conclusion, once you know the difference between `["colname"]` and
 `[, "colname"]`, `$` is only useful if it’s making your code cleaner,
@@ -1910,7 +1920,7 @@ matching, so `$` is only really useful for interactive use and my IDE’s
 auto-completion. That might even be its intended job. But if that is the
 case, nobody warns you of it.
 
-### Indistinguishable Errors
+### 4.5.4 Indistinguishable Errors
 
 When dealing with any sort of collection, any of the following mistakes
 can give indistinguishable results. This can make your debugging so
@@ -1918,11 +1928,11 @@ messy that by the time that you’re done, you don’t know what was broken.
 
 -   Trying to select an incorrect sequence of elements. This can be
     caused by `:` or `seq()` misbehaving or by simple user error. [A
-    tiny bit more on that later](#sequences)
+    tiny bit more on that later](#4111-sequences)
 
 -   The vector recycling rules silently causing the vector that you used
     to select elements to be recycled in an undesired way. [More on that
-    later](#vectorization-again).
+    later](#46-vectorization-again).
 
 -   Selecting an out-of-bounds value. You almost always don’t get any
     error or warning when you do this. For example, both out-of-bounds
@@ -1964,7 +1974,7 @@ messy that by the time that you’re done, you don’t know what was broken.
 This list also reveals another issue with subsetting: There’s too many
 ways to do it…
 
-### Named Atomic Vectors
+### 4.5.5 Named Atomic Vectors
 
 …and they don’t all work everywhere. For example, there’s a wide range
 of tools for using names to work with lists and data frames, but very
@@ -2137,9 +2147,9 @@ matrices).
     ```
 
     However, this is a bad habit for non-atomic vectors because, unless
-    you take the precautions [mentioned earlier](#removing-dimensions),
-    `[` likes to remove duplicated names and unnecessary dimensions from
-    your data.
+    you take the precautions [mentioned
+    earlier](#452-removing-dimensions), `[` likes to remove duplicated
+    names and unnecessary dimensions from your data.
 
 -   Don’t think that functional programming will save you from my
     previous point. The base library’s higher-order functions don’t play
@@ -2191,7 +2201,7 @@ matrices).
 
     Did you notice that `Filter` and `lapply`’s arguments are in
     inconsistent orders? A little bit more on that [much
-    later](#the-functions).
+    later](#472-the-functions).
 
 From the above few points, you can see that it’s hard to find a way to
 manipulate named atomic vectors by their names that is both safe for
@@ -2201,16 +2211,16 @@ own – it makes R feel unsafe and inconsistent – but it also makes named
 atomic vectors feel like an afterthought. I find that most of my code
 that makes extended use of named atomic vectors comes out looking
 disturbingly unidiomatic. A little bit more on that [when I talk about
-matrices](#extended-example-matrices).
+matrices](#473-extended-example-matrices).
 
-### Silence
+### 4.5.6 Silence
 
 I’ve already given a few examples of R either silently doing nothing or
 silently doing what you don’t want. Let’s have a few more:
 
 -   Again, much of what I’ve listed in the [Indistinguishable
-    Errors](#indistinguishable-errors) and [Removing
-    Dimensions](#removing-dimensions) sections occur silently.
+    Errors](#454-indistinguishable-errors) and [Removing
+    Dimensions](#452-removing-dimensions) sections occur silently.
 
 -   As documented
     [here](https://cran.r-project.org/doc/manuals/r-release/R-lang.html#Indexing-by-vectors),
@@ -2340,7 +2350,7 @@ Needless to say, there will be more examples of R silently misbehaving
 later on in this document. This was just a good place to throw in a few
 that are specific to subsetting.
 
-### Subsetting by Predicates
+### 4.5.7 Subsetting by Predicates
 
 This should be easy, shouldn’t it? Go through the data and only give me
 the bits that have the property that I’m asking for. What could possibly
@@ -2503,7 +2513,7 @@ be able to do on day one of using R, there are far too many pitfalls.
 
 -   Before you ask, `subset()`, `with()`, and `within()` aren’t good
     enough either. I’ve already mentioned some of their issues, but
-    [more on them later](#non-standard-evaluation).
+    [more on them later](#4112-non-standard-evaluation).
 
 Overall, it’s like R has no safe ways to subset. What is safe for one
 job is often either unsafe, invalid, or inconsistent for another. R’s
@@ -2525,9 +2535,9 @@ the right way to do it. If I’m still making those mistakes for something
 simple, then I can only imagine what it’s like for a true beginner doing
 something complicated.
 
-## Vectorization Again
+## 4.6 Vectorization Again
 
-[You’ve heard the good](#vectorization), now for the bad. R’s
+[You’ve heard the good](#34-vectorization), now for the bad. R’s
 vectorization is probably the best thing about the language and it will
 work miracles when you’re wanting to do mathematics. However, it will
 trip you up in other areas. A lot of these points are minor, but when
@@ -2580,9 +2590,9 @@ are vectorized.
     mix up any of `length()`, `lengths()`, `nrow()`, or `ncol()`. In
     particular, `length()` is so inconsistent that I’m unsure why they
     let it work for 2D structures ([probably something to do with it
-    being an internal generic](#internal-generics)). For example, the
-    length of a data frame is its number of columns and the length of a
-    matrix is its number of elements.
+    being an internal generic](#493-internal-generics)). For example,
+    the length of a data frame is its number of columns and the length
+    of a matrix is its number of elements.
 
     ``` r
     (a <- diag(4))
@@ -2642,7 +2652,7 @@ are vectorized.
     ## [1] 350
     ```
 
-    The fix for this isn’t some collapse-like argument like it is for
+    The fix for this isn’t some `collapse`-like argument like it is for
     `paste()`, it’s an entirely different function: `pmax()`. Why?
 
     ``` r
@@ -2916,7 +2926,7 @@ particularly like the inconsistency between functions like `paste()` and
 `max()`, but the only true minefield is the vector recycling rules. When
 they silently do things that you don’t want, you’re screwed.
 
-## R Won’t Help You
+## 4.7 R Won’t Help You
 
 R makes no secret of being essentially half a century of patches for S.
 Many things disagree, lack any clear conventions, or are just plain bad,
@@ -2956,7 +2966,7 @@ to sections that cover each aspect of this problem. All in all, this
 section came out to be shorter than I expected. However, I hope that I
 have made the magnitude of some of these points clear.
 
-### The Documentation
+### 4.7.1 The Documentation
 
 If R had outstanding documentation, then I could live with its
 inconsistencies. Sadly, it doesn’t. The documentation does almost
@@ -3039,7 +3049,7 @@ issues:
         ## function (n, expr, simplify = "array") 
         ## sapply(integer(n), eval.parent(substitute(function(...) expr)), 
         ##     simplify = simplify)
-        ## <bytecode: 0x55674fc773f8>
+        ## <bytecode: 0x559970311690>
         ## <environment: namespace:base>
         ```
 
@@ -3061,7 +3071,7 @@ issues:
         ##         X <- as.list(X)
         ##     .Internal(lapply(X, FUN))
         ## }
-        ## <bytecode: 0x55674f28df10>
+        ## <bytecode: 0x55996db63f10>
         ## <environment: namespace:base>
         ```
 
@@ -3194,7 +3204,7 @@ plenty of other related functions without themselves being cluttered
 with mentions of other functions and languages, then it would go a long
 way towards stopping R from tripping people up.
 
-### The Functions
+### 4.7.2 The Functions
 
 There are several inconsistencies in R’s functions and how you use them.
 This means that you either have to adopt a guess-and-check style of
@@ -3239,11 +3249,11 @@ of R’s functions. Neither are satisfactory.
     functions that remove duplicates from their inputs and apply
     `as.vector()` to them. The `subset()` function is a non-standard
     evaluation tool like `within()`, making it completely different and
-    [dangerous in a different way](#non-standard-evaluation). Finally,
-    despite it being documented with the Set Operations, none of these
-    warnings apply for `is.element()`. I regret every time that I wrote
-    off someone’s advice to use `subset()` because of my (entirely
-    reasonable!) assumption that it would be a (dangerous) Set
+    [dangerous in a different way](#4112-non-standard-evaluation).
+    Finally, despite it being documented with the Set Operations, none
+    of these warnings apply for `is.element()`. I regret every time that
+    I wrote off someone’s advice to use `subset()` because of my
+    (entirely reasonable!) assumption that it would be a (dangerous) Set
     Operation.
 -   Functions with related names sometimes have different effects. For
     example, here is a damning quote from [section 3.2.4 of *Advanced
@@ -3280,21 +3290,21 @@ of R’s functions. Neither are satisfactory.
     time with R, read the documentation for `Vectorize()`. It’s packed
     with tips for avoiding these pitfalls.
 
-### Extended Example: Matrices
+### 4.7.3 Extended Example: Matrices
 
 Let’s talk about matrices. I’ve already discussed some oddities like how
 functions like `[`, `$` and `length()` treat them in ways that seem
 inconsistent with either the rest of the language or your expectations,
 but let’s go deeper:
 
--   [As covered earlier](#named-atomic-vectors), matrices want to have
-    rownames and colnames rather than names. This gives us a few more
-    inconsistencies to deal with that I didn’t mention at the time. The
-    rest of the language has trained you to use `setNames(data, names)`.
-    When you do this, `data` is returned with its column names changed
-    without any changes to `data`. However, matrices want
-    `colnames(data) <- names` and the obvious equivalent for
-    `rownames()`. This modifies `data` and does not return it.
+-   [As covered earlier](#455-named-atomic-vectors), matrices want to
+    have rownames and colnames rather than names. This gives us a few
+    more inconsistencies to deal with that I didn’t mention at the time.
+    The rest of the language has trained you to use
+    `setNames(data, names)`. When you do this, `data` is returned with
+    its column names changed without any changes to `data`. However,
+    matrices want `colnames(data) <- names` and the obvious equivalent
+    for `rownames()`. This modifies `data` and does not return it.
 
     ``` r
     a <- b <- diag(3)
@@ -3433,7 +3443,7 @@ but let’s go deeper:
     explain `c(mtcars)` to myself.
 
 -   Named matrices are named atomic vectors, so they break in the ways
-    [discussed earlier](#named-atomic-vectors). This puts you in a
+    [discussed earlier](#455-named-atomic-vectors). This puts you in a
     dilemma when you’re using data that’s essentially only one type: Do
     you keep it as a matrix and lose the awesome subsetting powers of a
     data frame? Or do you make it in to a data frame and lose the power
@@ -3446,7 +3456,7 @@ Overall, matrices are so inconsistent with the rest of the language that
 your matrix-manipulation code never looks right. It leaves you with an
 awful sense of unease.
 
-### The Error Messages
+### 4.7.4 The Error Messages
 
 Something to mention while we’ve still got some bad error messages fresh
 in our minds: People often say that R’s error messages aren’t very good
@@ -3471,7 +3481,7 @@ Of course, the more worrying issue is when R gives you no
 warnings/errors at all. I’d much rather have a bad error message than
 none at all, but a bad error message is still annoying.
 
-### Mapply Challenge
+### 4.7.5 Mapply Challenge
 
 Maybe you think I’m clutching at straws? I admit, I do sometimes wonder
 if my outrage is unjustified. Let’s settle this with a challenge. If you
@@ -3479,7 +3489,7 @@ win, then by all means close this document and write me off as a madman.
 If you lose, then maybe I’ve got a point. Okay, here’s your challenge:
 
 |                                                                                                                                                                                                                                                                                                                                                                                  |
-|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **CHALLENGE**                                                                                                                                                                                                                                                                                                                                                                    |
 | Taking in to account R’s vector recycling rules, figure out how `mapply()`’s `MoreArgs` and `...` arguments differ and when you would want to pass something as a `MoreArgs` argument rather than in the `...` argument. No cheating by going online (trust me, it won’t help much anyway). Solve this without leaving your R IDE. You’re encouraged to check the documentation. |
 
@@ -3488,19 +3498,19 @@ is of little help and that your confidence in your R knowledge is too
 small to make an educated guess.
 
 |                                                                                                                 |
-|-----------------------------------------------------------------------------------------------------------------|
+|:----------------------------------------------------------------------------------------------------------------|
 | **HINT 1**                                                                                                      |
 | Don’t try to cheat by looking at `mapply()`’s code; Most of it is in C and therefore will be of no help to you. |
 
 |                                                                                                                                                                                                                             |
-|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **HINT 2**                                                                                                                                                                                                                  |
 | You might think that the documentation for `sapply()` will help you, but it’ll actually mislead you because `mapply()`’s `...` is essentially `sapply()`’s `X` and `sapply()`’s `...` is most like `mapply()`’s `MoreArgs`. |
 
 Solution below. Time to stop scrolling.
 
 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **SOLUTION**                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | .                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
 | .                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
@@ -3524,7 +3534,7 @@ documentation. Either provide fewer options, document them better, or
 make them so commonplace and consistent within the language that I only
 need to understand it once in order to understand it everywhere!
 
-### Stealing from the Tidyverse
+### 4.7.6 Stealing from the Tidyverse
 
 On top of many of the things that I’ve already said about the apply
 family, fans of the Tidyverse, particularly `purrr`, often point out of
@@ -3551,11 +3561,11 @@ whatever `vapply()` would consider a valid `FUN.VALUE` argument.
     As for the other obscure ones – e.g. `simplify2array()`, `rapply()`
     – I honestly cannot recall ever using them or seeing them used.
 
-## The Community
+## 4.8 The Community
 
 There are some community issues that make R harder to learn and work
 with. Put together with the earlier issues, it means that help can often
-neither be found inside or outside of R.
+neither be found inside nor outside of R.
 
 -   The community can’t agree on if we should be using base R’s data
     frames, the Tidyverse’s tibbles, or the `data.table` package. Even
@@ -3620,11 +3630,11 @@ neither be found inside or outside of R.
     doesn’t do the trick either. As any advocate of the Tidyverse will
     tell you, base R just isn’t designed for piping.
 
-## Generic Functions Again
+## 4.9 Generic Functions Again
 
 R’s generic function OOP systems are yet another source unpredictability
-and internal inconsistency. [They’re very cool](#generic-functions) and
-I must admit that I’ve not used them much, but what I’ve seen when
+and internal inconsistency. [They’re very cool](#353-generic-functions)
+and I must admit that I’ve not used them much, but what I’ve seen when
 trying to use them has discouraged me. Most of what I’m about to say is
 about S3, but you’ll rarely find much said about R’s OOP systems at all.
 It’s not really any surprise. S3, S4, RC, and any of the OOP systems
@@ -3636,7 +3646,7 @@ that they’re the only ones who have a generic function OOP system that
 is baked-in to their language. I’ve never used Julia or enough S4 or RC
 to be able to really comment, but I bet they’re right.
 
-### The Class System
+### 4.9.1 The Class System
 
 The class system is a mess and the docs do a poor job of explaining it.
 Good luck understanding it without a book like *Advanced R* and a
@@ -3708,7 +3718,7 @@ on:
     objects, meaning that you almost always have to write a `[` and `[[`
     method for them. On the bright side, this is documented behaviour.
 
-### Existing Functions
+### 4.9.2 Existing Functions
 
 The generic functions that you’ll find in the base and other common
 libraries have a few surprises:
@@ -3740,7 +3750,7 @@ libraries have a few surprises:
     functions written in this form that are not extensions to anything.
     `t()` and `t.test()` are the most cited example.
 
-### Internal Generics
+### 4.9.3 Internal Generics
 
 This is tough to explain, but I’ll try. If you consult
 `?"internal generic"`, you will find a big list of functions that you
@@ -3836,7 +3846,7 @@ how can anyone be expected to have the patience to even begin learning
 S4? I know that it’s dishonest to blame S4 for the sins of S3, but I
 wouldn’t blame any newcomer to R’s OOP for doing so.
 
-### S4
+### 4.9.4 S4
 
 Okay then, let’s talk about S4. I promise that this will be an easier
 read than the earlier sections. I’m quite ignorant of S4, as I’ve
@@ -3844,11 +3854,10 @@ already admitted to, so I’ve got very little to say. Regardless, the
 following seems clear:
 
 -   Everything that I’ve read about S4 gives me the impression that it
-    has far fewer stupid technicalities than S3 does. If I’m right, then
-    I find that laughable. How have we managed to make S3 more
-    complicated than S4? S3 should be extremely simple, but the
-    technicalities of the previous few sections are too easy to stumble
-    upon.
+    has far fewer stupid technicalities than S3. If I’m right, then I
+    find that laughable. How have we managed to make S3 more complicated
+    than S4? S3 should be extremely simple, but the technicalities of
+    the previous few sections are too easy to stumble upon.
 
 -   If [*Advanced R’s* chapter on S4](https://adv-r.hadley.nz/s4.html)
     is to be trusted, then the official documentation for S4 contains a
@@ -3878,7 +3887,7 @@ following seems clear:
     Without being too spiteful, by now I find it quite easy to believe
     that R has an OOP system that silently misbehaves.
 
-## Factor Variables
+## 4.10 Factor Variables
 
 Section 8.2 of [*The R
 Inferno*](https://www.burns-stat.com/pages/Tutor/R_inferno.pdf) calls
@@ -4010,7 +4019,7 @@ Personally, I’m afraid to use factor variables. Their unpredictability
 makes any code that uses them dramatically more complex, even if you’re
 confident that you know their rules.
 
-## Syntactic Sugar
+## 4.11 Syntactic Sugar
 
 The syntactic sugar is a source of problems, often to such a great
 degree that your best solution is to completely avoid the sugar. I’ll
@@ -4091,9 +4100,10 @@ to sections.
     between these functions, but we’ve already discussed that can of
     worms. Don’t think that I’m advocating for `purrr` here. It has so
     many functional programming tools that it arguably makes the
-    situation worse. I’ll cover its costs and benefits [later](#purrr).
+    situation worse. I’ll cover its costs and benefits
+    [later](#55-purrr).
 
-### Sequences
+### 4.11.1 Sequences
 
 The `:` operator is absolutely lovely… until it screws you. The solution
 is to prefer the `seq()` functions to using `:`. Some quick examples:
@@ -4152,7 +4162,7 @@ documentation warns against not naming its arguments, so you’re forced
 to write the long-winded `seq(from = 0, to = 100, by = 6)` rather than
 just `seq(0, 100, 6)`.
 
-### Non-standard Evaluation
+### 4.11.2 Non-standard Evaluation
 
 The documentation for several functions with non-standard evaluation,
 e.g. `with()` and `subset()`, explicitly warns the user to not use them
@@ -4248,7 +4258,7 @@ could fearlessly use `with()` and `subset()` at all times, but R’s nasty
 habit of not explaining the dangers that it warms you of leaves me in
 constant paranoia.
 
-## Missing Features
+## 4.12 Missing Features
 
 Some things seems obviously missing from R:
 
@@ -4332,7 +4342,7 @@ Some things seems obviously missing from R:
 
 Admittedly, few if any of these are major, but they’re a bit annoying.
 
-## Miscellaneous Negatives
+## 4.13 Miscellaneous Negatives
 
 And now for everything that I’ve got left in the bag.
 
@@ -4410,7 +4420,7 @@ And now for everything that I’ve got left in the bag.
     reporting. On the bright side, this makes it very easy to improve
     other people’s R code and get accepted pull requests.
 
-# The Tidyverse
+# 5 The Tidyverse
 
 As I’ve already admitted, my knowledge of the Tidyverse is much less
 than my knowledge of base R. However, no critique of R is complete
@@ -4420,10 +4430,10 @@ function syntax), are clear evidence that it’s on to something. Before
 going in to the specific libraries, I’ll give some general thoughts:
 
 -   I can’t back down from the “*polished turd*” point that I [made
-    earlier](#the-community). No matter how good the Tidyverse is, any
-    attempt to fix R’s inconsistencies by making new libraries is doomed
-    to fail. Base R is inconsistent, so the only way to be consistent
-    with it is to be inconsistent. For example, `as.foo()` is
+    earlier](#48-the-community). No matter how good the Tidyverse is,
+    any attempt to fix R’s inconsistencies by making new libraries is
+    doomed to fail. Base R is inconsistent, so the only way to be
+    consistent with it is to be inconsistent. For example, `as.foo()` is
     inconsistent with R’s S3 system, but it’s what I’d expect to find
     with a new class called `foo` in a library. The only solution to
     this problem is to somehow write code that completely ignores base
@@ -4437,7 +4447,7 @@ going in to the specific libraries, I’ll give some general thoughts:
     manifesto](https://cran.r-project.org/web/packages/tidyverse/vignettes/manifesto.html)),
     and depreciate their own functions in favour of functions from
     different Tidyverse packages.
--   For [the reasons explained earlier](#variable-manipulation), the
+-   For [the reasons explained earlier](#43-variable-manipulation), the
     authors are very scared of the `...` argument’s ability to pass
     arguments to where they should not have gone. To counter this, most
     of the Tidyverse functions use names that you would never type. This
@@ -4493,17 +4503,17 @@ base R. I see it as nothing more than a handy set of libraries.
 Now for the specific libraries. Assume that I’m ignorant of any that
 I’ve skipped.
 
-## Dplyr
+## 5.1 Dplyr
 
 -   I don’t like how it has name conflicts with the base R stats
     library. It just seems rude.
 -   Remember all of my complaints about [base R’s
-    subsetting](#subsetting) and how I’d rather use the [non-standard
-    evaluation](#non-standard-evaluation) functions if it weren’t for
-    all of their vague warnings? `dplyr` completely nullifies most of
-    these complains, for data frames at least. This is a huge win for
+    subsetting](#45-subsetting) and how I’d rather use the [non-standard
+    evaluation](#4112-non-standard-evaluation) functions if it weren’t
+    for all of their vague warnings? `dplyr` completely nullifies most
+    of these complains, for data frames at least. This is a huge win for
     the Tidyverse.
--   R’s [factor variables are scary](#factor-variables).
+-   R’s [factor variables are scary](#410-factor-variables).
     `dplyr::group_by()` takes a more SQL-like approach to the problem
     and feels a lot safer to work with.
 -   Compared to base R, the knowledge that `dplyr` will only output a
@@ -4529,7 +4539,7 @@ I’ve skipped.
     `dplyr::filter()`, I get errors due to character vector not being
     data frames.
 
-## Ggplot2
+## 5.2 Ggplot2
 
 -   To repeat my earlier praise for this library, it’s fun. That’s a
     huge win.
@@ -4547,7 +4557,7 @@ I’ve skipped.
     me the trouble by making a correct guess. There is no such facility
     in `ggplot2`.
 
-## Lubridate
+## 5.3 Lubridate
 
 I don’t use dates much, so I don’t have much to say. In fact, I don’t
 think that I’ve mentioned them before now. `lubridate` appears to be
@@ -4565,7 +4575,7 @@ say for certain is that experience has shown that when the day comes,
 I’ll have a much easier time learning this package than what base R
 offers for the same jobs.
 
-## Magrittr
+## 5.4 Magrittr
 
 Pipes come in very handy, but I’ve never been completely sold on them,
 even when viewing teaching examples that are supposed to demonstrate
@@ -4634,7 +4644,7 @@ some nonsense like `x |> (function(x) foo(bar, x))()`. For example,
 brackets. `magrittr` can do it with just
 `mtcars %>% (function(x) Map(max, x))` or even `mtcars %>% Map(max, .)`.
 
-## Purrr
+## 5.5 Purrr
 
 Unlike base R, where I can point to a specific example and explain to
 you why it’s silly, my objections to `purrr` are mostly philosophical.
@@ -4691,18 +4701,18 @@ objections:
 Overall, I could probably be convinced that `purrr`’s way is better than
 base R’s, but I doubt that `purrr`’s way is the best way.
 
-## Stringr and Tibble
+## 5.6 Stringr and Tibble
 
 For me, these both fall in to the same box. They’re not particularly
 outstanding, but they’re clearly much better than their base R
 equivalents. I’ve praised `tibble` enough already and have said plenty
-about [the state of R’s strings](#strings). The only thing that I’ve got
-left to say is that once you’ve noticed that tibbles let you use the
+about [the state of R’s strings](#42-strings). The only thing that I’ve
+got left to say is that once you’ve noticed that tibbles let you use the
 columns that you’ve just defined to define other columns, you really
 start to hate how many extra lines of code you have to write when using
 data frames for the same task.
 
-# Conclusion
+# 6 Conclusion
 
 If I were being generous, I would say that R teaches you some great
 lessons about functional programming while being a useful DSL and that
