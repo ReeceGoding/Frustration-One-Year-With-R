@@ -71,11 +71,11 @@ Reece Goding
 # 1 Introduction
 
 What follows is an account of my experiences from about one year of
-roughly daily R usage. It started out as a list of things that I liked
-and disliked about the language, but eventually grew to be something
-huge. Once the list exceeded ten thousand words, I knew that it must be
-published. By the time I was done, it had nearly tripled in length. It
-took five months of weekends just to get it all in R Markdown.
+roughly daily R usage. It began as a list of things that I liked and
+disliked about the language, but grew to be something huge. Once the
+list exceeded ten thousand words, I knew that it must be published. By
+the time it was ready, it had nearly tripled in length. It took five
+months of weekends just to get it all in R Markdown.
 
 This isn’t an attack on R or a pitch for anything else. It is only an
 account of what I’ve found to be right and wrong with the language.
@@ -94,7 +94,7 @@ reader has plenty of points where they can pause and return to the
 document later, but the word count is still far higher than I’m happy
 with. I have tried to not be too petty, but every negative point in here
 comes from an honest position of frustration. There are some things that
-I really love about R, I’ve even devoted [an entire section to
+I really love about R. I’ve even devoted [an entire section to
 them](#3-what-r-does-right). However, if there is one point that I
 really want this document to get across, it’s that R is filled to the
 brim with small madnesses. Although I can name a few major issues with
@@ -174,8 +174,9 @@ regards:
     (e.g. expressions like `foo ~ log(bar) * bar^2`), the `plot()`
     function, and factor variables than I ought to be. I saw a lot of
     them during my degree, but have long since forgotten them and have
-    never needed to pick them back up. For similar reasons, I have
-    nothing to say on how hard it can sometimes be to read data in to R.
+    never needed to really pick them back up. For similar reasons, I
+    have nothing to say on how hard it can sometimes be to read data in
+    to R.
 -   I haven’t used enough of the community’s favourite libraries. My
     biggest regret is my near-total ignorance of `data.table`. From
     [what little I’ve
@@ -199,10 +200,10 @@ regards:
     chapter 4 of *Structure and Interpretation of Computer Programs*.
     R’s clear Scheme inspiration makes Lisp books a lot less fun to
     read; It’s like I’ve already been spoiled on some of the best bits.
--   I haven’t done enough OOP in R. My only real experience of it is
-    with S3. S4 looks enough like CLOS that I expect that I will revisit
-    it at some point after picking up Common Lisp, but that will just be
-    to play around.
+-   I haven’t done enough OOP in R. My only real experience is with S3.
+    S4 looks enough like CLOS that I expect that I will revisit it at
+    some point after picking up Common Lisp, but that will just be to
+    play around.
 -   I have never made a package for R and have no experience with the
     ecosystem surrounding that (e.g. `roxygen2`). I have no plans for
     this.
@@ -331,10 +332,10 @@ Some examples:
 
 -   The rules for subsetting data, although requiring mastery, are
     extremely expressive. Coupled with sub-assignment tricks like
-    `result[which(result < 0.5)] <- 0`, which often do exactly what you
-    think they will, you can really save yourself a lot of work. Being
-    able to demand precisely what parts of your data that you want to
-    see or change is a really great feature.
+    `result[result < 0.5] <- 0`, which often do exactly what you think
+    they will, you can really save yourself a lot of work. Being able to
+    demand precisely what parts of your data that you want to see or
+    change is a really great feature.
 
 -   The factor and ordered data types are definitely the sort of tools
     that I want to have in a stats language. [They’re a bit
@@ -492,10 +493,10 @@ vectorization can be the best thing about the language:
     old version of [this page](https://rosettacode.org/wiki/FizzBuzz#R)
     and improved it a little.
 
--   Basically everything is a vector, so R comes with some really cool
-    vector-manipulation tools like `ifelse()` (as seen above) and makes
-    it very easy to use a function on an entire collection. Can you
-    believe that `mtcars / 20` actually works?
+-   Basically everything is a vector, so R comes with some great
+    vector-manipulation tools like `ifelse()` (seen above) and makes it
+    very easy to use a function on a collection. Can you believe that
+    `mtcars / 20` actually works?
 
 -   Tricks like `array / seq_along(array)` save a lot of loop writing.
 
@@ -573,8 +574,8 @@ you’re not familiar with the below, look it up. You will not regret it.
     complexity of using `with()`. It also allows for ridiculously
     concise code like `aggregate(. ~ cyl + gear, mtcars, mean)`.
 -   You can write your own data-masking functions. Doing so relies on
-    controlling the non-standard evaluation of some of your arguments.
-    It’s the closest thing that R has to metaprogramming. The names
+    controlling the non-standard evaluation of some of your arguments
+    and is the closest thing that R has to metaprogramming. The names
     mechanisms do a lot to remove any ambiguity from your attempts at
     this. Stealing an example from the documentation, do I even need to
     explain what
@@ -766,8 +767,8 @@ frequently a special case that you can rarely avoid.
     language would prepare you for. It and its many answers are very
     much worth a read.
 
--   Lists are the parent class of data frames, which are mandatory for
-    anyone who wants to do stats in R, and most of the problems with
+-   Lists are the parent class of data frames. Data frames are mandatory
+    for anyone who wants to do stats in R and most of the problems with
     lists are inherited by data frames. This makes the oddities of lists
     unavoidable.
 
@@ -916,8 +917,8 @@ fix many of these issues, the common sentiment of “*just use
         relate to `regexec()`?*” – leaving you with no straws to clutch
         at.
 
--   Even once you have found the right function for the job, it can be
-    tough to use. Compare the `stringr` answer to [this
+-   The right function for the job can still be tough to use. Compare
+    the `stringr` answer to [this
     question](https://stackoverflow.com/questions/12427385/) to the base
     R answers. Or better yet, use `gregexpr()` or `gregexec()` for any
     task and then tell me with a straight face that you both understand
@@ -1039,7 +1040,14 @@ use R.
     ## [1] 3 3
     str(x)
     ##  num [1:3, 1:3] 1 0 0 0 1 0 0 0 1
+    dput(x) #Dirty trick, don't use in practice.
+    ## structure(c(1, 0, 0, 0, 1, 0, 0, 0, 1), .Dim = c(3L, 3L))
     ```
+
+    Among these, `str()` is the closest. However, you can see that it
+    doesn’t give you all of the class information. This doesn’t improve
+    if you add non-implicit classes to `x`, but I’m avoiding that topic
+    for as long as I can.
 
 -   R likes to use “*double*” and “*numeric*” almost interchangeably.
     You’ve just seen one such example (`str(x)` vs `typeof(x)`).
@@ -1049,14 +1057,13 @@ use R.
     deeper than that. It’s as if R tries to avoid integers unless you
     tell it not to. For example, `4` is a double, not an integer. Why?
     Unless you’re very careful, any integer that you give to R will
-    eventually be coerced in to a double.
+    eventually be coerced to a double.
 
--   I don’t like how there’s no trivial way to express a condition like
-    1 &lt; x &lt; 5. In a maths language, I’d expect that exact syntax
-    to work. There’s probably a good reason why it doesn’t, and it’s not
-    at all hard to build an equivalent condition, but it still annoys me
-    from time to time. I suspect that the `<-` syntax for variable
-    assignment is to blame.
+-   There’s no trivial way to express a condition like 1 &lt; x &lt; 5.
+    In a maths language, I’d expect that exact syntax to work. There’s
+    probably a good reason why it doesn’t, and it’s not at all hard to
+    build an equivalent condition, but it still annoys me from time to
+    time. I suspect that the `<-` syntax is to blame.
 
 -   The distinction between `<-` and `=` is something that you’d have to
     look up. I’d try to explain the difference, but from what I’ve
@@ -1101,8 +1108,8 @@ use R.
     argument in an anonymous function.
 
 -   The idiomatic way to add an item to the end of a collection is
-    `a[length(a) + 1] <- "foo"`. This is rather verbose. It’s also [a
-    bit unpredictable when adding a collection to a list](#41-lists).
+    `a[length(a) + 1] <- "foo"`. This is rather verbose and [a bit
+    unpredictable when adding a collection to a list](#41-lists).
 
 -   A quote from [the language
     definition](https://cran.r-project.org/doc/manuals/r-release/R-lang.html#Argument-evaluation):
@@ -1111,7 +1118,7 @@ use R.
     to discover it on the first day that you use `eval()`. It has
     `parent.frame()` as one of its default arguments, but calling
     `eval()` with that argument supplied manually will produce different
-    results than what you get from letting it be supplied by default.
+    results than letting it be supplied by default.
 
     ``` r
     x <- 1
@@ -1125,25 +1132,24 @@ use R.
     [*The R
     Inferno*](https://www.burns-stat.com/pages/Tutor/R_inferno.pdf).
 
--   Variable names can be partially matched. See
-    <a href="https://rosettacode.org/wiki/Named_parameters\#R" class="uri">https://rosettacode.org/wiki/Named_parameters\#R</a>
-    for some examples. I can’t tell if it’s disgusting or awesome, but
-    it’s definitely dangerous. If I called `f(n = 1)`, I probably didn’t
-    mean `f(nukeEarth = 1)`! At least it throws an error if it fails to
+-   Variable names can be partially matched. See [this
+    link](https://rosettacode.org/wiki/Named_parameters#R) for some
+    examples. I can’t tell if it’s disgusting or awesome, but it’s
+    definitely dangerous. If I called `f(n = 1)`, I probably didn’t mean
+    `f(nukeEarth = 1)`! At least it throws an error if it fails to
     partially match (e.g. if there were multiple valid partial matches).
-    More on that [when I cover the `$` operator](#dangers-of-), which
-    usually has the same issue.
+    More on that [when I cover the `$` operator](#dangers-of-).
 
 -   The `...` argument doesn’t make its users throw errors when they’ve
     been called with arguments that they don’t have or, even worse,
-    those that they do have, but you misspelled. *Advanced R* has a
-    great example in [its Functions
+    those you misspelled. *Advanced R* has a great example in [its
+    Functions
     chapter](https://adv-r.hadley.nz/functions.html#exercises-17). Would
     you have guessed that `sum(1, 2, 3, na.omit = TRUE)` returns `7`,
     not `6`? Similarly, [the Functionals
     chapter](https://adv-r.hadley.nz/functionals.html#argument-names)
-    shows how this can lead to some baffling errors and what strange
-    things you have to do help your users avoid them.
+    shows how this can lead to baffling errors and what strange things
+    you have to do help your users avoid them.
 
 -   For many other examples, see section 8 of [*The R
     Inferno*](https://www.burns-stat.com/pages/Tutor/R_inferno.pdf).
@@ -1160,9 +1166,9 @@ R has some strange ideas about switch statements:
     code](https://github.com/wch/r-source/blob/trunk/src/main/builtin.c#L1009),
     suggesting that it can’t be all that optimised.
 
--   R doesn’t have one switch statement, it has two. One where it
-    switches on a numeric input and another for characters. The numeric
-    version makes the strange assumption that the first argument
+-   R doesn’t have one switch statement, it has two. There is one where
+    it switches on a numeric input and another for characters. The
+    numeric version makes the strange assumption that the first argument
     (i.e. the argument being switched on) can be safely translated to a
     set of cases that must follow an ordering like “*if input is 1, do
     the first option, if 2, do the second…*”. There is no flexibility
@@ -1185,12 +1191,11 @@ R has some strange ideas about switch statements:
 
     and they do it silently, returning `NULL`. I’d expect a warning
     message informing me of this, but there is no such thing. If you
-    want that behaviour, then you have to write it yourself by ending
-    each statement with a final unnamed branch that throws an error,
+    want that behaviour, then you have to write it yourself
     e.g. `switch("c", a = "foo", b = "bar", stop("Invalid input"))` or
-    `switch("c", a = "foo", b = "bar", warning("Invalid input"))`. Of
-    course, you can’t do that with the numeric version, because R has a
-    switch without defaults.
+    `switch("c", a = "foo", b = "bar", warning("Invalid input"))`. You
+    can’t do that with the numeric version, because R has a switch
+    without defaults.
 
 ## 4.5 Subsetting
 
@@ -2526,9 +2531,11 @@ they’re outright mocked. Do you understand how damning that is for a
 stats language? I can’t stress this point enough. Subsetting in R should
 be easy and intuitive. Instead, it’s something that I’ve managed to
 produce thousands of words of complaints about and it still trips me up
-with alarming regularity, despite my clear knowledge of the correct way
-to do things. If I want a vector of consonants, you can bet that I’m
-going to write `letters[-c("a", "e", "i", "o", "u")]`,
+with [alarming
+regularity](https://github.com/ReeceGoding/Frustration-One-Year-With-R/issues/3),
+despite my clear knowledge of the correct way to do things. If I want a
+vector of consonants, you can bet that I’m going to write
+`letters[-c("a", "e", "i", "o", "u")]`,
 `letters[-which(letters == c("a", "e", "i", "o", "u"))]`, and
 `letters[c("a", "e", "i", "o", "u") %in% letters]` before remembering
 the right way to do it. If I’m still making those mistakes for something
@@ -2574,7 +2581,8 @@ are vectorized.
     ```
 
     Personally, I find that it’s easy to remember to use `&` for `if`
-    but I often forget to use `&` for subsetting.
+    but I often forget to use `&` for subsetting. It looks like version
+    4.1.4 is going to make `||` and `&&` throw warnings.
 
 -   The `if` statements accept vectors of length greater than 1 as their
     predicate, but will only pay attention to the very first element.
@@ -2585,6 +2593,9 @@ are vectorized.
     and `||` syntax is for (e.g. `c(TRUE, FALSE) && c(TRUE, FALSE)` is
     `TRUE`), but I still don’t see why anyone would use several logical
     vectors and only be interested in their first elements.
+
+    -   It appears that version 4.1.4 is going to do something about
+        this. Specifically, replace this warning with an error.
 
 -   When dealing with anything 2D, you need to be very careful to not
     mix up any of `length()`, `lengths()`, `nrow()`, or `ncol()`. In
@@ -3049,7 +3060,7 @@ issues:
         ## function (n, expr, simplify = "array") 
         ## sapply(integer(n), eval.parent(substitute(function(...) expr)), 
         ##     simplify = simplify)
-        ## <bytecode: 0x559970311690>
+        ## <bytecode: 0x55f632ad9100>
         ## <environment: namespace:base>
         ```
 
@@ -3071,7 +3082,7 @@ issues:
         ##         X <- as.list(X)
         ##     .Internal(lapply(X, FUN))
         ## }
-        ## <bytecode: 0x55996db63f10>
+        ## <bytecode: 0x55f63123bf10>
         ## <environment: namespace:base>
         ```
 
@@ -3123,7 +3134,7 @@ issues:
     similarly lacking. It talks about “*the typical multinomial
     experiment*” as if you’ll know what that is. Its Details section
     tells you the mathematical technicalities, but if I wanted that then
-    I would’ve went to Wikipedia. All that they had to do was give an
+    I would’ve gone to Wikipedia. All that they had to do was give an
     example about biased die and that would’ve told the reader all that
     they will need to know. A similar case can be made about `rbinom()`,
     but I can forgive that on the grounds of “*who uses R without
@@ -4296,6 +4307,8 @@ Some things seems obviously missing from R:
     package to fix this syntax issue, then you might as well just use
     one that gives you actual hash tables.
 
+    -   It looks like version 4.1.4 might be fixing this?
+
 -   Given that R is a maths/stats language, I find the follow omissions
     surprising:
 
@@ -4333,7 +4346,7 @@ Some things seems obviously missing from R:
     a[-4.8]
     ## [1]  1  2  3  5  6  7  8  9 10
     sample(4.8)
-    ## [1] 4 1 3 2
+    ## [1] 4 2 3 1
     ```
 
     The pattern is that [R silently truncates the numeric index of
@@ -4643,6 +4656,8 @@ some nonsense like `x |> (function(x) foo(bar, x))()`. For example,
 `mtcars |> (function(x) Map(max, x))()`. I don’t like all of those extra
 brackets. `magrittr` can do it with just
 `mtcars %>% (function(x) Map(max, x))` or even `mtcars %>% Map(max, .)`.
+Regardless, base R’s pipe is still new, so perhaps I’m judging it too
+early.
 
 ## 5.5 Purrr
 
