@@ -300,6 +300,7 @@ but it only works because `replicate()` quietly wraps its second argument in an 
 An easier-to-discover example can be found in section 8.3.19 of [*The R Inferno*](https://www.burns-stat.com/pages/Tutor/R_inferno.pdf).
 * Variable names can be partially matched. See [this link](https://rosettacode.org/wiki/Named_parameters#R) for some examples. I can't tell if it's disgusting or awesome, but it's definitely dangerous. If I called `f(n = 1)`, I probably didn't mean `f(nukeEarth = 1)`! At least it throws an error if it fails to partially match (e.g. if there were multiple valid partial matches). More on that [when I cover the `$` operator](#dangers-of-).
 * The `...` argument doesn't make its users throw errors when they've been called with arguments that they don't have or, even worse, those you misspelled. *Advanced R* has a great example in [its Functions chapter](https://adv-r.hadley.nz/functions.html#exercises-17). Would you have guessed that `sum(1, 2, 3, na.omit = TRUE)` returns `7`, not `6`? Similarly, [the Functionals chapter](https://adv-r.hadley.nz/functionals.html#argument-names) shows how this can lead to baffling errors and what strange things you have to do help your users avoid them.
+* `NaN`, `NULL`, and `NA` [have been accused](https://github.com/ReeceGoding/Frustration-One-Year-With-R/issues/5) of inconsistencies and illogical outputs, making it impossible to form a consistent mental model of them.
 * For many other examples, see section 8 of [*The R Inferno*](https://www.burns-stat.com/pages/Tutor/R_inferno.pdf).
 
 ## Switch
@@ -1199,7 +1200,7 @@ Some things seems obviously missing from R:
   * It looks like version 4.1.4 might be fixing this?
 * Given that R is a maths/stats language, I find the follow omissions surprising:
   * There's no base function for counting the number of possible permutations of a collection of objects.
-  * Despite there being a function for finding the combinations that you can make from the elements of a vector, there's no function that does that with repetitions. For example, `combn(1:3, 2)` can't be convinced to include `c(1, 1)`, `c(2, 2)`, and `c(3, 3)`.
+  * Despite there being a function for finding the combinations that you can make from the elements of a vector, there's no function that does that with repetitions. For example, `combn(1:3, 2)` can't be convinced to include `c(1, 1)`, `c(2, 2)`, and `c(3, 3)`. `expand.grid(1:3, 1:3)` comes close, but that trick generates permutations rather than combinations.
   * There's no built-in big integer class.
   * Despite supporting equations, R offers no obvious way to simplify them.
   * Although R has some matrix functionality built in, there's no `is.square()` function.

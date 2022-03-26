@@ -1151,6 +1151,11 @@ use R.
     shows how this can lead to baffling errors and what strange things
     you have to do help your users avoid them.
 
+-   `NaN`, `NULL`, and `NA` [have been
+    accused](https://github.com/ReeceGoding/Frustration-One-Year-With-R/issues/5)
+    of inconsistencies and illogical outputs, making it impossible to
+    form a consistent mental model of them.
+
 -   For many other examples, see section 8 of [*The R
     Inferno*](https://www.burns-stat.com/pages/Tutor/R_inferno.pdf).
 
@@ -3060,7 +3065,7 @@ issues:
         ## function (n, expr, simplify = "array") 
         ## sapply(integer(n), eval.parent(substitute(function(...) expr)), 
         ##     simplify = simplify)
-        ## <bytecode: 0x55f632ad9100>
+        ## <bytecode: 0x55ad44797948>
         ## <environment: namespace:base>
         ```
 
@@ -3082,7 +3087,7 @@ issues:
         ##         X <- as.list(X)
         ##     .Internal(lapply(X, FUN))
         ## }
-        ## <bytecode: 0x55f63123bf10>
+        ## <bytecode: 0x55ad42ef6f10>
         ## <environment: namespace:base>
         ```
 
@@ -4318,7 +4323,8 @@ Some things seems obviously missing from R:
         you can make from the elements of a vector, there’s no function
         that does that with repetitions. For example, `combn(1:3, 2)`
         can’t be convinced to include `c(1, 1)`, `c(2, 2)`, and
-        `c(3, 3)`.
+        `c(3, 3)`. `expand.grid(1:3, 1:3)` comes close, but that trick
+        generates permutations rather than combinations.
     -   There’s no built-in big integer class.
     -   Despite supporting equations, R offers no obvious way to
         simplify them.
@@ -4346,7 +4352,7 @@ Some things seems obviously missing from R:
     a[-4.8]
     ## [1]  1  2  3  5  6  7  8  9 10
     sample(4.8)
-    ## [1] 4 2 3 1
+    ## [1] 1 2 3 4
     ```
 
     The pattern is that [R silently truncates the numeric index of
