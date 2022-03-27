@@ -3065,7 +3065,7 @@ issues:
         ## function (n, expr, simplify = "array") 
         ## sapply(integer(n), eval.parent(substitute(function(...) expr)), 
         ##     simplify = simplify)
-        ## <bytecode: 0x55ad44797948>
+        ## <bytecode: 0x55b69e362e60>
         ## <environment: namespace:base>
         ```
 
@@ -3087,7 +3087,7 @@ issues:
         ##         X <- as.list(X)
         ##     .Internal(lapply(X, FUN))
         ## }
-        ## <bytecode: 0x55ad42ef6f10>
+        ## <bytecode: 0x55b69cac5f10>
         ## <environment: namespace:base>
         ```
 
@@ -4352,7 +4352,7 @@ Some things seems obviously missing from R:
     a[-4.8]
     ## [1]  1  2  3  5  6  7  8  9 10
     sample(4.8)
-    ## [1] 1 2 3 4
+    ## [1] 1 3 4 2
     ```
 
     The pattern is that [R silently truncates the numeric index of
@@ -4446,7 +4446,11 @@ than my knowledge of base R. However, no critique of R is complete
 without at least giving this a mention. Its popularity, along with R
 version 4.0.6. adopting some its ideas (pipes and a shorter anonymous
 function syntax), are clear evidence that it’s on to something. Before
-going in to the specific libraries, I’ll give some general thoughts:
+going in to the specific libraries, I’ve given some general thoughts
+below. You may also be interested in [Hadley Wickham’s comments on this
+section](https://github.com/ReeceGoding/Frustration-One-Year-With-R/pull/1).
+Particularly with regards to `purrr`, I was surprised by how much we
+agree (look inside the changes made in the pull request).
 
 -   I can’t back down from the “*polished turd*” point that I [made
     earlier](#48-the-community). No matter how good the Tidyverse is,
@@ -4511,6 +4515,14 @@ going in to the specific libraries, I’ll give some general thoughts:
     10 helper functions in its documentation. I’m willing to be proven
     wrong here, but everything that I’ve just said strikes me as
     obviously true to anyone who has used `dplyr` or `purrr`.
+    -   Hadley’s comments, linked above, point to the `tidyr` package as
+        a strong counterexample to my claim that the argument count must
+        be minimised in a pipe-based design. They also mention that
+        there’s no obvious better way to design `dplyr::select()`. On
+        all counts, I have no counterargument. However, I’m confident
+        that I’m still on to something here, even if my original points
+        are wrong. Pipes must come at a cost, but it appears that I’ve
+        incorrectly identified what that cost is.
 
 Overall, I’m more than happy to use Tidyverse functions when I’m writing
 some run-once code or messing around in the REPL, but the unstable API
@@ -4556,7 +4568,8 @@ I’ve skipped.
     like `stringr`, I instinctively want to use a Tidyverse solution to
     problems like subsetting my inputs. However, if I reach for
     `dplyr::filter()`, I get errors due to character vector not being
-    data frames.
+    data frames. This isn’t really `dplyr`’s fault and they shouldn’t
+    try to fix it, but it’s still a minor annoyance.
 
 ## 5.2 Ggplot2
 
@@ -4574,7 +4587,9 @@ I’ve skipped.
 -   I miss the genericness of base R’s `plot()`. When I can’t be
     bothered to think about what sort of plot I need, `plot()` can save
     me the trouble by making a correct guess. There is no such facility
-    in `ggplot2`.
+    in `ggplot2`. Hadley’s comments have pointed out `autoplot()`, but
+    I’ve never gotten it to work. There are no examples in its
+    documentation and I’ve not found all that much help online.
 
 ## 5.3 Lubridate
 
@@ -4663,7 +4678,7 @@ some nonsense like `x |> (function(x) foo(bar, x))()`. For example,
 brackets. `magrittr` can do it with just
 `mtcars %>% (function(x) Map(max, x))` or even `mtcars %>% Map(max, .)`.
 Regardless, base R’s pipe is still new, so perhaps I’m judging it too
-early.
+early. It appears that future versions will expand it.
 
 ## 5.5 Purrr
 
