@@ -1073,7 +1073,8 @@ use R.
     everywhere else*”.
 
 -   `<-` was designed for keyboards that don’t exist any more. It’s a
-    pain to type on a modern system.
+    pain to type on a modern system. [IDEs can fix
+    this](https://github.com/ReeceGoding/Frustration-One-Year-With-R/issues/7).
 
 -   The day that you accidentally have `<` rather than `<-` without it
     throwing an error will be an awful one. The reverse can also happen.
@@ -3065,7 +3066,7 @@ issues:
         ## function (n, expr, simplify = "array") 
         ## sapply(integer(n), eval.parent(substitute(function(...) expr)), 
         ##     simplify = simplify)
-        ## <bytecode: 0x55b69e362e60>
+        ## <bytecode: 0x562d2f76ff68>
         ## <environment: namespace:base>
         ```
 
@@ -3087,7 +3088,7 @@ issues:
         ##         X <- as.list(X)
         ##     .Internal(lapply(X, FUN))
         ## }
-        ## <bytecode: 0x55b69cac5f10>
+        ## <bytecode: 0x562d2ded2f10>
         ## <environment: namespace:base>
         ```
 
@@ -4295,7 +4296,8 @@ Some things seems obviously missing from R:
     to make from a `repeat` loop.
 
 -   Without crude `if(FALSE){}` workarounds, there’s no way to comment
-    out blocks.
+    out blocks. [IDEs can fix
+    this](https://github.com/ReeceGoding/Frustration-One-Year-With-R/issues/7).
 
 -   Outside of packages, R lacks any real dictionary, associative array,
     or linked list type. The closest that we can get is matching
