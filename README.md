@@ -151,12 +151,13 @@ In my year with R, I have done the following:
     reader straight to its relevant section. Its only true fault is its
     age. I wish that I could claim that this document is a sequel to it,
     but I’m writing to review rather than advise.
--   After publishing this review, I skimmed a handful of books by John
-    Chambers. There were some gems in them and I’ve mentioned them where
-    needed, but I don’t expect that I will ever read those books
-    closely. I read them far too quickly for me to be able to say
-    anything insightful, but I will confess that I feel fundamentally
-    opposed to any programming textbooks that lack exercises.
+    -   Update: After publishing this review, I skimmed a handful of
+        books by John Chambers. There were some gems in them and I’ve
+        mentioned them where needed, but I don’t expect that I will ever
+        read those books closely. I read them far too quickly for me to
+        be able to say anything insightful, but I will confess that I
+        feel fundamentally opposed to any programming textbooks that
+        lack exercises.
 -   Made minor contributions to open source R projects.
 
 At minimum, I can say with confidence that unless I happen to pick up an
@@ -194,6 +195,8 @@ regards:
     experience with base R far exceeds my knowledge of both the
     Tidyverse and many other well-loved packages. If I’ve missed any
     gems, let me know.
+-   I know almost nothing about Shiny, but it appears to be far better
+    than Power BI.
 -   My experience with R’s competitors is minimal. In particular, I have
     virtually no experience with Python or Julia. Most of my points on R
     are about R on its own merits, rather than comparing it to its
@@ -3070,7 +3073,7 @@ issues:
         ## function (n, expr, simplify = "array") 
         ## sapply(integer(n), eval.parent(substitute(function(...) expr)), 
         ##     simplify = simplify)
-        ## <bytecode: 0x55e0445ae410>
+        ## <bytecode: 0x558ca955b9c8>
         ## <environment: namespace:base>
         ```
 
@@ -3092,7 +3095,7 @@ issues:
         ##         X <- as.list(X)
         ##     .Internal(lapply(X, FUN))
         ## }
-        ## <bytecode: 0x55e0435a3f10>
+        ## <bytecode: 0x558ca8565f10>
         ## <environment: namespace:base>
         ```
 
@@ -3789,9 +3792,9 @@ on:
     saying that `x` can be “*an R object*”. I’d give examples, but you
     really don’t want to think too hard about this.
 
-    -   I’ve recently skimmed some books by John Chambers. He also
-        claims that everything in R is an object. I think that what this
-        really means is that `class()` always returns something?
+    -   Update: I’ve recently skimmed some books by John Chambers. He
+        also claims that everything in R is an object. I think that what
+        this really means is that `class()` always returns something?
 
 -   The `[` and `[[` functions like to drop the attributes from your S3
     objects, meaning that you almost always have to write a `[` and `[[`
@@ -4417,7 +4420,7 @@ Some things seems obviously missing from R:
     a[-4.8]
     ## [1]  1  2  3  5  6  7  8  9 10
     sample(4.8)
-    ## [1] 2 3 4 1
+    ## [1] 2 4 3 1
     ```
 
     The pattern is that [R silently truncates the numeric index of
