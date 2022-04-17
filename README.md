@@ -204,7 +204,8 @@ regards:
     distant future.
 -   Although I have used SQL professionally, how it compares to R has
     rarely crossed my mind. This suggests that I’m missing something
-    about both languages.
+    about both languages. I plan to one day read a SQL book while having
+    `dplyr` loaded.
 -   R’s functional aspects make me wish that I knew more Lisp. I’m
     slowly picking it up, but I’ve currently not got any further than
     chapter 4 of *Structure and Interpretation of Computer Programs*.
@@ -3073,7 +3074,7 @@ issues:
         ## function (n, expr, simplify = "array") 
         ## sapply(integer(n), eval.parent(substitute(function(...) expr)), 
         ##     simplify = simplify)
-        ## <bytecode: 0x558ca955b9c8>
+        ## <bytecode: 0x559bf33299c8>
         ## <environment: namespace:base>
         ```
 
@@ -3095,7 +3096,7 @@ issues:
         ##         X <- as.list(X)
         ##     .Internal(lapply(X, FUN))
         ## }
-        ## <bytecode: 0x558ca8565f10>
+        ## <bytecode: 0x559bf2333f10>
         ## <environment: namespace:base>
         ```
 
@@ -4420,7 +4421,7 @@ Some things seems obviously missing from R:
     a[-4.8]
     ## [1]  1  2  3  5  6  7  8  9 10
     sample(4.8)
-    ## [1] 2 4 3 1
+    ## [1] 3 2 1 4
     ```
 
     The pattern is that [R silently truncates the numeric index of
