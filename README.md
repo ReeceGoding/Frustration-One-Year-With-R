@@ -151,6 +151,12 @@ In my year with R, I have done the following:
     reader straight to its relevant section. Its only true fault is its
     age. I wish that I could claim that this document is a sequel to it,
     but I’m writing to review rather than advise.
+-   After publishing this review, I skimmed a handful of books by John
+    Chambers. There were some gems in them and I’ve mentioned them where
+    needed, but I don’t expect that I will ever read those books
+    closely. I read them far too quickly for me to be able to say
+    anything insightful, but I will confess that I feel fundamentally
+    opposed to any programming textbooks that lack exercises.
 -   Made minor contributions to open source R projects.
 
 At minimum, I can say with confidence that unless I happen to pick up an
@@ -1012,8 +1018,9 @@ use R.
     make these unnecessary, such as Python’s `enumerate`.
 
 -   One day, you’ll be tripped up by R’s hierarchy of how it likes to
-    simplify mixed types outside of lists. For example, `c(2, "2")`
-    returns `c("2", "2")`. [An exercise from *Advanced
+    simplify mixed types outside of lists. The basics are documented
+    with the `c()` function. For example, `c(2, "2")` returns
+    `c("2", "2")`. [An exercise from *Advanced
     R*](https://adv-r.hadley.nz/vectors-chap.html#exercises-4) presents
     a few troubling cases:
 
@@ -1134,7 +1141,7 @@ use R.
     [*The R
     Inferno*](https://www.burns-stat.com/pages/Tutor/R_inferno.pdf).
 
--   Variable names can be partially matched. See [this
+-   Argument names can be partially matched. See [this
     link](https://rosettacode.org/wiki/Named_parameters#R) for some
     examples. I can’t tell if it’s disgusting or awesome, but it’s
     definitely dangerous. If I called `f(n = 1)`, I probably didn’t mean
@@ -1607,6 +1614,13 @@ the below in a programming language.
     can’t explain why base R doesn’t do the same. It’s got to either be
     some sort of compromise for matrix algebra or for making working in
     your console nicer.
+
+    -   Update: Section 6.8 of the *Software for Data Analysis:
+        Programming with R* book by John Chambers offers a partial
+        explanation: “*The default is, and always has been, `drop=TRUE`;
+        probably an unwise decision on our part long ago, but now one of
+        those back-compatibility burdens that are unlikely to be
+        changed.*”
 
 -   The `drop` argument is even stranger than I’m letting on. Its
     defaults differ depending on whether there may only be one column
@@ -3056,7 +3070,7 @@ issues:
         ## function (n, expr, simplify = "array") 
         ## sapply(integer(n), eval.parent(substitute(function(...) expr)), 
         ##     simplify = simplify)
-        ## <bytecode: 0x558cfd8d1250>
+        ## <bytecode: 0x55e0445ae410>
         ## <environment: namespace:base>
         ```
 
@@ -3078,7 +3092,7 @@ issues:
         ##         X <- as.list(X)
         ##     .Internal(lapply(X, FUN))
         ## }
-        ## <bytecode: 0x558cfc8e6f10>
+        ## <bytecode: 0x55e0435a3f10>
         ## <environment: namespace:base>
         ```
 
@@ -3775,6 +3789,10 @@ on:
     saying that `x` can be “*an R object*”. I’d give examples, but you
     really don’t want to think too hard about this.
 
+    -   I’ve recently skimmed some books by John Chambers. He also
+        claims that everything in R is an object. I think that what this
+        really means is that `class()` always returns something?
+
 -   The `[` and `[[` functions like to drop the attributes from your S3
     objects, meaning that you almost always have to write a `[` and `[[`
     method for them. On the bright side, this is documented behaviour.
@@ -3904,7 +3922,9 @@ know if you’re reading the whole truth or not. Furthermore, if this is
 at all representative of the complexity of S3, how can anyone be
 expected to have the patience to even begin learning S4? I know that
 it’s dishonest to blame S4 for the sins of S3, but I wouldn’t blame any
-newcomer to R’s OOP for doing so.
+newcomer to R’s OOP for doing so. One wonders if we should start
+newcomers on S4 and leave S3 until much later. The books by John
+Chambers take this approach and generally say to stick to S4.
 
 ### 4.9.4 S4
 
@@ -4397,7 +4417,7 @@ Some things seems obviously missing from R:
     a[-4.8]
     ## [1]  1  2  3  5  6  7  8  9 10
     sample(4.8)
-    ## [1] 3 2 4 1
+    ## [1] 2 3 4 1
     ```
 
     The pattern is that [R silently truncates the numeric index of
@@ -4845,6 +4865,12 @@ in-depth. You can find a fair bit on Twitter and Reddit as well, but
 you’d have to go looking. I found that Twitter had the most positive
 reception, Reddit was more negative and Hacker News was mixed.
 
+In April, I finished the proofreading and [sent this off to
+R-devel](https://stat.ethz.ch/pipermail/r-devel/2022-April/081605.html).
+I am very thankful for their comments and their sincere efforts to help
+me. I hope that my replies didn’t come off as half hearted. I was simply
+unequipped to handle to mass of feedback.
+
 I won’t single out any particular commenters, but there are some ideas
 and trends that I feel are worth addressing:
 
@@ -4858,8 +4884,8 @@ and trends that I feel are worth addressing:
 -   I find it interesting to note what hasn’t been criticised. The
     following examples stand out to me:
     -   Although many said they found my ‘`"es"` in `"test"`’ challenge
-        a bit too easy (I think they missed my point), I couldn’t find
-        anyone anywhere claiming to have won my [`mapply()`
+        a bit too easy (I think they missed my point), I could only find
+        one person who made any attempt at my [`mapply()`
         challenge](#475-mapply-challenge).
     -   If my complaints about R not telling you what [the dangers of
         non-standard evaluation](#4112-non-standard-evaluation) are had
@@ -4908,7 +4934,8 @@ and trends that I feel are worth addressing:
     If anything was ‘Worse is Better’, then it was probably S (which
     would make R “almost the right thing”, in that essay’s terms).
     However, I’m not historically knowledgeable enough to know key
-    factors like how simple S’s early implementations were.
+    factors like how simple S’s early implementations were. I hear that
+    it was very easy to get running on Unix?
 -   I never made it clear that I understand why backwards compatibility
     is a priority for R. For example, R code appears in a lot of science
     papers and you don’t want such code to become unrunnable or to
