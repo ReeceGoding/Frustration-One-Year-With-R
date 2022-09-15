@@ -45,7 +45,7 @@ I am not an R expert. I freely admit that I am lacking in the following regards:
 * I know almost nothing about Shiny, but it appears to be far better than Power BI.
 * My experience with R's competitors is minimal. In particular, I have virtually no experience with Python or Julia. Most of my points on R are about R on its own merits, rather than comparing it to its competition. I plan to pick up Python soon, but Julia is in my distant future.
 * Although I have used SQL professionally, how it compares to R has rarely crossed my mind. This suggests that I'm missing something about both languages. I plan to one day read a SQL book while having `dplyr` loaded.
-* R's functional aspects make me wish that I knew more Lisp. I'm slowly picking it up, but I've currently not got any further than chapter 4 of _Structure and Interpretation of Computer Programs_. R's clear Scheme inspiration makes Lisp books a lot less fun to read; It's like I've already been spoiled on some of the best bits.
+* R's functional aspects make me wish that I knew more Lisp. All that I've done is finish reading _Structure and Interpretation of Computer Programs_. I will learn more, but R's clear Scheme inspiration makes Lisp books a lot less fun to read. It's like I've already been spoiled on some of the best bits.
 * I haven't done enough OOP in R. My only real experience is with S3. S4 looks enough like CLOS that I expect that I will revisit it at some point after picking up Common Lisp, but that will just be to play around.
 *	I have never made a package for R and have no experience with the ecosystem surrounding that (e.g. `roxygen2`). I have no plans for this.
 * I have no experience in developing large projects in R. This is likely a part of why I have never felt the need to make significant use of its OOP. I do not expect this to change.
@@ -1217,6 +1217,7 @@ Some things seems obviously missing from R:
   sample(4.8)
   ```
   The pattern is that [R silently truncates the numeric index of choice towards 0](https://cran.r-project.org/doc/manuals/r-release/R-lang.html#Indexing-by-vectors).
+* The base libraries have no obvious dedicated functions for pivoting. [You can do it with `tapply()`](https://stackoverflow.com/a/30198488/), but nothing in the docs would make you guess that. In fact, virtually every occurrence of the word "pivot" in R's docs is talking about `chol()`. I think that you can pivot/unpivot with `stack()`/`unstack()`, but the only time I've ever seen those functions mentioned was in this [SQL article](https://www.sqlshack.com/data-science-in-sql-server-unpivoting-data/).
 
 Admittedly, few if any of these are major, but they're a bit annoying.
 
@@ -1260,6 +1261,7 @@ Now for the specific libraries. Assume that I'm ignorant of any that I've skippe
 * Compared to base R, the knowledge that `dplyr` will only output a tibble is a relief. There's no need to consider if I need `tapply()`, `by()`, or `aggregate()` for a job or if I need to coerce my input in order to go in/out of functions like `table()`. I therefore need to do a lot less guessing. [This link](https://gist.github.com/hadley/c430501804349d382ce90754936ab8ec) demonstrates it better than I can, although the formula solution with `aggregate()` is in base R's favour.
 * `dplyr::mutate()` is just plain better than base R's `transform()`. In particular, it allow you to refer to columns that you've just created.
 * [This link](https://cran.r-project.org/web/packages/dplyr/vignettes/base.html) shows a comparison between base R and `dplyr`. It's rather persuasive. In particular, it gives you the sense that you can make safe guesses about the `dplyr` functions.
+* I need to play around with it more, but I think that `pivot_wider()`'s `values_fn` argument makes `dplyr` the only tool that I've ever seen that allows arbitrary functions in a pivot table.
 * I don't like how the `dplyr` functions only accept data frame or objects derived from them. If I'm doing some work with something like `stringr`, I instinctively want to use a Tidyverse solution to problems like subsetting my inputs. However, if I reach for `dplyr::filter()`, I get errors due to character vector not being data frames. This isn't really `dplyr`'s fault and they shouldn't try to fix it, but it's still a minor annoyance.
 
 ## Ggplot2

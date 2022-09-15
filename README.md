@@ -2,72 +2,108 @@ Frustration: One Year With R
 ================
 Reece Goding
 
--   [1 Introduction](#1-introduction)
-    -   [1.1 Length](#11-length)
-    -   [1.2 Experience](#12-experience)
-    -   [1.3 Ignorance](#13-ignorance)
-    -   [1.4 Assumed Knowledge](#14-assumed-knowledge)
-    -   [1.5 Disclaimer](#15-disclaimer)
--   [2 General Feelings](#2-general-feelings)
--   [3 What R Does Right](#3-what-r-does-right)
-    -   [3.1 Mathematics and Statistics](#31-mathematics-and-statistics)
-    -   [3.2 Names and Data Frames](#32-names-and-data-frames)
-    -   [3.3 Outstanding Packages](#33-outstanding-packages)
-    -   [3.4 Vectorization](#34-vectorization)
-    -   [3.5 Functional Programming](#35-functional-programming)
-        -   [3.5.1 First-class Functions](#351-first-class-functions)
-        -   [3.5.2 First-class
-            Environments](#352-first-class-environments)
-        -   [3.5.3 Generic Functions](#353-generic-functions)
-    -   [3.6 Syntax](#36-syntax)
-    -   [3.7 Miscellaneous Positives](#37-miscellaneous-positives)
--   [4 What R Does Wrong](#4-what-r-does-wrong)
-    -   [4.1 Lists](#41-lists)
-    -   [4.2 Strings](#42-strings)
-    -   [4.3 Variable Manipulation](#43-variable-manipulation)
-    -   [4.4 Switch](#44-switch)
-    -   [4.5 Subsetting](#45-subsetting)
-        -   [4.5.1 Combining Operators](#451-combining-operators)
-        -   [4.5.2 Removing Dimensions](#452-removing-dimensions)
-        -   [4.5.3 Dangers of $](#453-dangers-of-)
-        -   [4.5.4 Indistinguishable
-            Errors](#454-indistinguishable-errors)
-        -   [4.5.5 Named Atomic Vectors](#455-named-atomic-vectors)
-        -   [4.5.6 Silence](#456-silence)
-        -   [4.5.7 Subsetting by
-            Predicates](#457-subsetting-by-predicates)
-    -   [4.6 Vectorization Again](#46-vectorization-again)
-    -   [4.7 R Won’t Help You](#47-r-wont-help-you)
-        -   [4.7.1 The Documentation](#471-the-documentation)
-        -   [4.7.2 The Functions](#472-the-functions)
-        -   [4.7.3 Extended Example:
-            Matrices](#473-extended-example-matrices)
-        -   [4.7.4 The Error Messages](#474-the-error-messages)
-        -   [4.7.5 Mapply Challenge](#475-mapply-challenge)
-        -   [4.7.6 Stealing from the
-            Tidyverse](#476-stealing-from-the-tidyverse)
-    -   [4.8 The Community](#48-the-community)
-    -   [4.9 Generic Functions Again](#49-generic-functions-again)
-        -   [4.9.1 The Class System](#491-the-class-system)
-        -   [4.9.2 Existing Functions](#492-existing-functions)
-        -   [4.9.3 Internal Generics](#493-internal-generics)
-        -   [4.9.4 S4](#494-s4)
-    -   [4.10 Factor Variables](#410-factor-variables)
-    -   [4.11 Syntactic Sugar](#411-syntactic-sugar)
-        -   [4.11.1 Sequences](#4111-sequences)
-        -   [4.11.2 Non-standard
-            Evaluation](#4112-non-standard-evaluation)
-    -   [4.12 Missing Features](#412-missing-features)
-    -   [4.13 Miscellaneous Negatives](#413-miscellaneous-negatives)
--   [5 The Tidyverse](#5-the-tidyverse)
-    -   [5.1 Dplyr](#51-dplyr)
-    -   [5.2 Ggplot2](#52-ggplot2)
-    -   [5.3 Lubridate](#53-lubridate)
-    -   [5.4 Magrittr](#54-magrittr)
-    -   [5.5 Purrr](#55-purrr)
-    -   [5.6 Stringr and Tibble](#56-stringr-and-tibble)
--   [6 Conclusion](#6-conclusion)
--   [7 Feedback](#7-feedback)
+-   <a href="#1-introduction" id="toc-1-introduction">1 Introduction</a>
+    -   <a href="#11-length" id="toc-11-length">1.1 Length</a>
+    -   <a href="#12-experience" id="toc-12-experience">1.2 Experience</a>
+    -   <a href="#13-ignorance" id="toc-13-ignorance">1.3 Ignorance</a>
+    -   <a href="#14-assumed-knowledge" id="toc-14-assumed-knowledge">1.4
+        Assumed Knowledge</a>
+    -   <a href="#15-disclaimer" id="toc-15-disclaimer">1.5 Disclaimer</a>
+-   <a href="#2-general-feelings" id="toc-2-general-feelings">2 General
+    Feelings</a>
+-   <a href="#3-what-r-does-right" id="toc-3-what-r-does-right">3 What R
+    Does Right</a>
+    -   <a href="#31-mathematics-and-statistics"
+        id="toc-31-mathematics-and-statistics">3.1 Mathematics and
+        Statistics</a>
+    -   <a href="#32-names-and-data-frames"
+        id="toc-32-names-and-data-frames">3.2 Names and Data Frames</a>
+    -   <a href="#33-outstanding-packages" id="toc-33-outstanding-packages">3.3
+        Outstanding Packages</a>
+    -   <a href="#34-vectorization" id="toc-34-vectorization">3.4
+        Vectorization</a>
+    -   <a href="#35-functional-programming"
+        id="toc-35-functional-programming">3.5 Functional Programming</a>
+        -   <a href="#351-first-class-functions"
+            id="toc-351-first-class-functions">3.5.1 First-class Functions</a>
+        -   <a href="#352-first-class-environments"
+            id="toc-352-first-class-environments">3.5.2 First-class Environments</a>
+        -   <a href="#353-generic-functions" id="toc-353-generic-functions">3.5.3
+            Generic Functions</a>
+    -   <a href="#36-syntax" id="toc-36-syntax">3.6 Syntax</a>
+    -   <a href="#37-miscellaneous-positives"
+        id="toc-37-miscellaneous-positives">3.7 Miscellaneous Positives</a>
+-   <a href="#4-what-r-does-wrong" id="toc-4-what-r-does-wrong">4 What R
+    Does Wrong</a>
+    -   <a href="#41-lists" id="toc-41-lists">4.1 Lists</a>
+    -   <a href="#42-strings" id="toc-42-strings">4.2 Strings</a>
+    -   <a href="#43-variable-manipulation"
+        id="toc-43-variable-manipulation">4.3 Variable Manipulation</a>
+    -   <a href="#44-switch" id="toc-44-switch">4.4 Switch</a>
+    -   <a href="#45-subsetting" id="toc-45-subsetting">4.5 Subsetting</a>
+        -   <a href="#451-combining-operators"
+            id="toc-451-combining-operators">4.5.1 Combining Operators</a>
+        -   <a href="#452-removing-dimensions"
+            id="toc-452-removing-dimensions">4.5.2 Removing Dimensions</a>
+        -   <a href="#453-dangers-of-" id="toc-453-dangers-of-">4.5.3 Dangers of
+            $</a>
+        -   <a href="#454-indistinguishable-errors"
+            id="toc-454-indistinguishable-errors">4.5.4 Indistinguishable Errors</a>
+        -   <a href="#455-named-atomic-vectors"
+            id="toc-455-named-atomic-vectors">4.5.5 Named Atomic Vectors</a>
+        -   <a href="#456-silence" id="toc-456-silence">4.5.6 Silence</a>
+        -   <a href="#457-subsetting-by-predicates"
+            id="toc-457-subsetting-by-predicates">4.5.7 Subsetting by Predicates</a>
+    -   <a href="#46-vectorization-again" id="toc-46-vectorization-again">4.6
+        Vectorization Again</a>
+    -   <a href="#47-r-wont-help-you" id="toc-47-r-wont-help-you">4.7 R Won’t
+        Help You</a>
+        -   <a href="#471-the-documentation" id="toc-471-the-documentation">4.7.1
+            The Documentation</a>
+        -   <a href="#472-the-functions" id="toc-472-the-functions">4.7.2 The
+            Functions</a>
+        -   <a href="#473-extended-example-matrices"
+            id="toc-473-extended-example-matrices">4.7.3 Extended Example:
+            Matrices</a>
+        -   <a href="#474-the-error-messages" id="toc-474-the-error-messages">4.7.4
+            The Error Messages</a>
+        -   <a href="#475-mapply-challenge" id="toc-475-mapply-challenge">4.7.5
+            Mapply Challenge</a>
+        -   <a href="#476-stealing-from-the-tidyverse"
+            id="toc-476-stealing-from-the-tidyverse">4.7.6 Stealing from the
+            Tidyverse</a>
+    -   <a href="#48-the-community" id="toc-48-the-community">4.8 The
+        Community</a>
+    -   <a href="#49-generic-functions-again"
+        id="toc-49-generic-functions-again">4.9 Generic Functions Again</a>
+        -   <a href="#491-the-class-system" id="toc-491-the-class-system">4.9.1 The
+            Class System</a>
+        -   <a href="#492-existing-functions" id="toc-492-existing-functions">4.9.2
+            Existing Functions</a>
+        -   <a href="#493-internal-generics" id="toc-493-internal-generics">4.9.3
+            Internal Generics</a>
+        -   <a href="#494-s4" id="toc-494-s4">4.9.4 S4</a>
+    -   <a href="#410-factor-variables" id="toc-410-factor-variables">4.10
+        Factor Variables</a>
+    -   <a href="#411-syntactic-sugar" id="toc-411-syntactic-sugar">4.11
+        Syntactic Sugar</a>
+        -   <a href="#4111-sequences" id="toc-4111-sequences">4.11.1 Sequences</a>
+        -   <a href="#4112-non-standard-evaluation"
+            id="toc-4112-non-standard-evaluation">4.11.2 Non-standard Evaluation</a>
+    -   <a href="#412-missing-features" id="toc-412-missing-features">4.12
+        Missing Features</a>
+    -   <a href="#413-miscellaneous-negatives"
+        id="toc-413-miscellaneous-negatives">4.13 Miscellaneous Negatives</a>
+-   <a href="#5-the-tidyverse" id="toc-5-the-tidyverse">5 The Tidyverse</a>
+    -   <a href="#51-dplyr" id="toc-51-dplyr">5.1 Dplyr</a>
+    -   <a href="#52-ggplot2" id="toc-52-ggplot2">5.2 Ggplot2</a>
+    -   <a href="#53-lubridate" id="toc-53-lubridate">5.3 Lubridate</a>
+    -   <a href="#54-magrittr" id="toc-54-magrittr">5.4 Magrittr</a>
+    -   <a href="#55-purrr" id="toc-55-purrr">5.5 Purrr</a>
+    -   <a href="#56-stringr-and-tibble" id="toc-56-stringr-and-tibble">5.6
+        Stringr and Tibble</a>
+-   <a href="#6-conclusion" id="toc-6-conclusion">6 Conclusion</a>
+-   <a href="#7-feedback" id="toc-7-feedback">7 Feedback</a>
 
 # 1 Introduction
 
@@ -206,11 +242,11 @@ regards:
     rarely crossed my mind. This suggests that I’m missing something
     about both languages. I plan to one day read a SQL book while having
     `dplyr` loaded.
--   R’s functional aspects make me wish that I knew more Lisp. I’m
-    slowly picking it up, but I’ve currently not got any further than
-    chapter 4 of *Structure and Interpretation of Computer Programs*.
-    R’s clear Scheme inspiration makes Lisp books a lot less fun to
-    read; It’s like I’ve already been spoiled on some of the best bits.
+-   R’s functional aspects make me wish that I knew more Lisp. All that
+    I’ve done is finish reading *Structure and Interpretation of
+    Computer Programs*. I will learn more, but R’s clear Scheme
+    inspiration makes Lisp books a lot less fun to read. It’s like I’ve
+    already been spoiled on some of the best bits.
 -   I haven’t done enough OOP in R. My only real experience is with S3.
     S4 looks enough like CLOS that I expect that I will revisit it at
     some point after picking up Common Lisp, but that will just be to
@@ -1053,7 +1089,7 @@ use R.
     str(x)
     ##  num [1:3, 1:3] 1 0 0 0 1 0 0 0 1
     dput(x) #Dirty trick, don't use in practice.
-    ## structure(c(1, 0, 0, 0, 1, 0, 0, 0, 1), .Dim = c(3L, 3L))
+    ## structure(c(1, 0, 0, 0, 1, 0, 0, 0, 1), dim = c(3L, 3L))
     ```
 
     Among these, `str()` is the closest. However, you can see that it
@@ -1734,7 +1770,7 @@ the below in a programming language.
     R, so it’s far too easy to forget that you needed the extra comma
     for the `drop` argument.
 
-### 4.5.3 Dangers of $
+### 4.5.3 Dangers of \$
 
 The `$` operator is both silently hazardous and redundant:
 
@@ -2575,6 +2611,8 @@ vectorized.
 
     ``` r
     mtcars[mtcars$mpg < 20 && mtcars$hp > 150,]
+    ## Warning in mtcars$mpg < 20 && mtcars$hp > 150: 'length(x) = 32 > 1' in coercion
+    ## to 'logical(1)'
     ##  [1] mpg  cyl  disp hp   drat wt   qsec vs   am   gear carb
     ## <0 rows> (or 0-length row.names)
     mtcars[mtcars$mpg < 20 & mtcars$hp > 150,]
@@ -3074,7 +3112,7 @@ issues:
         ## function (n, expr, simplify = "array") 
         ## sapply(integer(n), eval.parent(substitute(function(...) expr)), 
         ##     simplify = simplify)
-        ## <bytecode: 0x559bf33299c8>
+        ## <bytecode: 0x55735f5f7800>
         ## <environment: namespace:base>
         ```
 
@@ -3096,7 +3134,7 @@ issues:
         ##         X <- as.list(X)
         ##     .Internal(lapply(X, FUN))
         ## }
-        ## <bytecode: 0x559bf2333f10>
+        ## <bytecode: 0x55735ddf97a8>
         ## <environment: namespace:base>
         ```
 
@@ -4421,12 +4459,22 @@ Some things seems obviously missing from R:
     a[-4.8]
     ## [1]  1  2  3  5  6  7  8  9 10
     sample(4.8)
-    ## [1] 3 2 1 4
+    ## [1] 4 3 1 2
     ```
 
     The pattern is that [R silently truncates the numeric index of
     choice towards
     0](https://cran.r-project.org/doc/manuals/r-release/R-lang.html#Indexing-by-vectors).
+
+-   The base libraries have no obvious dedicated functions for pivoting.
+    [You can do it with
+    `tapply()`](https://stackoverflow.com/a/30198488/), but nothing in
+    the docs would make you guess that. In fact, virtually every
+    occurrence of the word “pivot” in R’s docs is talking about
+    `chol()`. I think that you can pivot/unpivot with
+    `stack()`/`unstack()`, but the only time I’ve ever seen those
+    functions mentioned was in this [SQL
+    article](https://www.sqlshack.com/data-science-in-sql-server-unpivoting-data/).
 
 Admittedly, few if any of these are major, but they’re a bit annoying.
 
@@ -4632,6 +4680,10 @@ I’ve skipped.
     shows a comparison between base R and `dplyr`. It’s rather
     persuasive. In particular, it gives you the sense that you can make
     safe guesses about the `dplyr` functions.
+-   I need to play around with it more, but I think that
+    `pivot_wider()`’s `values_fn` argument makes `dplyr` the only tool
+    that I’ve ever seen that allows arbitrary functions in a pivot
+    table.
 -   I don’t like how the `dplyr` functions only accept data frame or
     objects derived from them. If I’m doing some work with something
     like `stringr`, I instinctively want to use a Tidyverse solution to
