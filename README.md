@@ -3082,7 +3082,7 @@ issues:
     ## function (n, expr, simplify = "array") 
     ## sapply(integer(n), eval.parent(substitute(function(...) expr)), 
     ##     simplify = simplify)
-    ## <bytecode: 0x55f5c42d74a0>
+    ## <bytecode: 0x561319f581c8>
     ## <environment: namespace:base>
     ```
 
@@ -3103,7 +3103,7 @@ issues:
     ##         X <- as.list(X)
     ##     .Internal(lapply(X, FUN))
     ## }
-    ## <bytecode: 0x55f5c2212968>
+    ## <bytecode: 0x561317e95968>
     ## <environment: namespace:base>
     ```
 
@@ -3263,6 +3263,14 @@ of R’s functions. Neither are satisfactory.
 - Argument names are also inconsistent. Most of the apply family calls
   its function argument `FUN`, but `rapply()` and the funprog stuff use
   `f`.
+- Even when argument names are consistent, their behaviour may not be.
+  For example, `complex(real = 1, imaginary = 2, length.out = 0)` and
+  `rep_len(complex(real = 1, imaginary = 2), length.out = 0)` do not
+  have the same return value. If you ask me, it’s `complex()` that has
+  the wrong behaviour here. I can’t see anywhere in its documentation
+  mentioning that the other arguments can overrule the `length.out = 0`
+  argument and give you vectors larger than what you asked for. At least
+  throw a warning!
 - Related functions sometimes expect their arguments to be given in a
   different order. For example, except for `mapply()`, the entire apply
   family wants the data to come before the function, whereas all of the
@@ -4404,7 +4412,7 @@ Some things seems obviously missing from R:
   a[-4.8]
   ## [1]  1  2  3  5  6  7  8  9 10
   sample(4.8)
-  ## [1] 4 2 1 3
+  ## [1] 2 3 1 4
   ```
 
   The pattern is that [R silently truncates the numeric index of choice
@@ -4497,6 +4505,15 @@ And now for everything that I’ve got left in the bag.
   This means that nobody is really doing any bug fixing or even
   reporting. On the bright side, this makes it very easy to improve
   other people’s R code and get accepted pull requests.
+
+- For obscure and maybe machine-dependent [C
+  reasons](https://stackoverflow.com/questions/74798626/why-is-loginf-inf-j-equal-to-inf-0-785398-j-in-c-python-numpy/),
+  you will not be able to guess the return value of
+  `log(complex(real = Inf, imaginary = Inf))`. I also don’t quite like
+  how `complex(real = Inf, imaginary = Inf)` prints. Seeing `Inf+Infi`
+  makes me think that I’ve forgotten some variable called “Infi”.
+  Luckily, I’ve never had a reason to really bother with R’s complex
+  numbers.
 
 # 5 The Tidyverse
 
