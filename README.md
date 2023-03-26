@@ -797,6 +797,20 @@ without compromises, but R’s choices of compromises and inconsistencies
 are utterly unpredictable. I could deal with a handful of problems like
 the many that will follow, but this is far more than a handful.
 
+March 2023 update: It occurs to me that I don’t really have a summary of
+where R goes wrong. This is consistent with my above claim that R’s
+ultimate problem is the sum of its little problems. However, one pattern
+has become obvious both from learning other languages and from reading
+the section headings: R doesn’t have the right data structures; Roughly
+half of the subsections here are dedicated to complaining about them.
+This is no small complaint. [One of the big rules in the Unix Philosophy
+is that data structures are central to
+programming](www.catb.org/~esr/writings/taoup/html/ch01s06.html#rule5).
+If your data structures are wrong, then finding the correct algorithm
+becomes much harder. It’s little wonder that a focus of the Tidyverse is
+to clean up one of R’s primary data structures (the data frame) and then
+stick to it as much as possible.
+
 ## 4.1 Lists
 
 We’ll start gentle. R’s list type is an unavoidable part of the
@@ -3082,7 +3096,7 @@ issues:
     ## function (n, expr, simplify = "array") 
     ## sapply(integer(n), eval.parent(substitute(function(...) expr)), 
     ##     simplify = simplify)
-    ## <bytecode: 0x561319f581c8>
+    ## <bytecode: 0x56459c65f1c0>
     ## <environment: namespace:base>
     ```
 
@@ -3103,7 +3117,7 @@ issues:
     ##         X <- as.list(X)
     ##     .Internal(lapply(X, FUN))
     ## }
-    ## <bytecode: 0x561317e95968>
+    ## <bytecode: 0x56459a5959b8>
     ## <environment: namespace:base>
     ```
 
@@ -3418,6 +3432,21 @@ but let’s go deeper:
   operations in your code. Doubts like “*is there really no better way?
   R is supposed to be good with this sort of stuff*” become frequent
   when wanting to work by row.
+
+  - March 2023 update: I don’t think that there’s anywhere in R’s docs
+    that tell you that `expand.grid()` is used to make Cartesian
+    products. This compares poorly to languages such as Racket, which
+    calls the practically equivalent function `cartesian-product`.
+    Similarly, Python just calls it `product`. In both cases, they
+    return a collection of lists/tuples where each list/tuple would be a
+    row in `expand.grid()`’s data frame. Nested collections aren’t the
+    easiest things to deal with, but they seem to produce more intuitive
+    code than the messes that you get from trying to treat a data frame
+    like a matrix. Maybe the lesson here is that you should iterate
+    through a data frame’s rows the hard way rather than using functions
+    that let you think of it as a matrix? I think that this explains the
+    doubt that I’ve mentioned above; R’s data structures have a habit of
+    making the right way the hard way.
 
 - So what happens if, when manipulating a matrix, you write the
   `sapply()` that the rest of the language has taught you to expect? At
@@ -4412,7 +4441,7 @@ Some things seems obviously missing from R:
   a[-4.8]
   ## [1]  1  2  3  5  6  7  8  9 10
   sample(4.8)
-  ## [1] 2 3 1 4
+  ## [1] 4 2 3 1
   ```
 
   The pattern is that [R silently truncates the numeric index of choice
