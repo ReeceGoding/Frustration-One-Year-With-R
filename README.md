@@ -805,7 +805,7 @@ the section headings: R doesn’t have the right data structures; Roughly
 half of the subsections here are dedicated to complaining about them.
 This is no small complaint. [One of the big rules in the Unix Philosophy
 is that data structures are central to
-programming](www.catb.org/~esr/writings/taoup/html/ch01s06.html#rule5).
+programming](https://www.catb.org/~esr/writings/taoup/html/ch01s06.html#rule5).
 If your data structures are wrong, then finding the correct algorithm
 becomes much harder. It’s little wonder that a focus of the Tidyverse is
 to clean up one of R’s primary data structures (the data frame) and then
@@ -3096,7 +3096,7 @@ issues:
     ## function (n, expr, simplify = "array") 
     ## sapply(integer(n), eval.parent(substitute(function(...) expr)), 
     ##     simplify = simplify)
-    ## <bytecode: 0x56459c65f1c0>
+    ## <bytecode: 0x55e8793a81c0>
     ## <environment: namespace:base>
     ```
 
@@ -3117,7 +3117,7 @@ issues:
     ##         X <- as.list(X)
     ##     .Internal(lapply(X, FUN))
     ## }
-    ## <bytecode: 0x56459a5959b8>
+    ## <bytecode: 0x55e8772de9b8>
     ## <environment: namespace:base>
     ```
 
@@ -4441,7 +4441,7 @@ Some things seems obviously missing from R:
   a[-4.8]
   ## [1]  1  2  3  5  6  7  8  9 10
   sample(4.8)
-  ## [1] 4 2 3 1
+  ## [1] 3 2 1 4
   ```
 
   The pattern is that [R silently truncates the numeric index of choice
