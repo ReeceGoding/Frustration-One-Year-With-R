@@ -1,6 +1,6 @@
 
 
-# Conclusion
+# Conclusion {#sec-conclusion}
 
 If I were being generous, I would say that R teaches you some great lessons about functional programming while being a useful DSL and that its biggest fault is that it tries to do too much, ultimately becoming brutally inconsistent. I'd also say that the Tidyverse is a useful set of packages that, while unable to fix R and certainly not a panacea, do a lot to improve it within their specific domains. However, I'm not that generous.
 

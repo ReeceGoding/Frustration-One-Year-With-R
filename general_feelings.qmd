@@ -1,6 +1,6 @@
 
 
-# General Feelings
+# General Feelings {#sec-general-feelings}
 
 My overall feelings about R are tough to quantify. As I mentioned near the start, its ultimate problem is the sum of its little problems. However, if I must speak generally, then I think that the problem with R is that it's always some mix of the following:
 
