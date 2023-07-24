@@ -10,5 +10,7 @@ Encoding: UTF-8
 Imports:
   dplyr,
   purrr,
+  magrittr,
   rlang,
-  rmarkdown
+  rmarkdown,
+  tibble
