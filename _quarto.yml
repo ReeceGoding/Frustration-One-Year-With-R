@@ -3,6 +3,7 @@ project:
 book:
   title: "Frustration: One Year With R"
   author: Reece Goding
+  site-url: "https://ReeceGoding.github.io/Frustration-One-Year-With-R/index.html"
   description: "What follows is an account of my experiences from about one year of roughly daily R usage."
   chapters:
   - index.qmd

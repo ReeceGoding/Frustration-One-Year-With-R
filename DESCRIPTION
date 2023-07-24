@@ -1,0 +1,12 @@
+Package: rpkgs
+Title: R Packages
+Version: 0.1
+Authors@R: 
+    person("Reece", "Goding", , "reece.goding@outlook.com", role = c("aut", "cre"))
+Description: This is not a package, but we just use this file to declare
+    the dependencies of the site.
+URL: https://ReeceGoding.github.io/Frustration-One-Year-With-R/index.html
+Encoding: UTF-8
+Imports:
+  dplyr,
+  rlang
