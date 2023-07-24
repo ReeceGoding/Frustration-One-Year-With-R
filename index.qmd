@@ -1,0 +1,57 @@
+
+
+# Introduction
+
+What follows is an account of my experiences from about one year of roughly daily R usage. It began as a list of things that I liked and disliked about the language, but grew to be something huge. Once the list exceeded ten thousand words, I knew that it must be published. By the time it was ready, it had nearly tripled in length. It took five months of weekends just to get it all in R Markdown.
+
+This isn't an attack on R or a pitch for anything else. It is only an account of what I've found to be right and wrong with the language. Although the length of my list of what is wrong far exceeds that of what is right, that may be my failing rather than R's. I suspect that my list of what R does right will grow as I learn other languages and begin to miss some of R's benefits. I welcome any attempts to correct this or any other errors that you find. Some major errors will have slipped in somewhere or other.
+
+## Length
+
+To start, I must issue a warning: This document is **huge**. I have tried to keep everything contained in small sections, such that the reader has plenty of points where they can pause and return to the document later, but the word count is still far higher than I'm happy with. I have tried to not be too petty, but every negative point in here comes from an honest position of frustration. There are some things that I really love about R. I've even devoted [an entire section to them](#what-r-does-right). However, if there is one point that I really want this document to get across, it's that R is filled to the brim with small madnesses. Although I can name a few major issues with R, its ultimate problem is the sum of its little problems. This document couldn't be short.
+
+Also, on the topic of the sections in this document, watch out for all of the internal links. Nothing in R Markdown makes them look distinct from external ones, so you might lose your place if you don't take care to open all of your links in a new tab/window.
+
+## Experience
+
+Before I say anything nasty about R, a show of good faith is in order. In my year with R, I have done the following:
+
+- Added almost 100 [R solutions](https://github.com/ReeceGoding/Rosetta-Code-Submissions) to [Rosetta Code](https://rosettacode.org/wiki/Rosetta_Code).
+- Asked over 100 Stack Overflow R questions.
+- Read both editions of [*Advanced R*](https://adv-r.hadley.nz/) from cover to cover. I didn't do the exercises, but I'd recommend the books to any serious R user.
+- Read the first edition of [*R for Data Science*](https://r4ds.had.co.nz/) from cover to cover. It's a good enough non-technical introduction to the Tidyverse and a handful of other popular parts of R's ecosystem. However, I can't give it a strong recommendation for a variety of reasons:
+  - A lot of the exercises didn't specify what they wanted from your answer. This made checking your solutions against anyone else's quite difficult.
+  - It deliberately avoids the fundamentals of programming -- e.g. making functions, loops, and if statements -- until the second half. I therefore suspect that any non-novice would be better off finding an introduction to the relevant packages with their favourite search engine.
+  - Despite my efforts, I can find no "*Tidyverse for Programmers*" book. When one is inevitably written, it will make this book redundant for many potential readers.
+- Read [*The R Inferno*](https://www.burns-stat.com/pages/Tutor/R_inferno.pdf) and some other well-known PDFs and manuals, such as [*Rtips. Revival 2014!*](https://pj.freefaculty.org/R/Rtips.html) and the official [*An Introduction to R*](https://cran.r-project.org/doc/manuals/r-release/R-intro.html), [*R Language Definition*](https://cran.r-project.org/doc/manuals/r-release/R-lang.html), and [*R FAQ*](https://cran.r-project.org/doc/FAQ/R-FAQ.html) manuals. Out of all of these, I must recommend [*The R Inferno*](https://www.burns-stat.com/pages/Tutor/R_inferno.pdf). The page count may be intimidating, but it's a delightfully fast read that mirrors many of my points. In many cases I have pointed the reader straight to its relevant section. Its only true fault is its age. I wish that I could claim that this document is a sequel to it, but I'm writing to review rather than advise.
+  - Update: After publishing this review, I skimmed a handful of books by John Chambers. There were some gems in them and I've mentioned them where needed, but I don't expect that I will ever read those books closely. I read them far too quickly for me to be able to say anything insightful, but I will confess that I feel fundamentally opposed to any programming textbooks that lack exercises.
+- Made minor contributions to open source R projects.
+
+At minimum, I can say with confidence that unless I happen to pick up an R-focused statistics textbook -- [the *R FAQ* has some tempting items](https://cran.r-project.org/doc/FAQ/R-FAQ.html#What-documentation-exists-for-R_003f) -- I've already done all of the R-related reading that I ever plan to do. All that is left for me is to use the language more and more. I hope that this section shows that I've given it a good chance before writing this review of it.
+
+## Ignorance
+
+I am not an R expert. I freely admit that I am lacking in the following regards:
+
+- You can never have done enough statistics with R. I've mostly used R as a programming language rather than a statistics tool. My arguments would certainly be stronger if I had some published stats work to back them up, even just blogs. I might correct this at some point.
+- The above point makes me more ignorant of formulae objects (e.g. expressions like `foo ~ log(bar) * bar^2`), the `plot()` function, and factor variables than I ought to be. I saw a lot of them during my degree, but have long since forgotten them and have never needed to really pick them back up. For similar reasons, I have nothing to say on how hard it can sometimes be to read data in to R.
+- I haven't used enough of the community's favourite libraries. My biggest regret is my near-total ignorance of `data.table`. From [what little I've seen](https://atrebas.github.io/post/2019-03-03-datatable-dplyr/), it's a real pleasure. More practice with `ggplot2`, the wider Tidyverse, and R Markdown is also in order. If I continue to use R, I will gradually master these. For now, it suffices to say that my experience with base R far exceeds my knowledge of both the Tidyverse and many other well-loved packages. If I've missed any gems, let me know.
+- I know almost nothing about Shiny, but it appears to be far better than Power BI.
+- My experience with R's competitors is minimal. In particular, I have virtually no experience with Python or Julia. Most of my points on R are about R on its own merits, rather than comparing it to its competition. I plan to pick up Python soon, but Julia is in my distant future.
+- Although I have used SQL professionally, how it compares to R has rarely crossed my mind. This suggests that I'm missing something about both languages. I plan to one day read a SQL book while having `dplyr` loaded.
+- R's functional aspects make me wish that I knew more Lisp. All that I've done is finish reading *Structure and Interpretation of Computer Programs*. I will learn more, but R's clear Scheme inspiration makes Lisp books a lot less fun to read. It's like I've already been spoiled on some of the best bits.
+- I haven't done enough OOP in R. My only real experience is with S3. S4 looks enough like CLOS that I expect that I will revisit it at some point after picking up Common Lisp, but that will just be to play around.
+- I have never made a package for R and have no experience with the ecosystem surrounding that (e.g. `roxygen2`). I have no plans for this.
+- I have no experience in developing large projects in R. This is likely a part of why I have never felt the need to make significant use of its OOP. I do not expect this to change.
+
+The above list is unlikely to be exhaustive. I'm not against reading another book about R as a programming language, but [*Advanced R*](https://adv-r.hadley.nz/) seems to be the only one that anyone ever mentions. For the foreseeable future, the main thing that I plan to do to improve my evaluation of R is to learn Python. I'll probably read a book on it.
+
+## Assumed Knowledge
+
+You'd be a fool to read this without some experience of R. I don't think that I've written anything that requires an expert level of understanding, but you're unlikely to get much out of this document without at least a basic idea of R. I've also mentioned the Tidyverse a few times without giving it much introduction, particularly its `tibble` package. If you care enough about R to consider reading this document, then you really ought to be familiar with the most popular parts of the Tidyverse. It's rare for any discussion of R to go long without some mention of `purrr`, `dplyr` or `magrittr`.
+
+## Disclaimer
+
+This document started out as personal notes that I had no intention of publishing. There's a good chance that I might have copy and pasted someone's example from somewhere and totally forgot that it wasn't my own. If you spot any plagiarism, let me know.
+
+

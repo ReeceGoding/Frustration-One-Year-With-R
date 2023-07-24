@@ -1,0 +1,32 @@
+
+
+# Feedback
+
+In late March 2022, this article suddenly exploded overnight. It was briefly [in the top 10 on Hacker News](https://twitter.com/HackerNewsTop10/status/1506221752191492103) and got about 20,000 views in one day. This came as quite a shock to me, given that I wasn't even done proofreading yet. I've read through as much of the online commentary on this article as I can find. The comments on [the Hacker News page](https://news.ycombinator.com/item?id=30764505) are by far the most in-depth. You can find a fair bit on Twitter and Reddit as well, but you'd have to go looking. I found that Twitter had the most positive reception, Reddit was more negative and Hacker News was mixed.
+
+In April, I finished the proofreading and [sent this off to R-devel](https://stat.ethz.ch/pipermail/r-devel/2022-April/081605.html). I am very thankful for their comments and their sincere efforts to help me. I hope that my replies didn't come off as half hearted. I was simply unequipped to handle to mass of feedback.
+
+I won't single out any particular commenters, but there are some ideas and trends that I feel are worth addressing:
+
+- From the negative feedback, I can't help but wonder if some of my examples were too trivial or too petty. This document would have been a lot easier to read and write if I only mentioned big issues. I've made some minor edits to address this, but it's hard to judge. A master would never make some of the mistakes that my [subsetting](#subsetting) section warns against, but does that mean I shouldn't even mention those issues?
+
+- I find it interesting to note what hasn't been criticised. The following examples stand out to me:
+  
+  - Although many said they found my '`"es"` in `"test"`' challenge a bit too easy (I think they missed my point), I could only find one person who made any attempt at my [`mapply()` challenge](#mapply-challenge).
+  - If my complaints about R not telling you what [the dangers of non-standard evaluation](#non-standard-evaluation) are had simple resolutions (e.g. a hyperlink), then I'd expect someone to have provided them. I've yet to see any feedback on this topic. The same is true of what I've said of [generic functions](#generic-functions-again).
+  - Despite some fair criticism of my section on [subsetting](#subsetting), I don't think that anyone mentioned any disagreements with what I've said about the [the vector recycling](#vectorization-again).
+  - I don't think that anyone disagreed with what I said about R's [documentation and error messages](#r-wont-help-you).
+  
+  It could just be luck that these parts weren't mentioned anywhere that I found, but you'll forgive me for concluding that the lack of criticism implies my points were very strong.
+
+- A very common objection was that my [Ignorance section](#ignorance) invalidates much of my commentary. Of course, said ignorance makes me unable to know if they're right or not. The two most common criticisms were that my lack of expertise in the Tidyverse and/or `data.table` mean that I've got nothing worthwhile to say and that using R as a programming language rather than a statistics tool is fundamentally wrong. All of these criticisms are partly correct. Using R for interactive data analysis is very different from trying to program with it, so such users simply won't encounter many of the issues that I've mentioned. Similarly, swapping base R for the Tidyverse automatically nullifies many of my complaints. You can even go through my table of contents and cross sections off. `dplyr` and its tibble-focus already knock off most of my complaints about base R's variable manipulations, data types, subsetting rules, and vector rules. Don't get me wrong, the Tidyverse has its own problems. For example, I'd hate to develop anything reliant on the Tidyverse's unstable API. However, if you're doing a run-once piece of analysis, then it's probably great. It's just a shame to see so much of R replaced by its packages.
+  
+  - December 2022 update: I'm further in to my career as a software developer than I was when I wrote this and I'm starting to put more and more weight on the above point. Every R developer I've encountered professionally has been an exclusive user of the Tidyverse. I remember one person whose only memory of her R training was that you "*need to type `library(tidyverse)` before anything works*". I have a growing suspicion that using R for anything other than the Tidyverse is steadily -- and perhaps even correctly -- becoming seen as simply wrong. It's unfortunate that I sincerely love many parts of it.
+
+- I've perhaps undersold just how good R can be at what it's specialised for. [This chain of Hacker News comments](https://news.ycombinator.com/item?id=30765409) seems to get across something that I haven't. I've certainly said that R is a large mathematics and statistics tool that is easy to extend and has clear Scheme inspiration, but the sum of those comments seems to say it better. As for the idea that R is a ['Worse is Better'](https://www.dreamsongs.com/RiseOfWorseIsBetter.html) language, I find it appealing but I don't feel qualified to judge. If anything was 'Worse is Better', then it was probably S (which would make R "almost the right thing", in that essay's terms). However, I'm not historically knowledgeable enough to know key factors like how simple S's early implementations were. I hear that it was very easy to get running on Unix?
+
+- I never made it clear that I understand why backwards compatibility is a priority for R. For example, R code appears in a lot of science papers and you don't want such code to become unrunnable or to change meaning.
+
+As a final point, making the changes to this document to reflect the changes coming in what I presume to be R version 4.1.4 has forced me to question my points about R being unable to change. I've not changed my mind yet, but time will tell. They certainly prove that R can change, but I think the real issue might be that it can't *fundamentally* change.
+
+

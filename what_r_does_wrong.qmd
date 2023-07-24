@@ -1,0 +1,1160 @@
+
+
+# What R Does Wrong
+
+This is where this documents starts to get long. Brace yourself. I really don't want to give off the impression that I hate R, but there are just too many things wrong with it. Again, R's ultimate problem is the sum of its small madnesses. No language is perfectly consistent or without compromises, but R's choices of compromises and inconsistencies are utterly unpredictable. I could deal with a handful of problems like the many that will follow, but this is far more than a handful.
+
+March 2023 update: It occurs to me that I don't really have a summary of where R goes wrong. This is consistent with my above claim that R's ultimate problem is the sum of its little problems. However, one pattern has become obvious both from learning other languages and from reading the section headings: R doesn't have the right data structures; Roughly half of the subsections here are dedicated to complaining about them. This is no small complaint. [One of the big rules in the Unix Philosophy is that data structures are central to programming](https://www.catb.org/~esr/writings/taoup/html/ch01s06.html#rule5). If your data structures are wrong, then finding the correct algorithm becomes much harder. It's little wonder that a focus of the Tidyverse is to clean up one of R's primary data structures (the data frame) and then stick to it as much as possible.
+
+## Lists
+
+We'll start gentle. R's list type is an unavoidable part of the language, but it's very strange. As the following examples show, it's frequently a special case that you can rarely avoid.
+
+- [https://stackoverflow.com/questions/2050790/](https://stackoverflow.com/questions/2050790/) does a good job of demonstrating that the list type is not like anything that another language would prepare you for. It and its many answers are very much worth a read.
+- Lists are the parent class of data frames. Data frames are mandatory for anyone who wants to do stats in R and most of the problems with lists are inherited by data frames. This makes the oddities of lists unavoidable.
+- Particularly when extracting single elements of lists, you need to be vigilant for whether R is going to give what you wanted or the list containing what you wanted. Most of this comes down to learning the distinction between `[` and `[[` and `sapply()` and `lapply()`. It's not too bad, but it's a complication.
+- Because they won't attempt to coerce your inputs to a common type and because, unless you count matrices, you cannot nest vectors (e.g. `c(c(1, 2), c(3, 4))` is `1:4`), lists are what you're most likely to use when you want to put two or more vectors in one place. A lot of your lists will therefore be nested structures. This is not inherently a problem, but extracting elements from nested structures is hard, both in a general sense and specifically for R's lists. R does little to help you with this. Give [https://stackoverflow.com/q/9624169/](https://stackoverflow.com/q/9624169/) and some of its answers a read. Why does this simple question get seven different answers? Do we really need libraries, anonymous functions, or knowing that `[` is a function, just for what ought to be a commonplace operation?
+- Some common R functions do not work properly with lists. Some functions like `sort()` and `order()` will not work at all, even if you list only contains numbers, and other will work but misbehave. For example, what do you expect to get from `c(someList, someVectorWithManyElements)`? You might expect a list that is now one item longer. Instead, you get your original list with every element of the vector appended to it in new slots, i.e. a list that is `length(someVectorWithManyElements)` longer.
+  ```{r, echo=TRUE}
+  c(list(1, 2, 3), LETTERS[1:5])
+  ```
+
+The same output is given by `append()`. To get `list(1, 2, 3, LETTERS[1:5])`, you must do something like `x <- list(1, 2, 3); x[[4]] <- LETTERS[1:5]`.
+
+- Note the use of `[[4]]` and not `[4]` above. Using `[4]` gets you a warning and the output `list(1, 2, 3, "A")`. The `[` version is intended for cases like `x[4:8] <- LETTERS[1:5]`, which gives the same output as `c()` did above. The `[`/`[[` distinction is a beginner's nightmare, as is R's tendency to give you many ways to do the same thing.
+- Primarily due to the commonality of data frames, R has a handful of functions that are essentially "*foo, but the list version*". `lapply()` is the most obvious example.
+- A few functions, such as `strsplit()`, can catch you off guard by returning a list when there's no obvious reason why a vector or matrix wouldn't have done. For `strsplit()` in particular, I think that the idea is that it's designed to be used on character vectors of lengths greater than one. However, in my experience, I almost always want a length-one version. I'd far rather have that function and `lapply()`/`sapply()`/whatever it as need be than have to constantly use `strsplit("foo")[[1]]`. Similarly, some functions, e.g. `merge()`, insist on returning data frames even when the inputs were matrices. Coercing these unwanted outputs in to what you actually wanted is often harder than it has any right to be.
+
+I think that the ultimate problem with lists is that the right way to use them is not easy to guess from your knowledge of the language's other constructs. If everything in R worked like lists do, or if lists weren't so common, then you wouldn't really mind. As it is, you'll often make mistakes with lists and have to guess your way through correcting them. This isn't terrible. It's just annoying.
+
+## Strings
+
+R's strings suck. The overarching problem is that because there is no language-level distinction between characters vectors and their individual elements, R's vectorization means that almost everything that you want to do with a string needs to be done by knowing the right function to use (rather than by using R's ordinary syntax). I find that the correct functions can be hard to find and use. Although it doesn't fix many of these issues, the common sentiment of "*just use `stringr`/`stringi`*" is difficult to dismiss.
+
+- Technically, R doesn't even have a type for strings. You would want a string to be a vector of characters, but R's characters are already vectors, so R can't have a normal string type. Despite this, the documentation often uses the word "*string*". [The language definition will tell you how to make sense of that](https://cran.r-project.org/doc/manuals/r-release/R-lang.html#Vector-objects), but I don't think that information is found anywhere in the sorts of documentation that you'll find in your IDE.
+- It's a pain to have to account for how R has two types of empty string: `character(0)` and `""`.
+- Character vectors aren't trivially split in to the characters that make each element. For example, `"dog"[1]` is `"dog"` because `"dog"` is a vector of length one. The idiomatic way to split up a string in to its characters -- `strsplit("dog", "")` -- returns a list, so rather than just getting the `"d"` from `"dog"` by doing `"dog"[1]`, you have to do something like `unlist(strsplit("dog", ""))[1]` or `strsplit("dog", "")[[1]][1]`. The `substr()` function can serve you better for trivial jobs, but you often need `strsplit()`.
+- Here's a challenge: Find the function that checks if `"es"` is in `"test"`. You'll be on for a while.
+- Many of R's best functions for handling strings expect you to know regex and are all documented in the same place (grep {base}, titled "*Pattern Matching and Replacement*"). If you don't know regex -- exactly what I'd expect of R's target audience -- then you're thrice damned:
+  - Firstly, you're going to have a very hard time figuring out that the functions in `?grep` are probably what you need. A glance at their documentation suggests that they're difficult materials and therefore presumably not required for your task.
+  - Secondly, you're going to struggle to find the correct function in that documentation because the information that you need is surrounded by concepts that are not familiar to you. This reinforces your initial impression that you're in the wrong place, letting you stumble over the first point again.
+  - Thirdly and finally, the function names will be meaningless to you -- "*what the heck does `regexpr()` mean and how does it relate to `regexec()`?*" -- leaving you with no straws to clutch at.
+- The right function for the job can still be tough to use. Compare the `stringr` answer to [this question](https://stackoverflow.com/questions/12427385/) to the base R answers. Or better yet, use `gregexpr()` or `gregexec()` for any task and then tell me with a straight face that you both understand their outputs and find them easy to work with.
+  ```{r, echo=TRUE}
+  gregexpr("a", c("greatgreat", "magic", "not"))
+  ```
+- The most useful function for printing strings seem to counter-intuitively be `cat()` rather than `print()` or `format()`. For example, `print()` ignores your `\n` characters. The only time where `print()` comes in really handy for string-related stuff is when your inputs are either quoted or lists. In both cases, `print()` accepts these but `cat()` does not. Without significant coercion (mostly `deparse()`), I've yet to find a way to mix `\n` with quoted input. Most of my attempts to do anything clever that mixes printing and lists end with me giving up and using a data frame.
+- [Without defining a new operator](https://stackoverflow.com/q/4730551/), you can't add strings in the way that other languages have taught you to, i.e. `"a"+"b"`. [John Chambers is against fixing this](https://www.stat.math.ethz.ch/pipermail/r-devel/2006-August/039004.html). I'm not convinced that he's wrong, but it is annoying.
+- If you're converting numbers to characters, or using a function like `nchar()` that's meant for characters but accepts numbers, a shocking number of things will break when your numbers get big enough for R to automatically start using scientific notation.
+  ```{r, echo=TRUE}
+  nchar(10000)
+  nchar(100000)
+  a <- 10000
+  nchar(a) == nchar(a * 100)
+  ```
+  You're supposed to use `format()` to coerce these sorts of numbers in to characters, but you won't know about that until something breaks and `nchar()`'s documentation doesn't seem to mention it (try `?as.character`). The `format()` function also has a habit of requiring you to set the right flags to get what you want. `trim = TRUE` comes up a lot. If you're using a package or unfamiliar function, you're forced to check to see if the author dealt with these issues before you use their work. I'd rather just have a generic `nchar()`\-like function that does what I mean. Would you believe that `nchar()`'s documentation says it's a generic? It's not lying and it later tells you that `nchar()` coerces non-characters to characters, but R sure does know how to mess with your expectations.
+
+## Variable Manipulation
+
+R has some problems with its general facilities for manipulating variables. Some of the following will be seen **every** time that you use R.
+
+- It lacks both `i++` and `x += i`. It also lacks anything that would make these unnecessary, such as Python's `enumerate`.
+- One day, you'll be tripped up by R's hierarchy of how it likes to simplify mixed types outside of lists. The basics are documented with the `c()` function. For example, `c(2, "2")` returns `c("2", "2")`. [An exercise from *Advanced R*](https://adv-r.hadley.nz/vectors-chap.html#exercises-4) presents a few troubling cases:
+  - "*Why is `1 == "1"` true?*"
+  - "*Why is `-1 < FALSE` true?*"
+  - "*Why is `"one" < 2` false?*".
+- To get complete information about the typing and structure of something, you will almost certainly need to call several functions. For example, do any of the following tell you everything about `x`?
+  ```{r, echo=TRUE}
+  x <- diag(3)
+  x
+  typeof(x)
+  class(x)
+  attributes(x)
+  str(x)
+  dput(x) #Dirty trick, don't use in practice.
+  ```
+  Among these, `str()` is the closest. However, you can see that it doesn't give you all of the class information. This doesn't improve if you add non-implicit classes to `x`, but I'm avoiding that topic for as long as I can.
+- R likes to use "*double*" and "*numeric*" almost interchangeably. You've just seen one such example (`str(x)` vs `typeof(x)`).
+- Integers are almost second class. `?integer` suggests that they're mostly for talking to other languages, but the problem seems to go deeper than that. It's as if R tries to avoid integers unless you tell it not to. For example, `4` is a double, not an integer. Why? Unless you're very careful, any integer that you give to R will eventually be coerced to a double.
+- There's no trivial way to express a condition like 1 \< x \< 5. In a maths language, I'd expect that exact syntax to work. There's probably a good reason why it doesn't, and it's not at all hard to build an equivalent condition, but it still annoys me from time to time. I suspect that the `<-` syntax is to blame.
+- The distinction between `<-` and `=` is something that you'd have to look up. I'd try to explain the difference, but from what I've gathered, the difference only matters when using `=` rather than `<-` causes bugs. Like most R users, I've picked up the habit of "*use `=` only for the arguments of functions and use `<-` everywhere else*".
+- `<-` was designed for keyboards that don't exist any more. It's a pain to type on a modern system. [IDEs can fix this](https://github.com/ReeceGoding/Frustration-One-Year-With-R/issues/7).
+- The day that you accidentally have `<` rather than `<-` without it throwing an error will be an awful one. The reverse can also happen. For example, there are two things that you could have meant by `if(x<-2)`.
+- `Y<--2` is a terrible way to have to say "*set `Y` to be equal to negative two*". `Y<<--2` is even worse.
+- `<<-` is probably the only good thing about the convention of using `<-`, but it's only useful if you either know what a closure is and have reason to use one or if you're some sort of guru with R's first-class environments. You can sometimes use `<<-` to great effect without deliberately writing a closure, but it always feels like a hack because you're implicitly using one. For example, `replicate(5, x <- x+1)` and `replicate(5, x <<- x+1)` are very different, with the `<<-` case being a very cool trick,
+  ```{r, echo=TRUE}
+  x <- 1
+  replicate(5, x <- x+1)
+  x
+  replicate(5, x <<- x+1)
+  x
+  ```
+
+but it only works because `replicate()` quietly wraps its second argument in an anonymous function.
+
+- The idiomatic way to add an item to the end of a collection is `a[length(a) + 1] <- "foo"`. This is rather verbose and [a bit unpredictable when adding a collection to a list](#lists).
+- A quote from [the language definition](https://cran.r-project.org/doc/manuals/r-release/R-lang.html#Argument-evaluation): "*supplied arguments and default arguments are treated differently*". This usually doesn't trip you up, but you're certain to discover it on the first day that you use `eval()`. It has `parent.frame()` as one of its default arguments, but calling `eval()` with that argument supplied manually will produce different results than letting it be supplied by default.
+  ```{r, echo=TRUE}
+  x <- 1
+  (function(x) eval(quote(x + 1)))(100)
+  (function(x) eval(quote(x + 1), envir = parent.frame()))(100)
+  ```
+
+An easier-to-discover example can be found in section 8.3.19 of [*The R Inferno*](https://www.burns-stat.com/pages/Tutor/R_inferno.pdf).
+
+- Argument names can be partially matched. See [this link](https://rosettacode.org/wiki/Named_parameters#R) for some examples. I can't tell if it's disgusting or awesome, but it's definitely dangerous. If I called `f(n = 1)`, I probably didn't mean `f(nukeEarth = 1)`! At least it throws an error if it fails to partially match (e.g. if there were multiple valid partial matches). More on that [when I cover the `$` operator](#dangers-of-).
+- The `...` argument doesn't make its users throw errors when they've been called with arguments that they don't have or, even worse, those you misspelled. *Advanced R* has a great example in [its Functions chapter](https://adv-r.hadley.nz/functions.html#exercises-17). Would you have guessed that `sum(1, 2, 3, na.omit = TRUE)` returns `7`, not `6`? Similarly, [the Functionals chapter](https://adv-r.hadley.nz/functionals.html#argument-names) shows how this can lead to baffling errors and what strange things you have to do help your users avoid them.
+- `NaN`, `NULL`, and `NA` [have been accused](https://github.com/ReeceGoding/Frustration-One-Year-With-R/issues/5) of inconsistencies and illogical outputs, making it impossible to form a consistent mental model of them.
+- For many other examples, see section 8 of [*The R Inferno*](https://www.burns-stat.com/pages/Tutor/R_inferno.pdf).
+
+## Switch
+
+R has some strange ideas about switch statements:
+
+- It's not a special form of any kind; Its syntax is that of a normal function call. If I'm being consistent in my formatting, then I should be calling it "*R's `switch()` function*".
+- It's only [about 70 lines of C code](https://github.com/wch/r-source/blob/trunk/src/main/builtin.c#L1009), suggesting that it can't be all that optimised.
+- R doesn't have one switch statement, it has two. There is one where it switches on a numeric input and another for characters. The numeric version makes the strange assumption that the first argument (i.e. the argument being switched on) can be safely translated to a set of cases that must follow an ordering like "*if input is 1, do the first option, if 2, do the second...*". There is no flexibility like letting you start at 2, having jumps higher than 1, or letting you supply a default case. Reread that last one: R has a switch without defaults! It's frankly the worst switch that I've ever seen. The other version, the one that switches on characters, is more sensible. I'd give examples, but I don't know how to demonstrate a non-feature.
+- As is a trend in R, both versions of switch are capable of silently doing nothing. For example, these do nothing:
+  ```{r, echo=TRUE}
+  switch(3, "foo", "bar")
+  switch("c", a = "foo", b = "bar")
+  print(switch("c", a = "foo", b = "bar")) #Showing off the return value.
+  ```
+  and they do it silently, returning `NULL`. I'd expect a warning message informing me of this, but there is no such thing. If you want that behaviour, then you have to write it yourself e.g. `switch("c", a = "foo", b = "bar", stop("Invalid input"))` or `switch("c", a = "foo", b = "bar", warning("Invalid input"))`. You can't do that with the numeric version, because R has a switch without defaults.
+
+## Subsetting
+
+Now for the nasty stuff. R's rules for selecting elements, deleting elements, and any other sort of subsetting require mastery. They're extremely powerful once mastered, but until that point, they make using R a nightmare. For a stats language, this is unforgivable. Before mentioning any points that are best put in their own subsections, I'll cover some more general points:
+
+- You never quite know whether you want to use `x`, the name of `x`, or a function like `subset()`, `which()`, `Find()`, `Position()`, or `match()`. R's operators make this even more of mess. You either want `$`, `[`, `@` or even `[[`. Making the wrong choice of `[x]`, `[x,]`, `[,x]` or `[[x]]` is another frequent source of error. You will get used to it eventually, but your hair will not survive the journey. [Similar stories](https://www.talyarkoni.org/blog/2012/06/08/r-the-master-troll-of-statistical-languages/) can be found about the apply family.
+- The `[[` operator has been accused of inconsistent behaviour. [*Advanced R* covers this better than I could](https://adv-r.hadley.nz/subsetting.html#subsetting-oob). The short version is that it sometimes returns `NULL` and other times throws an error. Personally, I've never noticed these because I've rarely tried to subset `NULL` and I don't see any reason why you would use `[[` on an atomic vector. As far as I know, `[` does the same job. The only exception that I can think of is if your atomic vector was named. For example:
+  ```{r, echo=TRUE}
+  a <- c(Alice = 1, Bob = 2)
+  a["Alice"]
+  a[["Alice"]]
+  ```
+- When doing variable assignment on anything more than one-dimensional, `object` and `object[]` behave differently when you try to assign variables to them. Compare:
+  ```{r, echo=TRUE}
+  (c <- b <- diag(3))
+  b[] <- 5
+  c <- 5
+  b
+  c
+  ```
+
+This kind of makes sense, but it will trip you up.
+
+- The syntax for deleting elements of collections by index can be rather verbose. You can't just pop out an element, you have to write `vect <- vect[-index]` or `vect <- vect[-c(index, nextIndex, ...)]`.
+- R is 1-indexed, but accessing element 0 of a vector gives an empty vector rather than an error. This probably makes sense considering that index -1 deletes element 1, but it's a clear source of major errors.
+- With the sole exception of environments, every named object in R is allowed to have duplicate names. I guarantee that will one day break your subsetting (e.g. see section 8.1.19 of [*The R Inferno*](https://www.burns-stat.com/pages/Tutor/R_inferno.pdf)). Fortunately, the constructor for data frames has a `check.names` argument that corrects duplicates by default. Unfortunately, it does this silently, so you may not notice that some of your column names have been changed. Another oddity is that many functions that work on data frames, most notably `[`, will silently correct duplicated names even if you told the original data frame to not do so. Why even let me have duplicated names if you're going to make it so hard to keep them?
+  ```{r, echo=TRUE}
+  data.frame(x = 1:3, x = 11:13)
+  #Notice the x.1? You didn't ask for that. To get x twice, you need this:
+  correctNames <- data.frame(x = 1:3, x = 11:13, check.names = FALSE)
+  correctNames
+  correctNames[1:3, ]#As expected.
+  correctNames[1:2]#What?
+  ```
+
+Not only is this behaviour inconsistent, it is **silent**; No warnings or errors are thrown by the above code.
+Tibbles are much better about this:
+
+```{r, echo=TRUE}
+library(tibble)
+#We can't repeat our original first line, because tibble(x = 1:5, x = 11:15) throws an error:
+## > tibble(x = 1:5, x = 11:15)
+## Error: Column name `x` must not be duplicated.
+## Use .name_repair to specify repair.
+#We follow the error's advice.
+#The .name_repair argument provides a few useful options, so we must pick one.
+correctNames <- tibble(x = 1:5, x = 11:15, .name_repair = "minimal")
+correctNames
+correctNames[1:3,]#Good
+correctNames[1:2]#Still good!
+```
+
+This may seem like an isolated example. It isn't. A related example is that the `check.names` argument in `data.frame()` is very insistent on silently doing things, even to the point of overruling arguments that you explicitly set. For example, these column names aren't what I asked for.
+
+```{r, echo=TRUE}
+ as.data.frame(list(1, 2, 3, 4, 5), col.names = paste("foo=bar", 6:10))
+ as.data.frame(list(1, 2, 3, 4, 5), col.names = paste("foo=bar", 6:10), check.names = FALSE)#The fix.
+```
+
+I think R does this to ensure your names are suitable for subsetting. Subsetting with non-unique or non-syntactic column names could be a pain, but the decision to not inform the user of this correction is baffling. Even if you're fortunate enough to notice the silent changes, the lack of a warning message will leave you with no idea how to correct them. You could perhaps argue that duplicated names are the user's fault and they deserve what they get, but that argument falls apart for non-syntactic names. Who hasn't put a space or an equals sign in their column names before? Mind, tibbles aren't much better when it comes to non-syntactic names. Neither `tibble("Example col" = 4)` nor `data.frame("Example col" = 4)` warn you of the name change.
+
+- For what I believe to be memory reasons, objects of greater than one dimension are stored in column order rather than row order. Quick, what output do you expect from `matrix(1:9, 3, 3)`?
+  ```{r, echo=TRUE}
+  matrix(1:9, 3, 3)
+  ```
+
+This gives us a matrix with first row `c(1, 4, 7)`. This goes against the usual English convention of reading from left to right. It is also inconsistent with functions like `apply()`, where `MARGIN = 1` corresponds to their by-row version and `MARGIN = 2` is for by-column (if R privileges columns, shouldn't they be the `= 1` case?). This means that you can never really be sure if R is working in column order or row order. This is bad enough on its own, but it can also be a source of subtle bugs when working with matrices. Many mathematical functions don't see any difference between a matrix and its transpose.
+
+- There is no nice way to access the last element of a vector. The idiomatic way is `x[length(x)]`. The only good part of this is that `x[length(x) - 0:n]` is a very nice way to get the last `n + 1` elements. You could use `tail()`, but Stack Overflow tells me it's very slow.
+- The `sort()` and `order()` functions are the main ways to sort stuff in R. If you're trying to sort some data by a particular variable, then R counter-intuitively wants you to use `order()` rather than `sort()`. The syntax for `order()` doesn't help matters. It returns a permutation, so rather than `order(x, params)`, you will want `x[order(params),]`. My only explanation for this is that it makes `order()` much easier to use with the `with()` function. For example, `data[with(data, order(col1, col2, col3)),]` is perhaps more pleasant to write than the hypothetical `order(data, data$col1, data$col2, data$col3)`. The Tidyverse's `dplyr` solves these problems: `dplyr::arrange(data, col1, col2, col3)` does what you think. I'd much rather use `arrange(mtcars, cyl, disp)` than `mtcars[with(mtcars, order(cyl, disp)),]`.
+- The `order()` case above illustrates another frequent annoyance with subsetting. Rather than asking for what you want, you often need to generate a vector that matches up to it. A collection of booleans (R calls these "*logical vectors*") is one of the most common ways to do this, with `duplicated()` being a typical example.
+  ```{r, echo=TRUE}
+  head(Nile)
+  duplicated(head(Nile))
+  head(Nile)[duplicated(head(Nile))]
+  ```
+
+This means that you will usually be asking for `items[bools]` (and maybe `[,bools]` or `[bools,]`...) in order to get the items that you want. There is great power in being able to do this, but having to do it is annoying and can catch you off guard. For example, what do you expect `lower.tri()` to return when called on a matrix? What you wanted from `lower.tri(mat)` is probably what you get from `mat[lower.tri(mat)]`. Also, don't expect a helpful error message if your construction of `bools` is wrong. As I'll discuss later on, [the vector recycling](#vectorization-again) rules will often make an incorrect construction give sensible-looking output.
+
+- For reasons that I cannot explain, `aperm(x, params)` is the correct syntax, not `x[aperm(params)]` or anything like it. I think that it's trying to be consistent with R's ideas of how to manipulate matrices, but it's yet another source of confusion. I don't want to have to think about if I'm treating my data like a matrix or like a data frame.
+- Good luck trying to figure out how to find a particular sequence of elements within a vector. For example, try finding if/where the unbroken vector `1:3` has occurred in `sample(6, 100, replace = TRUE)`. You're best off just writing the `for` loop.
+
+### Combining Operators
+
+This one isn't too bad, but it's worth a mention. Combining operations can lead to some counter-intuitive results:
+
+- If `a <- 1:5`, what do you expect to get from `a[-1] <- 12:15`? Do you expect `a[1]` to be removed or not? This is great once you know how it works, but it's confusing to a beginner.
+  ```{r, echo=TRUE}
+  a <- 1:5
+  a[-1] <- 12:15
+  a
+  ```
+- Because `data[-index]` can be used to remove elements and `data["colName"]` can be used to select elements, you might expect `data[-"colName"]` or `data[-c("colName1", "colName2")]` to work. You would be wrong. Both throw errors.
+  ```{r, echo=TRUE}
+  ## > mtcars[-"wt"]
+  ## Error in -"wt" : invalid argument to unary operator
+  ```
+- Attempting to remove both by index and by name at the same time will never work. For example, `mtcars[-c(1, "cyl")]` is an error and `mtcars[c(1, "cyl")] <- NULL` will only remove the `cyl` variable. Weirdly enough, I can't actually show this `mtcars[c(1, "cyl")] <- NULL` example. R is perfectly happy to show it, but R Markdown isn't. What happens is that `c(1, "cyl")` is coerced to `c("1", "cyl")`. After this, R does not inform you that there is no `1` column to remove.
+
+Now for the serious stuff...
+
+### Removing Dimensions
+
+This issue is notorious: R likes to remove unnecessary dimensions from your data in ways that are not easily predicted, forcing you to waste time preventing them. Rumour has it that this can be blamed on S being designed as a calculator rather than as a programming language. I can't cite that, but it's easy to believe. No programmer would include any of the below in a programming language.
+
+- Unless you add `, drop=FALSE` to all of your data selection/deletion lines, you run the risk of having all of your code that expects your data to have a particular structure unexpectedly break. This gives no errors or warnings. Compare:
+  ```{r, echo=TRUE}
+  (mat <- cbind(1:4, 4:1))
+  mat[, -1]
+  mat[, -1, drop=FALSE]
+  ```
+
+and you will see that one of these is not a matrix. Data frames have the same issue unless you do all of your subsetting in a 1D form.
+
+```{r, echo=TRUE}
+mat <- cbind(1:4, 4:1)
+(frame <- as.data.frame(mat))
+frame[, -1]
+frame[, -1, drop=FALSE]
+frame[-1]#1D subsetting
+```
+
+The Tidyverse, specifically `tibble`, does its best to remove this.
+
+```{r, echo=TRUE}
+library(tibble)
+mat <- cbind(1:4, 4:1)
+(tib <- as_tibble(mat))
+tib[, -1]
+tib[, -1, drop=FALSE]
+tib[-1]
+tib[, -1, drop=TRUE]
+```
+
+You can think of tibbles as having `drop=FALSE` as their default. I can't explain why base R doesn't do the same. It's got to either be some sort of compromise for matrix algebra or for making working in your console nicer.
+
+- Update: Section 6.8 of the *Software for Data Analysis: Programming with R* book by John Chambers offers a partial explanation: "*The default is, and always has been, `drop=TRUE`; probably an unwise decision on our part long ago, but now one of those back-compatibility burdens that are unlikely to be changed.*"
+- The `drop` argument is even stranger than I'm letting on. Its defaults differ depending on whether there may only be one column remaining or if there may only be one row. To quote the documentation (`?"[.data.frame"`): "*The default is to drop if only one column is left, but **not** to drop if only one row is left*". Unlike the previous point, I can sort of make sense of this. For example, a single column can only ever be one type (even if that may be a container for mixed types, such as a list) but a single row could easily be a mix of types. Dropping on a row of mixed types will just give you a really ugly list, so you'd much rather have a data frame. With a column, it's only with years of experience that the community has realised that they probably still want the data frame; It's nowhere near as obvious that the vector is not preferable.
+- As you can tell by taking a close look at the documentation for `[` and that of `[.data.frame`, the `drop` argument does not do the same thing for arrays and matrices as it does for data frames. This means that my earlier example could be dishonest. However, the confusion that you would need to overcome in order to check for if I've been dishonest is so great that it proves that there's definitely something wrong with the `drop` argument.
+- You may think that `object` and `object[,]` are the same thing. They are not. You would expect and get an error if `object` is one-dimensional. However, if it's a data frame or matrix with one of its dimensions having size 1, then you do not get an error and both `object` and `object[,]` are very different.
+  ```{r, echo=TRUE}
+  library(tibble)
+  colMatrix <- matrix(1:3)
+  colMatrix
+  colMatrix[,]
+  rowMatrix <- matrix(1:3, ncol = 3)
+  rowMatrix
+  rowMatrix[,]
+  colFrame <- as.data.frame(colMatrix)
+  colFrame
+  colFrame[,]
+  rowFrame <- as.data.frame(rowMatrix)
+  rowFrame
+  rowFrame[,]
+  colTib <- as_tibble(colMatrix)
+  colTib
+  colTib[,]
+  rowTib <- as_tibble(rowMatrix)
+  rowTib
+  rowTib[,]
+  ```
+
+Can you guess why? It's because the use of `[` makes R check if it should be dropping dimensions. This makes `object` and `object[,,drop=FALSE]` equivalent, whereas `object[,]` is a vector rather than whatever it was originally. Tibbles, of course, don't have this issue.
+
+- If you've struggled to read this section, then you're probably now aware of another point: It's really easy to get the commas for `drop=FALSE` mixed up. What do you think `data[4, drop=FALSE]` is? If `data` is a data frame, you get column 4 and a warning that the `drop` argument was ignored. Did you expect row 4? Whether you did or not, you should be able to see why somebody may come to the opposite answer. Although I see no sensible alternative, the `drop` argument needing its own comma is terrible syntax for a language where a stray comma is the difference between your data's life and death. This is made even worse by the syntax for `[` occasionally needing stray commas. Expressions like `data[4,]` are commonplace in R, so it's far too easy to forget that you needed the extra comma for the `drop` argument.
+
+### Dangers of $
+
+The `$` operator is both silently hazardous and redundant:
+
+- As an S3 generic, you can never be certain that `$` does what you want it to when you use it on a class from a package. For example, it's common knowledge that base R's `$` and the Tidyverse's `$` are not the same thing. In fact, `$` does not even behave consistently in base R. Compare the following partial matching behaviour:
+  ```{r, echo=TRUE}
+  library(tibble)
+  list(Bob = 5, Dobby = 7)$B
+  env <- list2env(list(Bob = 5, Dobby = 7))
+  env$B
+  data.frame(Bob = 5, Dobby = 7)$B
+  tibble(Bob = 5, Dobby = 7)$B
+  ```
+  For what it's worth, replacing `Dobby` with `Bobby` gives more consistent results.
+  ```{r, echo=TRUE}
+  library(tibble)
+  list(Bob = 5, Bobby = 7)$B
+  env <- list2env(list(Bob = 5, Bobby = 7))
+  env$B
+  data.frame(Bob = 5, Bobby = 7)$B
+  tibble(Bob = 5, Bobby = 7)$B
+  ```
+  In theory, I should note that `[` and `[[` are also S3 generics and therefore should share this issue. Aside from the `drop` issues above, I rarely notice such misbehaviour in practice.
+- Consistency aside, partial matching is inherently dangerous. `data$Pen` might give the `Penetration` column if you forgot that you removed the `Pen` column. By default, R does not give you any warnings when partial matches happen, so you won't have any idea that you got the wrong column.
+- The documentation for `$` points out its redundancy in base R: "*`x$name` is equivalent to `x[["name", exact = FALSE]]`*". In other words, even if I want the behaviour of `$`, I can get it with `[[`. Another benefit of `[[` is that it will only partially match if you tell it to (use `exact = FALSE`). That matters because...
+- The partial matching of `$` can be even worse than I've just described. If there are multiple valid partial matches, rather than get any of them, you get `NULL`. This is what happened with the Bob/Bobby example above. To give another example, `mtcars$di` and `mtcars$dr` both give sensible output because there is only one valid partial match, but `mtcars$d` is just `NULL`. I'm largely okay with this behaviour, but you don't even get a warning!
+  ```{r, echo=TRUE}
+  mtcars$di
+  mtcars$dr
+  mtcars$d
+  ```
+- Tibbles try to fix the partial-matching issues of `$` by completely disallowing partial matching. They will not partially match even if you tell them to with `[[, exact=FALSE]]`. If you try to partially match anyway, it will give you a warning and return `NULL`. I sometimes wonder if it should be an error.
+  ```{r, echo=TRUE}
+  library(tibble)
+  mtTib <- as_tibble(mtcars)
+  mtTib$di
+  mtTib$dr
+  mtTib$d
+  mtcars[["d", exact = FALSE]]
+  mtTib[["d", exact = FALSE]]
+  ```
+- On the base R side, there is a global option that makes `$` give you warnings whenever partial matching happens. It's disabled by default. Common sense suggests it should be otherwise.
+- The `$` operator is another case of R quietly changing your data structures. For example, I would call `mtcars$mpg` unreadable.
+  ```{r, echo=TRUE}
+  mtcars$mpg
+  typeof(mtcars$mpg)
+  ```
+  You probably wanted `mtcars["mpg"]`
+  ```{r, echo=TRUE}
+  mtcars["mpg"]
+  typeof(mtcars["mpg"])
+  ```
+  and you definitely did not want `mtcars[, "mpg"]` or `mtcars[["mpg"]]`, which both give the same output as using `$`.
+  ```{r, echo=TRUE}
+  mtcars[, "mpg"]
+  mtcars[["mpg"]]
+  ```
+  Would you have guessed that? Tibbles share the above behaviour with `$` and `[[`, but keep `["name"]` and `[, "name"]` identical due to their promise to not drop dimensions with `[`.
+- The `$` operator does not have any uses beyond selection. For example, there is no way to combine `$` with operators like `-` and there's no way to pass arguments like `drop=FALSE` to it.
+- `$` is not allowed for atomic vectors like `c(fizz=3, buzz=5)`, unlike `[` and `[[`. This is particularly annoying when dealing with named matrices because you end up having to use `mat[, "x"]` where `mat$x` should have done.
+- Section 8.1.21 of [*The R Inferno*](https://www.burns-stat.com/pages/Tutor/R_inferno.pdf): There exists a `$<-` operator. You hardly ever see it used. [*The R Inferno*](https://www.burns-stat.com/pages/Tutor/R_inferno.pdf) points out that it does not do partial matching, even for lists, unlike `$`. This is actually documented behaviour -- in fact, `?Extract` mentions it twice -- but I challenge you to find it. I can see why it would be difficult to make a `$<-` with partial matching, but making `$<-` inconsistent with `$` is just laughable.
+
+In conclusion, once you know the difference between `["colname"]` and `[, "colname"]`, `$` is only useful if it's making your code cleaner, saving you typing, or if you actually want the partial matching. Personally, I'm uncomfortable with the inherent risks of partial matching, so `$` is only really useful for interactive use and my IDE's auto-completion. That might even be its intended job. But if that is the case, nobody warns you of it.
+
+### Indistinguishable Errors
+
+When dealing with any sort of collection, any of the following mistakes can give indistinguishable results. This can make your debugging so messy that by the time that you're done, you don't know what was broken.
+
+- Trying to select an incorrect sequence of elements. This can be caused by `:` or `seq()` misbehaving or by simple user error. [A tiny bit more on that later](#sequences)
+- The vector recycling rules silently causing the vector that you used to select elements to be recycled in an undesired way. [More on that later](#vectorization-again).
+- Selecting an out-of-bounds value. You almost always don't get any error or warning when you do this. For example, both out-of-bounds positive numbers and logical vectors that are longer than the vector that you're subsetting silently return `NA` for the inappropriate values.
+  ```{r, echo=TRUE}
+  length(LETTERS)
+  LETTERS[c(1, 5, 20, 100)]
+  LETTERS[rep(TRUE, 100)]
+  ```
+  Again, as with many of the issues that we've mentioned recently, **this happens silently**.
+- Accessing/subsetting a collection in the wrong way. For example, wrongly using any of `[c(x, y)]`, `[x, y]`, or `[cbind(x, y)]`, selecting `[x]` rather than `[x, ]`, `[[x]]`, or `[, x]`, using the wrong `rbind()/cbind()`, or an error in your call to anything like `subset()` or `within()`.
+- Selecting element 0.
+- Any sort of off-by-one errors, e.g. a modulo mistake of any sort, genuine off-by-one errors, or	R's 1-indexing causing you to trip up.
+- Misuse of searching functions like `which()`, `duplicated()`, or `match()`.
+
+This list also reveals another issue with subsetting: There's too many ways to do it...
+
+### Named Atomic Vectors
+
+...and they don't all work everywhere. For example, there's a wide range of tools for using names to work with lists and data frames, but very few of them work for named atomic vectors (which includes named matrices).
+
+- The `$` operator simply does not work.
+- Although `namedVector["name"]` can be used for subsetting and subassignment, `namedVector["name"] <- NULL` throws an error. For a list or data frame, this would have deleted the selected data points.
+  ```{r, echo=TRUE}
+  typeof(letters)
+  named <- setNames(letters, LETTERS)
+  tail(named)
+  named["Z"]
+  named["Z"] <- "Super!"
+  tail(named)
+  #So subsetting and subassignment work just fine. However, for NULL...
+  ## > named["Z"] <- NULL
+  ## Error in named["Z"] <- NULL : replacement has length zero
+  #But for a data frame, this is just fine.
+  (data <- data.frame(A = 1, B = 2, Z = 3))
+  data["Z"] <- NULL
+  data
+  ```
+  Incidentally, `anyAtomicVector[index] <- NULL` is also an error. e.g. `LETTERS[22] <- NULL`.
+- Sorry, did I say that `namedVector["name"]` works for subsetting?
+  ```{r, echo=TRUE}
+  a <- diag(3)
+  colnames(a) <- LETTERS[1:3]
+  a
+  a["A"]
+  a["Z"]
+  ```
+  Long story short, named atomic vectors make a distinction between names and colnames that data frames do not.
+  ```{r, echo=TRUE}
+  a <- diag(3)
+  colnames(a) <- LETTERS[1:3]
+  colnames(a)
+  names(a)
+  names(mtcars)
+  colnames(mtcars)
+  identical(names(mtcars), colnames(mtcars))
+  ```
+  So what happens when you give an atomic vector plain old names rather than colnames? For a non-matrix, it works fine (see the `named <- setNames(letters, LETTERS)` example above). For a matrix - and presumably for any array, but let's not get in to that distinction - it's a little bit more complicated. Look closely at this output before reading further.
+  ```{r, echo=TRUE}
+  a <- diag(3)
+  (a <- setNames(a, LETTERS[1:3]))
+  a["A"]
+  a["Z"]#For a data frame, this would be an error...
+  ```
+  When you try to give an atomic vector ordinary names, R will only try to name it element-by-element (even if said vector has dimensions). Data frames, on the other hand, treat names as colnames. R ultimately sees named matrices as named atomic vectors that happen to have a second dimension. This means that you can subset them with both `["name"]` and `[, "name"]` and get different results.
+  ```{r, echo=TRUE}
+  a <- setNames(diag(3), LETTERS[1:3])
+  colnames(a) <- LETTERS[1:3]
+  a
+  a["A"]
+  a["Z"]
+  a[, "A"]
+  #I'd love to show a[, "Z"], but it throws the error "Error in a[, "Z"] : subscript out of bounds".
+  #This is clearly consistent with a["Z"] and my earlier bits on out-of-bounds stuff not throwing errors. 
+  ```
+  Of course, `["name"]` and `[, "name"]` aren't identical for data frames either, but let's not get back in to talking about the `drop` argument. Starting to see what I mean about R being inconsistent?
+- You cannot use named atomic vectors to generate environments. This means that awesome tricks like `within(data, remove(columnIDoNotWant, anotherColumn))` work for lists and data frames but not for named atomic vectors.
+  ```{r, echo=TRUE}
+  #Data frames are fine.
+  head(within(mtcars, remove("mpg")))
+  #Named atmomic vectord are not.
+  ## > within(setNames(letters, LETTERS), remove("Z"))
+  ## Error in UseMethod("within") : 
+  ##   no applicable method for 'within' applied to an object of class "character"
+  ```
+- When you want to work with the names of named atomic vectors, you probably want to access their names directly and use expressions like `namedVect[!names(namedVect) %in% c("remove", "us")]`.
+  ```{r, echo=TRUE}
+  namedVect <- setNames(letters, LETTERS)
+  namedVect[!names(namedVect) %in% c("A", "Z")]
+  ```
+
+However, this is a bad habit for non-atomic vectors because, unless you take the precautions [mentioned earlier](#removing-dimensions), `[` likes to remove duplicated names and unnecessary dimensions from your data.
+
+- Don't think that functional programming will save you from my previous point. The base library's higher-order functions don't play nice with the `names()` function. I think it's got something to do with `lapply()` using `X[[i]]` under the hood (see its documentation).
+  ```{r, echo=TRUE}
+  namedVect <- setNames(letters, LETTERS)
+  Filter(function(x) names(x) == "A", namedVect)
+  head(lapply(namedVect, function(x) names(x) == "A"))
+  head(sapply(namedVect, function(x) names(x) == "A"))
+  ```
+  Did you notice that `Filter` and `lapply`'s arguments are in inconsistent orders? A little bit more on that [much later](#the-functions).
+
+From the above few points, you can see that it's hard to find a way to manipulate named atomic vectors by their names that is both safe for them and for other named objects. The only one that comes to mind is to use `[` with the aforementioned precautions. That's bad enough on its own -- it makes R feel unsafe and inconsistent -- but it also makes named atomic vectors feel like an afterthought. I find that most of my code that makes extended use of named atomic vectors comes out looking disturbingly unidiomatic. A little bit more on that [when I talk about matrices](#extended-example-matrices).
+
+### Silence
+
+I've already given a few examples of R either silently doing nothing or silently doing what you don't want. Let's have a few more:
+
+- Again, much of what I've listed in the [Indistinguishable Errors](#indistinguishable-errors) and [Removing Dimensions](#removing-dimensions) sections occur silently.
+- As documented [here](https://cran.r-project.org/doc/manuals/r-release/R-lang.html#Indexing-by-vectors), negative out-of-bounds values are silently disregarded when deleting elements. For example, if you have `x <- 1:10`, then `x[-20]` returns an unmodified version of `x` without warning or error.
+  ```{r, echo=TRUE}
+  x <- 1:10
+  x[20]
+  x
+  x[-20]
+  identical(x, x[-20])
+  ```
+
+Given that `x[20]` is `NA` -- a questionable decision in of itself -- is this the behaviour that you expected?
+
+- Subassigning `NULL` to a column that your data does not have does not give a warning or error. For example, trying to access `mtcars["weight"]` is an error, but `mtcars["weight"] <- NULL` silently does nothing. `$` and `$<-` have the same issue.
+- Using `within()` to remove unwanted columns from your data, e.g. `within(data, rm(colName1, colName2))`, does nothing to any columns with duplicated names. Again, no warning or error...
+  ```{r, echo=TRUE}
+  dupe <- cbind(mtcars, foo = 3, foo = 4)
+  head(dupe)
+  head(within(dupe, rm(carb, foo)))
+  ```
+  By the way, `cbind()` doesn't silently correct duplicated column names. By now, you probably expected otherwise. This is documented behaviour, but I don't think that anyone ever bothered to read the docs for `cbind()`.
+- Using `subset()` rather than `within()` is sometimes suggested for operations like what I was trying to do in the previous point. For example, you can remove columns with `subset(data, select = -c(colName1, colName2))`. However, for duplicated names, I'd argue that `subset()` is even weirder than `within()`. With `subset()`, attempting to remove a duplicated column by name will only remove the first such column and removing any non-duplicated column will change the names of your duplicated columns.
+  ```{r, echo=TRUE}
+  #First, I'll show subset() working as normal and save us some space.
+  mtcars2 <- subset(mtcars, mpg > 25, select = -c(cyl, disp, hp, wt))
+  mtcars2
+  dupe <- cbind(mtcars2, foo = 3, foo = 4, foo = 5)
+  dupe
+  subset(dupe, select = -foo)#Names have silently changed and only one foo was dropped.
+  subset(dupe, select = -c(foo, foo))#Identical to previous.
+  subset(dupe, select = -carb)#Foo's names have silently changed, despite us not touching foo!
+  subset(dupe, select = -c(carb, foo))#Names have silently changed and only one foo was dropped.
+  ```
+  I think that the worst example here is `subset(dupe, select = -carb)`. I didn't touch `foo`, so why change it? I'd rather have `within()`'s silent inaction than `subset()`'s silent sabotage.
+
+Needless to say, there will be more examples of R silently misbehaving later on in this document. This was just a good place to throw in a few that are specific to subsetting.
+
+### Subsetting by Predicates
+
+This should be easy, shouldn't it? Go through the data and only give me the bits that have the property that I'm asking for. What could possibly go wrong? Turns out, it's quite a lot. Even predicates as simple as "*does the element equal `x`?*" are a minefield. I understand why these examples are the way that they are -- really, I do -- but how to delete unwanted elements is one of the first things that you're going to want to learn in a stats language. For something that you're going to want to be able to do on day one of using R, there are far too many pitfalls.
+
+- You might think that `setdiff()` is sufficient for removing data -- it's certainly the first thing tool that a mathematician would reach for -- but it has the side-effect of removing duplicate entries from the original vector and destroying your data structures by applying `as.vector()` to them.
+  ```{r, echo=TRUE}
+  Nile
+  setdiff(Nile, 1160)#Not a time series any more.
+  setdiff(Nile, 0)#Hey, where did the other 1160s go?
+  ```
+  It's safer when you're dealing with names, e.g. `data[setdiff(names(data), "nameOfThingToDelete")]`
+  ```{r, echo=TRUE}
+  head(mtcars)
+  head(mtcars[setdiff(names(mtcars), "wt")])
+  ```
+  but anything that's only sometimes safe doesn't fill me with confidence.
+- Because `which()` is an extremely intuitive function for extracting/changing subsets of your data and for dealing with missing values (see [*The R Inferno*](https://www.burns-stat.com/pages/Tutor/R_inferno.pdf), section 8.1.12), it is one of the first things that a beginner will learn about. However, although your intuition is screaming for you to do it, you almost never want to use `data <- data[-which(data==thingToDelete)]`. When `which()` finds no matches, it evaluates to something of length 0. This makes `data[-which(data==thingToDelete)]` also returns something of length 0, deleting your data.
+  ```{r, echo=TRUE}
+  Nile
+  Nile[-which(Nile==1160)]#This is fine.
+  which(Nile==11600)
+  Nile[-which(Nile==11600)]#This is not.
+  ```
+  What you probably expected was `which()` leaving your data unchanged when it has not found a match. You might also have expected a warning or error, but surely you've learned your lesson by now? Anyway, section 8.1.13 of [*The R Inferno*](https://www.burns-stat.com/pages/Tutor/R_inferno.pdf) offers some ways to get this behaviour, but the only practical-looking suggestion is `data[!(data %in% thingToDelete)]`. I think that you can get away with removing the curly brackets there.
+  ```{r, echo=TRUE}
+  Nile[!Nile %in% 1160]
+  Nile[!Nile %in% 11600]
+  ```
+  That's mostly okay. However, `identical(Nile, Nile[!Nile %in% 11600])` is `FALSE`. Can you guess why? It's like R has no always safe ways to subset.
+- At least removing elements that are equal to a particular number is simple for vectors. Even for lists, it's just `data[data!=x]`. It's maybe not what a beginner would guess ("*I have to write `data` twice?*"), but it's simple enough.
+- For removing a vector from a list of vectors, you're going to want to learn some functional programming idioms. Not hard if you're a programmer, but shouldn't this be easier in a stats and maths tool? Anyway, you probably want `Filter(function(x) all(x!=vectorToDelete), data)`. You can also do it with the apply family, but I don't see why you would.
+- Removing what you don't want from a data frame largely comes down to mastering the subsetting rules, a nightmare that I've spent the previous few thousand words covering. I often end up with very ugly lines like `outcomes[outcomes$playerChoice == playerChoice & outcomes$computerChoice == computerChoice, "outcome"]`
+- Before you ask, `subset()`, `with()`, and `within()` aren't good enough either. I've already mentioned some of their issues, but [more on them later](#non-standard-evaluation).
+
+Overall, it's like R has no safe ways to subset. What is safe for one job is often either unsafe, invalid, or inconsistent with another. R's huge set of subsetting tools is useful -- maybe even good -- once mastered, but until then you're forced to adopt a guess-and-check style of programming and pray that you get a useful error/warning message when you get something wrong. Worse still, these prayers are rarely answered and, in the cases where R silently does something that you didn't want, they're outright mocked. Do you understand how damning that is for a stats language? I can't stress this point enough. Subsetting in R should be easy and intuitive. Instead, it's something that I've managed to produce thousands of words of complaints about and it still trips me up with [alarming regularity](https://github.com/ReeceGoding/Frustration-One-Year-With-R/issues/3), despite my clear knowledge of the correct way to do things. If I want a vector of consonants, you can bet that I'm going to write `letters[-c("a", "e", "i", "o", "u")]`, `letters[-which(letters == c("a", "e", "i", "o", "u"))]`, and `letters[c("a", "e", "i", "o", "u") %in% letters]` before remembering the right way to do it. If I'm still making those mistakes for something simple, then I can only imagine what it's like for a true beginner doing something complicated.
+
+## Vectorization Again
+
+[You've heard the good](#vectorization), now for the bad. R's vectorization is probably the best thing about the language and it will work miracles when you're doing mathematics. However, it will trip you up in other areas. A lot of these points are minor, but when they cause you problems their source can be tough to track down. This is because R is working as intended and therefore not giving you any warnings or errors (spotting a pattern?). Furthermore, if you have correctly identified that you have a vectorization problem, then pretty much any function in R could be to blame, because most of R's functions are vectorized.
+
+- The commonality of vectors leads to some new syntax that must be memorised. For example, `if(x|y)` and `if(x||y)` are very different and using `&&` rather than `&` can be fatal. Compare the following:
+  ```{r, echo=TRUE, error=TRUE}
+  mtcars[mtcars$mpg < 20 && mtcars$hp > 150,]
+  mtcars[mtcars$mpg < 20 & mtcars$hp > 150,]
+  ```
+  Personally, I find that it's easy to remember to use `&` for `if` but I often forget to use `&` for subsetting. It looks like version 4.1.4 is going to make `||` and `&&` throw warnings.
+- The `if` statements accept vectors of length greater than 1 as their predicate, but will only pay attention to the very first element. This throws a warning and there is a global option to make it an error instead, but I can't see why R accepts such predicates at all. Why would I ever use `if(c(TRUE, FALSE))` to mean "*if the first element of my vector is true, then...*"? This is also what the `&&` and `||` syntax is for (e.g. `c(TRUE, FALSE) && c(TRUE, FALSE)` is `TRUE`), but I still don't see why anyone would use several logical vectors and only be interested in their first elements.
+  - It appears that version 4.1.4 is going to do something about this. Specifically, replace this warning with an error.
+- When dealing with anything 2D, you need to be very careful to not mix up any of `length()`, `lengths()`, `nrow()`, or `ncol()`. In particular, `length()` is so inconsistent that I'm unsure why they let it work for 2D structures ([probably something to do with it being an internal generic](#internal-generics)). For example, the length of a data frame is its number of columns and the length of a matrix is its number of elements.
+  ```{r, echo=TRUE}
+  (a <- diag(4))
+  (b <- as.data.frame(a))
+  length(a)
+  length(b)
+  ```
+- Vectors are collections and therefore inherit the previous section's issues about selecting elements.
+- Because virtually everything is already a vector, you never know what to use when you want a collection or anything nested. Lists? Arrays? `c()`? Data frames? One of `cbind()`/`rbind()`? Matrices? You get used to it eventually, but it takes a while to understand the differences.
+- Some functions are vectorized in such a way that you're forced to remember the difference between how they behave for n length-one vectors and and how they behave for the corresponding single vector of length n. For example, `paste("Alice", "Bob", "Charlie")` is not the same as `paste(c("Alice", "Bob", "Charlie"))`.
+  ```{r, echo=TRUE}
+  paste("Alice", "Bob", "Charlie")
+  paste(c("Alice", "Bob", "Charlie"))
+  paste("Alice", "Bob", "Charlie", collapse = "")
+  paste(c("Alice", "Bob", "Charlie"), collapse = "")
+  ```
+  I'm not saying that this doesn't make sense, but it is a source of unpredictability.
+- Another unpredictable example: What does `max(100:200, 250:350, 276)` return? You might be surprised to discover that the output is the single number `350`, rather than a vector of many outputs.
+  ```{r, echo=TRUE}
+  max(100:200, 250:350, 276)
+  ```
+  The fix for this isn't some `collapse`\-like argument like it is for `paste()`, it's an entirely different function: `pmax()`. Why?
+  ```{r, echo=TRUE}
+  pmax(100:200, 250:350, 276)
+  ```
+- A further annoyance comes from how many things behave differently on vectors of length one. For example, `sample(1:5)` is exactly the same as `sample(5)`, which is bound to give you bugs when you use `sample(5:n)` for changing `n`.
+- R has rules for recycling vector elements when you try to get it to do something with several vectors that don't all have the same length. You saw this abused when I gave the `x <- paste0(rep("", 100), c("", "", "Fizz"), c("", "", "", "", "Buzz"))` FizzBuzz example. When recycling occurs, R only throws a warning if the longest vector's length is not a multiple of the others. For example, neither `Map(sum, 1:6, 1:3)` nor that FizzBuzz line warn you that recycling has occurred, but `Map(sum, 1:6, 1:4)` will.
+  ```{r, echo=TRUE}
+  Map(sum, 1:6, 1:3)
+  Map(sum, 1:6, 1:4)
+  ```
+  The first case -- where no warnings are given -- can be an unexpected source of major error. [The authors of the Tidyverse seem to agree with me](https://r4ds.had.co.nz/vectors.html#scalars-and-recycling-rules). For example, you're only allowed to recycle vectors of length 1 when constructing a tibble, so `tibble(1:4, 1:2)` will throw a clear error message whereas `data.frame(1:4, 1:2)` silently recycles the second argument. Similarly, `map2(1:6, 1:3, sum)` is an error, but  `map2(1:6, 1, sum)` is not.
+  ```{r, echo=TRUE}
+  library(tibble)
+  ## > tibble(1:4, 1:2)
+  ## Error: Tibble columns must have compatible sizes.
+  ## * Size 4: Existing data.
+  ## * Size 2: Column at position 2.
+  ## ℹ Only values of size one are recycled.
+  ## Run `rlang::last_error()` to see where the error occurred.
+  data.frame(1:4, 1:2)
+  library(purrr)
+  ## > map2(1:6, 1:3, sum)
+  ## Error: Mapped vectors must have consistent lengths:
+  ## * `.x` has length 6
+  ## * `.y` has length 3
+  map2(1:6, 1, sum)
+  ```
+- Section 8.1.6 of [*The R Inferno*](https://www.burns-stat.com/pages/Tutor/R_inferno.pdf): The recycling of vectors lets you attempt to do things that look correct to a novice and make sense to a master, but are almost certainly not what was wanted. For example, `c(4, 6) == 1:10` is `TRUE` only in its sixth element. The recycling rules turn it in to `c(4, 6, 4, 6, 4, 6, 4, 6, 4, 6) == 1:10`. Again, there is no warning given to the user unless the longest vector's length is not a multiple of the other's. In this case, what you wanted was probably `c(4, 6) %in% 1:10`, maybe with a call to `all()`.
+  ```{r, echo=TRUE}
+  c(4, 6) == 1:10
+  c(4, 6, 4, 6, 4, 6, 4, 6, 4, 6) == 1:10
+  c(4, 6) %in% 1:10
+  all(c(4, 6) %in% 1:10)
+  ```
+- Some functions don't recycle in the way that you would expect. For example, read the documentation for `strsplit()` and ask yourself if you expect `strsplit("Alice", c("l", "c"))` and `strsplit("Alice", "l")` to give the same output. If you think that they don't, you're wrong. If you expected the first option to warn you about the `"c"` part not being used, you're sane, but wrong. If you want to see how the second argument is supposed to work, re-run the earlier code with `c("Alice", "Boblice")` as your first argument.
+  ```{r, echo=TRUE}
+  strsplit("Alice", c("l", "c"))
+  strsplit("Alice", "l")
+  strsplit(c("Alice", "Boblice"), c("l", "c"))
+  ```
+- Remember what I said about needing to generate the correct logical vector when you want to subset a collection? Logical vectors are also recycled when subsetting collections. Because this vector recycling does not always throw warnings or errors, it's a new Hell. I'm honestly not sure if the exact rules for when this does/doesn't throw warnings/errors are documented anywhere. [The language definition](https://cran.r-project.org/doc/manuals/r-release/R-lang.html#Indexing-by-vectors) claims that using a logical vector to subset a longer vector follows the same rules as when you're using two such vectors for arithmetic (i.e. you get a warning if the larger of the two's length isn't a multiple of the smaller's). However, I know this to be false.
+  ```{r, echo=TRUE}
+  a <- 1:10
+  a + rep(1, 9) #Arithmetic; Gives a warning.
+  a[rep(TRUE, 9)] #Logical subsetting; 10 results without warning.
+  a[c(TRUE, FALSE, TRUE)] #Again, 10 results. Shouldn't it be either 10 with a warning or just 3?
+  ```
+  I'll take this chance to repeat my claim that this is extremely powerful if used correctly, but the potential for errors slipping through unnoticed is huge. This toy example isn't so bad, but wait until these errors creep in to your dataset with 50 rows and columns, leaving you with no idea where it all went wrong. The first time where this really caught me out was when I used the same logical vector for two similar datasets of slightly different sizes. I had hoped that if anything went wrong, I'd get an error. Because I didn't, I continued on without knowing that half of my data was now ruined.
+- Logical vectors also recycle `NA` without warning. I can't point to any documentation that contradicts this, but it will always catch you off guard. On the bright side, this is consistent with the addition and subsetting rules for numeric vectors with `NA`s.
+  ```{r, echo=TRUE}
+  arithmetic <- c(2, NA)
+  arithmetic + c(11, 12, 13, 14) #Keeps NA and recycles.
+  logic <- c(TRUE, FALSE, TRUE, NA)
+  LETTERS[logic]
+  LETTERS[arithmetic] #Keeps NA and recycling is not expected.
+  ```
+- You sometimes have to tell R that you wanted to work on the entire vector rather than its elements. For example, `rep(matrix(1:4, nrow = 2, ncol = 2), 5)` will not repeat the matrix 5 times, it will repeat its elements 5 times. The fix is to use `rep(list(matrix(1:4, nrow = 2, ncol = 2)), 5)` instead.
+  ```{r, echo=TRUE}
+  m <- matrix(1:4, nrow = 2, ncol = 2)
+  rep(m, 5)
+  rep(list(m), 5)
+  ```
+  Similarly, you might think that `vect %in% listOfVectors` will work, but it will instead check if the elements of `vect` are elements of `listOfVectors`. Again, the solution is to wrap the vector in a list. For example, you want `list(1:4) %in% list(5:10, 10:15, 1:4)` not `1:4 %in% list(5:10, 10:15, 1:4)`.
+  ```{r, echo=TRUE}
+  list(1:4) %in% list(5:10, 10:15, 1:4)
+  1:4 %in% list(5:10, 10:15, 1:4)
+  ```
+  You might be surprised that the last result was entirely `FALSE`. After all, some of `1:4` is in the last element of the list. I'll leave that one to you.
+
+Again, for the most part, these aren't major issues. I don't particularly like the inconsistency between functions like `paste()` and `max()`, but the only true minefield is the vector recycling rules. When they silently do things that you don't want, you're screwed.
+
+## R Won't Help You
+
+R makes no secret of being essentially half a century of patches for S. Many things disagree, lack any clear conventions, or are just plain bad, but show no signs of changing. Because so many packages depend on these inconsistencies, I don't think that they will ever be removed from base R. R could be salvaged if its means of helping you manage the inconsistency were up to scratch -- e.g. the documentation, the function/argument names, or the warning/error messages -- but they're not. It's therefore hard to guess about anything or to help yourself when you've guessed wrong. These sounds like minor complaints, but R can be so poor in these regards that it becomes a deal-breaker for the entire language. If there's one thing that will make you quit R forever, it's this. It may sound like I'm being harsh, but I'm not alone in saying it. Both *Advanced R* and [*The R Inferno*](https://www.burns-stat.com/pages/Tutor/R_inferno.pdf) can barely go a section without pointing out an inconsistency in R.
+
+Really, this is R's biggest issue. You can get used to the arcane laws powering R's subsetting and vectorization, the abnormalities of its variable manipulations, and it's tendency to do dangerous things without warning you. However, this is the one thing that you can never learn to live with. R is openly, dangerously, and eternally inconsistent and also does a poor job of helping you live with that. In the very worst cases, you can't find the relevant documentation, the thing that's conceptually close to what you're after doesn't link to it, the examples are as poor as they are few, the documentation is simultaneously incomplete and filled with irrelevant information while assuming familiarity with something alien, the error messages don't tell you what line threw the errors that your inevitable misunderstandings caused, the dissimilarity between what you're working with and the rest of the language makes it impossible to guess where you've slipped up, there's undocumented behaviour that you need to look at the C code to discover, and you know that none of this will ever be fixed!
+
+These issues tend to overlap, but I've done my best to split this up in to sections that cover each aspect of this problem. All in all, this section came out to be shorter than I expected. However, I hope that I have made the magnitude of some of these points clear.
+
+### The Documentation
+
+If R had outstanding documentation, then I could live with its inconsistencies. Sadly, it doesn't. The documentation does almost nothing to help you in this regard and has more than its fair share of issues:
+
+- Some of the docs are ancient and therefore have examples that are either terrible, few in number, or non-existent. The references in these docs suggests that this is a disease inherited from S, but sometimes it's really unforgivable:
+  
+  - The Examples section in the documentation for control flow shows no examples of how to use `if`, `while`, `repeat`, `break`, or `next`. They're explained in the actual text, but I expect the Examples section to give examples!
+  - The documentation for the list data type has five examples, many of which are for the other seven functions that it shares it documentation with, despite it being an absolutely fundamental data type. For some reason, that documentation also includes a library call. And yes, that does mean that some of the functions don't have examples.
+  - For stats functions, we typically see documentation for a set of algorithms. However, said documentation will often have far fewer examples than there are members in said set. The `quantile()` function's docs are an extreme examples of this. A similar sin can be found in the docs for `lm()` and `glm()`. However, their See Also sections link to a lot of functions that use them in their own examples, so I can just barely forgive this.
+  
+  The Tidyverse seems to be far better in this regard, with the examples often taking up almost as much room as the actual documentation. However, I don't like how its docs often don't have a Value section, like a lot of base R's docs do.
+
+- Some of the docs have no examples at all e.g. `UseMethod()`, `vcov()`, and `xtfrm()`.
+
+- Some of the docs will document many seemingly identical things and not tell you how they differ. For example, can you tell from the documentation if there's a difference between `rm()` and `remove()`? An even worse case is trying to figure out the difference between `resid()` and `residuals()`. The documentation correctly tells you that one is an alias for another, but then it tells you that `resid()` is intended to encourage you to not do a certain thing. This implies that `residuals()` does not have that same intention, incorrectly hinting that they might have different behaviour.
+
+- In some of the standard libraries, you can find functions without any documentation. For example, `MASS::as.fraction()` is totally undocumented.
+
+- The [*R Language Definition*](https://cran.r-project.org/doc/manuals/r-release/R-lang.html) is incomplete. I imagine that this will really bother some people on principle alone. Personally, I would be satisfied if it were incomplete in the sense of "*each section is complete and correct, but the document is missing many key sections*". However, it's really more like a rough draft. It has [sentences that stop mid-word](https://cran.r-project.org/doc/manuals/r-release/R-lang.html#Inheritance), [prompts for where to write something latter](https://cran.r-project.org/doc/manuals/r-release/R-lang.html#Propagation-of-names), and lots of information that is either clearly incomplete or very out of date.
+
+- A lot of R's base functions are not written in R, so if you really want to understand how an R function works, you need to learn an extra language. I find that a lot of the power users have gotten used to reading the C source code for a lot of R. That wouldn't be so bad, but...
+
+- For a long time, I didn't know why many of my technical questions on Stack Overflow were answered by direct reference to R's code, without any mention of its documentation. I eventually learned that R's functions occasionally have undocumented behaviour, meaning that you can't trust anything other than the code. For example:
+  
+  - Where do the docs tell you that the `expr` argument in `replicate()` gets wrapped in an anonymous function, meaning that you can't use it to do `<-` variable assignment to its calling environment (e.g. code like `n <- 0; replicate(5, n <- n + 1)` does not change `n`)? You might just spot this if you check the R code, but even then it's not clear.
+    
+    ```{r, echo=TRUE}
+    replicate
+    ```
+  
+  - Where do `rep()`'s docs tell you that it's a special kind of generic where your extensions to it won't dispatch properly? Even the R code -- `function (x, ...)  .Primitive("rep")` -- won't help you here.
+  
+  - Where do `lapply()` and `Filter()`'s docs tell you that they don't play nice with the `names()` function? Again, even the R code won't help here.
+    
+    ```{r, echo=TRUE}
+    lapply
+    ```
+  
+  You can sometimes find parts of the documentation that very vaguely hint to this misbehaviour, but such things are rarely specific or said at a non-expert level: Their meaning is only obvious in retrospect. On the rare occasion that the documentation is specific about the misbehaviour, it can be incomplete. For example, the documentation for `choose()` tells you that it behaves differently for small `k`, but what is "*small `k`*"? I think that it's 29 or less, but that assumes that I've found the correct C code (I think it's [this](https://github.com/wch/r-source/blob/trunk/src/nmath/choose.c)?) and read it correctly.
+
+- In the same vein to the `choose()` example, functions in the base stats library do not always tell you which calculation method they used. This can make you falsely assume that a figure was calculated exactly. For example, `prop.test()` computes an approximation, but the only mention of this in its documentation is the See Also section saying "*`binom.test()` for an exact test of a binomial hypothesis*". Not only is this in a terrible place, it only suggests that an approximation has been used in `prop.test()`. The details of the approximation are left for the reader to guess.
+
+- Some functions act very strangely because they're designed with S compatibility in mind. This issue goes on to damage the documentation for said functions. For example, have a look at the docs for the `seq()` function. It won't tell you what `seq_along()` does, but it will tell you what to use `seq_along()` instead of! I'll let [Stack Overflow](https://stackoverflow.com/questions/59378862/) explain `seq.int()`'s documentation issues. Said documentation is so poor that I've been scared out of using the function. I really don't know why R pays this price: Who is still using S? Another example is the `**` operator. I'll let the Arithmetic Operators documentation (try `?'**'`) speak for itself on that one. Its three sentences on the topic are `**`'s only documentation. Given that you shouldn't use it, it would be harsh for me to say more. For further reading, I will only give [this](https://rosettacode.org/wiki/Exponentiation_order#R).
+
+- As the previous example shows, backwards compatibility is a priority for R. This means that its inconsistencies will almost certainly never be fixed. Things would be better if the docs did a better job of helping you, but this section demonstrates ad nauseam that they do not. One wonders if there's ever been any real interest in fixing it.
+
+- Some docs assume stats knowledge even when there should be no need to. If you don't know what "*sweeping out*" is, you will never understand the docs for `sweep()`. I find `rmultinom()`'s docs to be similarly lacking. It talks about "*the typical multinomial experiment*" as if you'll know what that is. Its Details section tells you the mathematical technicalities, but if I wanted that then I would've gone to Wikipedia. All that they had to do was give an example about biased die and that would've told the reader all that they will need to know. A similar case can be made about `rbinom()`, but I can forgive that on the grounds of "*who uses R without knowing at least that much stats?*".
+
+- The docs often do a bad job of linking to other relevant functions. For example, `match()`'s doesn't tell you about `Position()`, `subset()`, `which()`, or the various grep things, `mapply()`'s doesn't tell you about `Map()`, and `rbinom()`'s doesn't tell you about `rmultinom()`.
+
+- I sometimes can't understand how to search for functions in the documentation. For example, `Filter()`'s docs are in the "*funprog {base}*" category, but putting `?funprog` in to R won't return those docs. Another oddity is that it's sometimes case sensitive. For example, `?Extract` works but `?extract` doesn't. In case you missed it, there is no `Extract()` or `extract()` function.
+
+- I find that the documentation tries to cover too many functions at once. For example, in order to understand any particular function in the funprog or grep documentation, you're probably going to have to go as far as understanding all of them. The worst case is the Condition Handling and Recovery documentation (`?tryCatch`), which lists about 30 functions, forever dooming me to never really understand any more of R's exception system than `stop()` and `stopifnot()`. A much smaller example is that both `abs()` and `sqrt()` are documented in the same place, despite barely having anything in common and not sharing this documentation with anything else. This issue also compromises the quality of the examples that are given. For example, the funprog documentation gives no examples of how to use `Map()`, `Find()`, or `Position()`, something that never would have happened if they were alone in their own documentation pages. Then again, `which()` and `arrayInd()` are the only functions in their documentation, and `arrayInd() `has no examples, so maybe I'm giving R too much credit. After all, like I hinted at earlier, even totally fundamental stuff like lists have more functions in their documentation than examples.
+
+- The docs sometimes spend a distracting amount of time comparing their subjects to other languages that you might not know. The best example is the funprog docs, which are needlessly cluttered with mentions of Common Lisp. A close second to this is the documentation for pairlists, which even in [the language definition](https://cran.r-project.org/doc/manuals/r-release/R-lang.html#Pairlist-objects) have little more description than "*Pairlist objects are similar to Lisp's dotted-pair lists*". My favourite example is probably "*regexpr and gregexpr with perl = TRUE allow Python-style named captures*", if only because it manages to mention two languages in a totally unexpected way. I should also mention that I've already complained about how some functions are so obsessed with S compatibility that both their documentation and functionality are compromised. As a final but forgiveable case, `sprintf()` is deliberately about C-style stuff and therefore never shuts up about C, making the R documentation pretty difficult for anyone who doesn't know C.
+
+- If pairlists are not really intended for use by normal users, why are they documented in the exact same place as normal lists, which are critical to normal R usage?
+
+- Guidelines for unusual operators, such as using `[` as a function, are rather hard to find in the documentation. One example that I found particularly annoying is in the `names()` documentation. It can't make its mind up about whether it wants to talk about the `names(x) <- value` version or the `"names<-"(x, value)` version. The only place where it's apparent that there's a meaningful difference between the two is in the second part of the Values section, which says:
+  
+  - "*For `names<-`, the updated object. (Note that the value of `names(x) <- value` is that of the assignment, `value`, not the return value from the left-hand side.)*"
+  
+  ...Wasn't that helpful? You'll only really be able to understand it if you understand the abstract notion of R's replacement functions, but nowhere in the `names()` documentation will point you to that. In fact, unless you find the correct section of the language definition, you're never going to find it at all (I'm not linking to that, go prove my point and find it yourself!).
+
+Don't get me wrong, R's documentation isn't terrible. Its primary issue is that it does a poor job of helping you navigate R's inconsistencies. If the examples were plentiful and the docs for each function linked to plenty of other related functions without themselves being cluttered with mentions of other functions and languages, then it would go a long way towards stopping R from tripping people up.
+
+### The Functions
+
+There are several inconsistencies in R's functions and how you use them. This means that you either have to adopt a guess-and-check style of coding or constantly double-check the documentation before using a lot of R's functions. Neither are satisfactory.
+
+- There are a few too many functions that have names synonymous with "*do more than once*". There's `replicate()`, `repeat` loops, and `rep()`. Good luck remembering which does what.
+
+- Why do we have both `structure()` and `str()` or `seq()` and `sequence()`, all of which are different, while having `rm()`/`remove()` and `residuals()`/`resid()`, which are not? The potential for confusion is obvious: If I were to write a new function, `Pos()`, should you or should you not assume that it's an alias for `Position()`?
+
+- There is no consistent convention for function names in the base libraries, even for related functions. I struggle to think of a function-naming scheme that isn't found somewhere in R. For example, the documentation for `mean()` links to both `colMeans()` and `weighted.mean()`. Similarly, the `seq()` documentation contains both `seq.int()` and `seq_len()`. I also don't like how there's both `readline()` and `readLines()` or `nrow()` and `NROW()`. Or how about `all.equal()` and `anyDuplicated()`? There's even all of those functions with leading capitals like `Vectorize()` or the funprog stuff. I could go on...
+
+- The above issue gets even worse if we discuss functions that you'd expect to exist but don't. For example, we have `write()` but not `read()` (the equivalent is probably `scan()`).
+
+- Argument names are also inconsistent. Most of the apply family calls its function argument `FUN`, but `rapply()` and the funprog stuff use `f`.
+
+- Even when argument names are consistent, their behaviour may not be. For example, `complex(real = 1, imaginary = 2, length.out = 0)` and `rep_len(complex(real = 1, imaginary = 2), length.out = 0)` do not have the same return value. If you ask me, it's `complex()` that has the wrong behaviour here. I can't see anywhere in its documentation mentioning that the other arguments can overrule the `length.out = 0` argument and give you vectors larger than what you asked for. At least throw a warning!
+
+- Related functions sometimes expect their arguments to be given in a different order. For example, except for `mapply()`, the entire apply family wants the data to come before the function, whereas all of the funprog functions (e.g. `Map()`, `Filter()`, etc), want the reverse. When you realise that you picked the wrong function for a job, this makes rewriting your code infuriating.
+
+- Functions that should be related in theory are not always related in practice. For example, `subset()` is not documented with the Set Operations (`union()`, `setdiff()`, etc) and works on completely different principles. The Set Operations are the extremely dangerous functions that remove duplicates from their inputs and apply `as.vector()` to them. The `subset()` function is a non-standard evaluation tool like `within()`, making it completely different and [dangerous in a different way](#non-standard-evaluation). Finally, despite it being documented with the Set Operations, none of these warnings apply for `is.element()`. I regret every time that I wrote off someone's advice to use `subset()` because of my (entirely reasonable!) assumption that it would be a (dangerous) Set Operation.
+
+- Functions with related names sometimes have different effects. For example, here is a damning quote from [section 3.2.4 of *Advanced R*](https://adv-r.hadley.nz/vectors-chap.html#testing-and-coercion):
+  
+  - "*Generally, you can test if a vector is of a given type with an `is.*()` function, but these functions need to be used with care. `is.logical()`, `is.integer()`, `is.double()`, and `is.character()` do what you might expect: they test if a vector is a character, double, integer, or logical. Avoid `is.vector()`, `is.atomic()`, and `is.numeric()`: they don't test if you have a vector, atomic vector, or numeric vector; you'll need to carefully read the documentation to figure out what they actually do.*"
+  
+  Another example is that `any()`, `all()`, and `identical()` are all predicate functions, but `all.equal()` and `anyDuplicated()` are definitely not.
+
+- Similar to the above, from [the solutions to *Advanced R*](https://advanced-r-solutions.rbind.io/vectors.html#lists):
+  
+  - "*Note that `as.vector()` and `is.vector()` use different definitions of "vector!"*".
+  
+  The above quote is then followed by showing that `is.vector(as.vector(mtcars))` returns `FALSE`. I've found similar issues with `as.matrix()` and `is.matrix()`.
+
+- The language can't really decide if it wants you to be using lambdas. The apply family has arguments like `...` and `MoreArgs` to make it so you don't always have to do so, but the funprog stuff gives you no such choice. I almost always find that I want the lambdas, so the apply family's tools to help you avoid them only serve to complicate the documentation.
+
+- As an enjoyable example of how these inconsistencies can ruin your time with R, read the documentation for `Vectorize()`. It's packed with tips for avoiding these pitfalls.
+
+### Extended Example: Matrices
+
+Let's talk about matrices. I've already discussed some oddities like how functions like `[`, `$` and `length()` treat them in ways that seem inconsistent with either the rest of the language or your expectations, but let's go deeper:
+
+- [As covered earlier](#named-atomic-vectors), matrices want to have rownames and colnames rather than names. This gives us a few more inconsistencies to deal with that I didn't mention at the time. The rest of the language has trained you to use `setNames(data, names)`. When you do this, `data` is returned with its column names changed without any changes to `data`. However, matrices want `colnames(data) <- names` and the obvious equivalent for `rownames()`. This modifies `data` and does not return it.
+  
+  ```{r, echo=TRUE}
+  a <- b <- diag(3)
+  (colnames(a) <- c("I", "Return", "Me"))
+  a#Changed
+  setNames(b, c("I", "Return", "b"))
+  b#Not changed
+  ```
+  
+  Not only are the function names inconsistent (why not `colNames()`?), the syntax is wildly so. Also, take a look at the incomprehensible error message that `colnames()` gives if you use `diag(3)` directly rather than assigning it to a variable beforehand.
+  
+  ```{r, echo=TRUE}
+    a <- diag(3)
+    colnames(a) <- c("Not", "A", "Problem")
+    ## > colnames(diag(3)) <- c("Big", "Bad", "Bug")
+    ## Error in colnames(diag(3)) <- c("Big", "Bad", "Bug") : 
+    ##  target of assignment expands to non-language object
+    ## > colnames(a <- diag(3)) <- c("Has", "Similar", "Problem")
+    ## Error in colnames(a <- diag(3)) <- c("Has", "Similar", "Problem") : 
+    ##  object 'a' not found
+  ```
+  
+  `setNames()` has no such issue.
+  
+  ```{r, echo=TRUE}
+  setNames(diag(3), c("Works", "Just", "Fine"))
+  setNames(a <- diag(3), c("Works", "Just", "Fine"))
+  ```
+  
+  In truth, I don't mind either `colnames()` or `setNames()`. I just wish that R would pick one way of handling names and stick to it.
+
+- Unlike anything else in R that I can think of, matrices are happy to let you work by row and even have dedicated functions for it, with `rowSums()` and `apply(..., MARGIN = 1)` being the obvious examples. There is a good reasons for this difference -- matrices are always one type, unlike things like data frames -- but it's still an inconsistency. This inconsistency leads to code that is tough to justify. For instance, I frequently find that I want to treat the output of `expand.grid()` as a matrix. `unique(t(apply(expand.grid(1:4, 1:4, 1:4, 1:4), 1, sort)))` is one of my recent examples. This isn't too bad, but I honestly have no idea why I needed the `t()`. Experience has taught me not to question it, which is pretty bad in of itself. R's inconsistency eventually makes you either fall in to the habit of not questioning sudden transformations of your data or forces you to become completely paralysed when trying to understand what ought to be trivial operations in your code. Doubts like "*is there really no better way? R is supposed to be good with this sort of stuff*" become frequent when wanting to work by row.
+  
+  - March 2023 update: I don't think that there's anywhere in R's docs that tell you that `expand.grid()` is used to make Cartesian products. This compares poorly to languages such as Racket, which calls the practically equivalent function `cartesian-product`. Similarly, Python just calls it `product`. In both cases, they return a collection of lists/tuples where each list/tuple would be a row in `expand.grid()`'s data frame. Nested collections aren't the easiest things to deal with, but they seem to produce more intuitive code than the messes that you get from trying to treat a data frame like a matrix. Maybe the lesson here is that you should iterate through a data frame's rows the hard way rather than using functions that let you think of it as a matrix? I think that this explains the doubt that I've mentioned above; R's data structures have a habit of making the right way the hard way.
+
+- So what happens if, when manipulating a matrix, you write the `sapply()` that the rest of the language has taught you to expect? At best, it gets treated like a vector in column-order.
+  
+  ```{r, echo=TRUE}
+  (mat <- matrix(1:9, nrow = 3, byrow = TRUE))
+  sapply(mat, max)
+  ```
+
+At worst, it doesn't do anything like what you wanted.
+
+```{r, echo=TRUE}
+mat <- matrix(1:9, nrow = 3, byrow = TRUE)
+sapply(mat, sum)
+```
+
+The trick for avoiding this is to use numbers as your data argument and let subsetting be the function.
+
+```{r, echo=TRUE}
+mat <- matrix(1:9, nrow = 3, byrow = TRUE)
+sapply(1:3, function(x) sum(mat[x, ]))
+sapply(1:3, function(x) max(mat[x, ]))
+```
+
+Better yet, just use `apply()`.
+
+```{r, echo=TRUE}
+mat <- matrix(1:9, nrow = 3, byrow = TRUE)
+apply(mat, MARGIN = 1, sum)
+ apply(mat, MARGIN = 1, max)
+```
+
+But why did we have the learn any of this in the first place?
+
+- Your turn: What does `seq_along(diag(3))` return? `1:3` or `1:9`? What if you added a row? What if you added a column? Or is the name of that function `seq.along()`? Are you sure? Tempted to check the docs? Which docs? Feeling helpless? You should!
+- Many functions that are designed for matrices should be forgotten about everywhere else. Several guides warn against using `apply()` on non-matrices and I wouldn't dare use `t()` on a non-matrix. Try `t(iris)`.
+- I always expect `c()` of a matrix to work in row-order. It doesn't. However, that's probably more the fault of `c()` and I than it is of matrices. There are times when I can't explain `c(mtcars)` to myself.
+- Named matrices are named atomic vectors, so they break in the ways [discussed earlier](#named-atomic-vectors). This puts you in a dilemma when you're using data that's essentially only one type: Do you keep it as a matrix and lose the awesome subsetting powers of a data frame? Or do you make it in to a data frame and lose the power to work by row that matrices give you? At times, I'm tempted to forget that I named the matrix in the first place and just manipulate it like a mathematician. None of these solutions are good.
+
+Overall, matrices are so inconsistent with the rest of the language that your matrix-manipulation code never looks right. It leaves you with an awful sense of unease.
+
+### The Error Messages
+
+Something to mention while we've still got some bad error messages fresh in our minds: People often say that R's error messages aren't very good and I'm starting to agree. Errors like "*`dim(X)` must have a positive length*" are useless when you're not told which function in the line that threw the error had that error, what `X` is, or in the very worst cases, what line the error was even in. This means that almost any error that R throws is going to require you looking through both the result of `traceback()` (to find where the error happened) and the documentation (to identify the problematic argument). It seems that this issue gets even worse when you try to do statistics. Warnings like "*Warning message: In `ks.test(foo, bar)` : ties should not be present for the Kolmogorov-Smirnov test*" don't even tell you where the tie was. Was it in one of my arguments? Is it some technical detail of the test? Somewhere safe to ignore? You don't know and R won't tell you unless you study the documentation. Worst come to worst, you have to read the code or learn the secret for getting `traceback()` to work on warning messages. And yes, that last bit is something that you have to learn. It makes warnings messages a lot harder to debug than errors.
+
+Of course, the more worrying (and frequent?) issue is when R gives you no warnings/errors at all. I'd much rather have a bad error message than none at all, but a bad error message is still annoying.
+
+### Mapply Challenge
+
+Maybe you think I'm clutching at straws? I admit, I sometimes wonder if my outrage is unjustified. Let's settle this with a challenge. If you win, then by all means close this document and write me off as a madman. If you lose, then maybe I've got a point.
+
+***
+
+**CHALLENGE**
+
+Taking in to account R's vector recycling rules, figure out how `mapply()`'s `MoreArgs` and `...` arguments differ and when you would want to pass something as a `MoreArgs` argument rather than in the `...` argument. No cheating by going online (trust me, it won't help). Solve this without leaving your R IDE. You're encouraged to check the documentation.
+
+If my criticisms are true, you will find that `mapply()`'s documentation is of little help and that your confidence in your R knowledge is too small to make an educated guess.
+
+***
+
+**HINT 1**
+
+Don't try to cheat by looking at `mapply()`'s code; Most of it is in C and therefore will be of no help to you.
+
+***
+
+**HINT 2**
+
+You might think that the documentation for `sapply()` will help you, but it'll actually mislead you because `mapply()`'s `...` is essentially `sapply()`'s `X` and `sapply()`'s `...` is most like `mapply()`'s `MoreArgs`.
+
+Solution below. Time to stop scrolling.
+
+***
+
+**SOLUTION**
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+**How do `MoreArgs` and `...` differ?**
+
+It's tough to explain. `mapply()` uses the default vector recycling rules for the `...` arguments but reuses every element of `MoreArgs` for each call. Because the `MoreArgs` argument must be a list and R recycles the elements of lists (e.g. using a length one list as a `...` argument will have the element of that list reused for each call), the difference is subtle to the point of near invisibility. Ultimately, `MoreArgs = list(a, b, c)` is equivalent to using `list(a)`, `list(b)`, and `list(c)` as three separate `...` arguments. The answer is therefore that `MoreArgs` only exists as syntactic sugar for this `...` case.
+
+**When use `MoreArgs` rather than `...`?**
+
+Beyond what I've already said, I barely have any idea. If you want to keep some function arguments fixed for each call, then just use an anonymous function. I struggle to invent a useful example of where I'd even consider using `MoreArgs`, never mind one that doesn't look tailor-made to make the anonymous function option look better. The one and only example that the documentation gives for using `MoreArgs` does not help here. Their example of `mapply(rep, times = 1:4, MoreArgs = list(x = 42))` is identical to `mapply(rep, times = 1:4, list(x = 42))`. Read that again: **You can get identical functionality by deleting the thing that they're trying to demonstrate!**
+
+**Bonus**
+
+Did you notice that the documentation for `mapply()` has a notable omission? It doesn't mention this, but you can call `mapply()` without the `...` argument, e.g. `mapply(rep, MoreArgs = list(1:4))`. You won't get sensible output, but you also don't get any warnings or errors.
+
+***
+
+If I've won this challenge, then allow me to take a victory lap by making the following point: By giving you the options of using `...`, `MoreArgs`, or an anonymous function to do the same task, R gives you plenty of room to confuse yourself without providing any help in its documentation. Either provide fewer options, document them better, or make them so commonplace and consistent within the language that I only need to understand it once in order to understand it everywhere!
+
+### Stealing from the Tidyverse
+
+On top of many of the things that I've already said about the apply family, fans of the Tidyverse, particularly `purrr`, often point out of the following inconsistencies. They've never bothered me, but they're undeniably correct. It makes me wonder why we can't just give all of the apply family a `simplify` argument that takes either `TRUE`, `FALSE`, or whatever `vapply()` would consider a valid `FUN.VALUE` argument.
+
+- Probably due to its use of `as.vector()`, `apply()` has no `simplify` argument. Version 4.0.6 did something about this, but I've yet to get my head around it.
+- There is no equivalent to `vapply()` for any member of the apply family other than `sapply()`. Among others, neither `tapply()` nor `mapply()` have one.
+- You can argue that some functions are missing in base R. For example, if we think of `lapply()` as "*list in, data frame out*" and `by()` as "*data frame in, list out*", and so on for `sapply()` and others, then where is the "*array in, list out*" function?
+- This might be a repeat of my complaints about the documentation, but there are several apply family functions that hardly anyone uses or understands. Few understand `eapply()` and even fewer use it. Just about everyone who uses R for stats has had to invest a few hours getting their head around `tapply()`, but at least that's worth it. As for the other obscure ones -- e.g. `simplify2array()`, `rapply()` -- I honestly cannot recall ever using them or seeing them used.
+
+## The Community
+
+There are some community issues that make R harder to learn and work with. Put together with the earlier issues, it means that help can often neither be found inside nor outside of R.
+
+- The community can't agree on if we should be using base R's data frames, the Tidyverse's tibbles, or the `data.table` package. Even if you find one that you like, you can bet that you will someday want to use a package that requires another. For example, if your friendly neighbourhood package author made use of the default `drop = TRUE` argument when manipulating data frames, you're not going to be allowed to use tibbles. Protecting the user from this isn't easy, because both data.tables and tibbles return `TRUE` for `is.data.frame()`.
+- The community is also split on which OOP system to use. For example, `R6` gets about as much mention as RC, even though they both do the same job. Depending on when they were made, you also see some popular libraries that are fully committed to some particular OOP system. For example, you will see a lot of S3 in base R, but the `Bioconductor` package sticks to S4. Fortunately, all of this only becomes a problem when you want to contribute to these packages. If all goes well, you will never really notice which OOP system has been used; You will just have polymorphic code and not need to question it.
+- A lot of people seem to treat R as secondary to the Tidyverse packages. Many books essentially ignore base R or go out of their way to tell you why the Tidyverse is better -- *Advanced R* is a good example of the latter, particularly the second edition, so much so that I needed to read both editions -- and many R Q\&A sites will give you a Tidyverse solution to pretty much any problem, even if it can be solved almost as well in base R. You sometimes see the same with `data.table`, but it's much less common.
+- The popularity of the Tidyverse is a major blow to your motivation to learn R. Why would anyone want to learn a language that is treated as secondary to some packages? Worse still, if that turns out to be the best way to use R, then you're forced to admit that R is a polished turd with a fragmented community. Why would you ever knowingly use a polished turd? The popularity of the Tidyverse is possibly the strongest piece of evidence that not only does R suck, the community knows it.
+- If base R is best ignored in favour of packages, or at least if the community thinks so, then how are you expected to actually learn R? When do you stop learning the base library and move on?
+- Data science people have a strong preference for Python, so a lot of good tutorials that should be in R are only available in Python. I've also noticed at least one case where the R package documentation is clearly inferior to the Python equivalent, despite the gap in functionality not being as wide.
+- R's functional programming aspects are so strong that loops, particularly `for` loops, are considered a code smell. This goes double in the Tidyverse, with the *R for Data Science* book not even introducing them until chapter 21 (of 30). There are practical reasons for this, mostly in relation to the apply family's code being written in C and therefore being faster than most R loops. However, it encourages you to do some silly things. For example, you have to make a judgement call between writing a `for` loop that is inherently fast but slowed down by being written in R or writing an `sapply()` that ought to be slow but is speeded up due to `sapply()` calling C code. This issue also affects how you present your code. Calls to the apply family are inherently one-liners, so it's difficult to find the right way to present/comment them when they become complex. You either end up introducing unnecessary variables in to your code or indenting it in unconventional ways. The Tidyverse's solution -- piping -- often does the trick, but it openly admits to not being a universal solution. The new `|>` base R pipe doesn't do the trick either. As any advocate of the Tidyverse will tell you, base R just isn't designed for piping.
+
+## Generic Functions Again
+
+R's generic function OOP systems are yet another source of unpredictability and internal inconsistency. [They're very cool](#generic-functions) and I must admit that I've not used them much, but what I've seen when trying to use them has discouraged me. Most of what I'm about to say is about S3, but you'll rarely find much said about R's OOP systems at all. It's not really any surprise. S3, S4, RC, and any of the OOP systems that come from packages are all openly admitted to being bolted-on to R rather than something that was part of its design from the early days. Points like the below make discovering this fact unavoidable. Presumably, this is what the Julia fans are talking about when they say that they're the only ones who have a generic function OOP system that is baked-in to their language. I've never used Julia or enough S4 or RC to be able to really comment, but I bet they're right.
+
+### The Class System
+
+The class system is a mess and the docs do a poor job of explaining it. Good luck understanding it without a book like *Advanced R* and a package like `sloop`. I believe that this problem is mostly isolated to S3, but I've not used enough S4 to be able to say that with any certainty. Here are some problems that you're likely to encounter early on:
+
+- Functions like `mode()` and `storage.mode()` exist only for compatibility with S. As an R user, they exist only to increase your confusion. This is particularly common when reading the language definition; It never shuts up about the modes of things.
+- *Advanced R* makes [a strong case](https://adv-r.hadley.nz/base-types.html#numeric-type) for `is.numeric()` being inconsistent, particularly regarding its interaction with S3.
+- The documentation for `class()` uses vague statements like "*method dispatch may use more classes than are returned by `class(x)`*". May? **MAY???** What am I supposed to do with that? Where do I look for more info? It mentions `.class2()`, but warns you against using it. Why? It doesn't say! Did you think that `.class2()` would have its own documentation somewhere else? It doesn't! All of the documentation for `.class2()` is in the docs for `class()` and most of that is a warning to not use it!
+- Call `class()` on a matrix and you will see that they have a few classes. However, `is.object()`, which has docs that correctly state that it will return `TRUE` for anything with a class attribute, returns `FALSE`.
+  ```{r, echo=TRUE}
+  a <- diag(3)
+  class(a)
+  is.object(a)
+  ```
+  Why? Because `class()` also returns implicit classes -- as detailed in its docs -- which `is.object()` ignores because implicit classes aren't part of the class attribute. The documentation for `is.object()` does not mention this fact and the `class()` function's output does not tell you which classes are implicit. Can you see the potential for confusion? The docs never lied or even mislead, but they make naivety fatal. Maybe that's starting to become a theme.
+- So what base R function actually returns the non-implicit classes? I think that you have to use `attr(foo, "class")`. I say "*I think*" because the documentation for `class()` does not offer any help.
+- Don't ask what determines the implicit classes of an object or how S3 dispatch occurs with them. It's far too complicated and not clearly documented in any place that I know of. It's also what's used for dispatching on anything without a class attribute, such as matrices. Good luck with that!
+- Don't ask what an object is either. The community will tell you that `is.object()` is poorly named and the language definition will tell you that pretty much everything in R is an object. However, there are functions like `names(x)<-` that will not work on several types of objects (e.g. anything anonymous) despite their documentation saying that `x` can be "*an R object*". I'd give examples, but you really don't want to think too hard about this.
+  - Update: I've recently skimmed some books by John Chambers. He also claims that everything in R is an object. I think that what this really means is that `class()` always returns something?
+- The `[` and `[[` functions like to drop the attributes from your S3 objects, meaning that you almost always have to write a `[` and `[[` method for them. On the bright side, this is documented behaviour.
+
+### Existing Functions
+
+The generic functions that you'll find in the base and other common libraries have a few surprises:
+
+- Some functions appear to be generic, but aren't. For example, both `abline()` and `sample()` can behave differently depending on what sort of input you gave them, but that's because they're hard-coded to do so. If you expect to find some `abline.lm()` function or be able to write your own `abline.myClass()` method, you'll be disappointed.
+- In stats libraries, I've seen the ability to overload function names abused. For example, why is the function to return a one-hot encoded dataset in the `caret` library `predict()`? I'm pretty sure that my Bayesian Statistics lecturer also showed me a few cases where `anova()` definitely does not do an ANOVA. I'm out of practice, but I think that the R FAQ gives [one such example](https://cran.r-project.org/doc/FAQ/R-FAQ.html#Why-does-the-output-from-anova_0028_0029-depend-on-the-order-of-factors-in-the-model_003f).
+- Although you can usually write your own functions to fix this, it's annoying when you expect a generic function to behave in a sensible way on your input, only to discover that it has no special case for your type of input and treats it like any other vector. To repeat an earlier example, why does `rep(matrix(1:4, nrow = 2, ncol = 2), 5)` treat the input matrix like it's a normal vector? I can't imagine anyone calling `rep()` on a matrix and wanting to work element-by-element rather than repeating the matrix.
+- Because of S3, it's now considered bad practice to write function names in the form `foo.bar()` because they look like extensions to `foo()`. Open up any standard R library and you will see countless functions written in this form that are not extensions to anything. `t()` and `t.test()` are the most cited example.
+
+### Internal Generics
+
+This is tough to explain, but I'll try. If you consult `?"internal generic"`, you will find a big list of functions that you cannot extend properly with S3. Specifically, anything on that list cannot be extended to dispatch on any object for which `is.object()` returns `FALSE`. For example, writing a `rep.matrix()` function that does what my earlier example wanted is easy, but because `rep()` is on that list and matrices are not objects in this sense, `rep()` will not dispatch to `rep.matrix()` when given a matrix. The documentation for `rep()` and other functions that share this misbehaviour do not do much to help the reader discover this fact. *Advanced R* has the only good explanation that I've found for this, but it's the sort of thing where you either have to read [two](https://adv-r.hadley.nz/base-types.html) [chapters](https://adv-r.hadley.nz/s3.html) or the first edition's [OO Field Guide](http://adv-r.had.co.nz/OO-essentials.html). The short explanation is "*internal generics are written in C and therefore only understand non-implicit classes and whatever internal R type the C code ultimately gets fed*".
+
+- Did you notice that `length()` is on the list mentioned above? This explains the inconsistency in how it behaves on data frames and matrices. You cannot properly extend internal generics with S3, so you cannot change how `length()` behaves on implicitly classed input. Data frames are non-implicitly lists and matrices are non-implicitly atomic vectors, so that's how `length()` treats them. This issue isn't unique to just data frames and matrices. *Advanced R* has [a comical example in its S3 chapter](https://adv-r.hadley.nz/s3.html#object-styles): Linear models, which are non-implicitly lists, have a length of about 12! My personal favourite is giving it quoted input:
+  ```{r, echo=TRUE}
+  length(quote(5^30))
+  length(quote(5^30 + 1))
+  length(quote(5^30 + 12))
+  length(quote(1))
+  length(quote(length(1)))
+  ```
+  You will find issues like this -- i.e. unexpected and tough to explain output -- whenever using or extending most internal generics; `length()` is just the easiest example to show.
+- Did you notice that I lied about data frames? The careful reader will notice that due to having the real `data.frame` class, data frames don't have any implicit classes. That's a thing, by the way, having a real class means not having implicit classes.
+  ```{r, echo=TRUE}
+  attr(mtcars, "class")
+  class(mtcars)
+  is.object(mtcars)
+  ```
+
+This means that `length(someDataFrame)` cannot possibly dispatch to some `length.list()` internal method. Further inspection reveals that there is no S3 (i.e. non-internal) `length.data.frame()` method. What actually happens is that R tries to find `length.data.frame()`, fails, and then tries to find `length.default()`, only to fail again and get pointed to the internal C code that presumably treats data frames just like lists. This happens even though data frames do not have implicit classes. Enjoying the complexity?
+
+- So what happens if you try to write a `length.data.frame()` method -- something that is totally allowed because data frames return `TRUE` for `is.object()` and `length()` is an internal generic function -- and have `length()` dispatch to it? You'll probably break R. I once redefined the length of a data frame to be its number of rows and I got a stack usage error. Please, take a few seconds to appreciate all of the complexity that we've had to work through just for R's most basic object system.
+
+Much of the above makes the class system -- and therefore S3 dispatch -- impossible to clearly explain. Any real explanation would be so full of exceptions that it would become incomprehensible. The only way to explain it is to ignore the contradictions for as long as possible, meaning that you must be given incorrect information until you're ready to read about the exceptions. This ultimately means that you cannot even find a good reference manual for the class system, because you never know if you're reading the whole truth or not. Furthermore, if this is at all representative of the complexity of S3, how can anyone be expected to have the patience to even begin learning S4? I know that it's dishonest to blame S4 for the sins of S3, but I wouldn't blame any newcomer to R's OOP for doing so. One wonders if we should start newcomers on S4 and leave S3 until much later. The books by John Chambers take this approach and generally say to stick to S4.
+
+### S4
+
+Let's talk about S4. I promise that this will be an easier read than the earlier sections. I'm quite ignorant of S4, as I've already admitted to, so I've got very little to say. Regardless, the following seems clear:
+
+- Everything that I've read about S4 gives me the impression that it has far fewer stupid technicalities than S3. If I'm right, then I find that laughable. How have we managed to make S3 more complicated than S4? S3 should be extremely simple, but the technicalities of the previous few sections are too easy to stumble upon.
+- If [*Advanced R's* chapter on S4](https://adv-r.hadley.nz/s4.html) is to be trusted, then the official documentation for S4 contains a lot of bad advice. I've not looked closely, but I have noticed that it shares R's tendency to put many functions in one page of documentation and then not give examples for many of them. For example, `?getMethod` documents five functions, but only gives examples for two. Similarly, `@` has no examples in its documentation.
+- S4 has some strange semantics. Why call something that is sometimes not a predicate function `is()`? Why does it use an `@` operator to do what the rest of R would use `$` for?
+  ```{r, echo=TRUE}
+  is(mtcars)
+  ```
+- As far as I can tell, S4 doesn't inform you if there was some ambiguity in your dispatch, such as if it had to pick one option from two equally appropriate potential dispatches. I think that unless there is no appropriate method to dispatch to, it has some internal rules that silently handle these cases, meaning that there is no ambiguity even when there probably should be. In other words, it may misbehave by silently resolving the developer's ambiguities. Without being too spiteful, by now I find it quite easy to believe that R has an OOP system that silently misbehaves.
+
+## Factor Variables
+
+Section 8.2 of [*The R Inferno*](https://www.burns-stat.com/pages/Tutor/R_inferno.pdf) calls the factor and ordered variables "*chimeras*". This is exactly the right criticism. Under the hood, they're S3 objects with integers as their base type and a character vector -- the levels -- as an attribute. When using these variables, it is difficult to predict if R will treat them as their integer base type, as their character vector levels attribute, or as a factor object. And that's not even mentioning how the labels come in to it. [*The R Inferno*](https://www.burns-stat.com/pages/Tutor/R_inferno.pdf) has said more than I will and gives some examples of their unpredictable behaviour, but here are some points from my own experience:
+
+- There is no base R function for extracting the original object from its corresponding factor. To extract your original set of numbers (assuming that they were numbers, if not, you get nonsense) from a factor variable called `f`, the documentation tells you to use either `as.numeric(levels(f))[f]` or the slower `as.numeric(as.character(f))`. Let's use a bit more code than usual and show off what each of these functions do before and after composition:
+  ```{r, echo=TRUE}
+    (withoutLabels <- factor(rep(seq(from = 2, by = 2, to = 10), 3)))
+    (withLabels <- factor(rep(seq(from = 2, by = 2, to = 10), 3), labels = LETTERS[1:5]))
+    fList <- list(withoutLabels, withLabels)
+    #Just to make sure that we're on the same page, here's the output of str().
+    #The internal integers are in plain sight.
+    lapply(fList, str)
+    #Nothing surprising to start:
+    lapply(fList, levels)
+    #as.character() returns the non-attribute part of what you get when you print the factor
+    #i.e. the result of mapping its internal integers to its character vector of levels.
+    #Notice that these are characters. It's not obvious from printing your factors that
+    #the non-attribute part becomes a character.
+    lapply(fList, as.character)
+    #Calling `as.numeric()` on a factor does not return the original numbers.
+    #It returns the underlying integers.
+    #Why would you ever want or expect these?
+    lapply(fList, as.numeric)
+    #Subsetting with factors always treats them as their integer base type.
+    #If the factor fundamentally has nothing to do with integers
+    #(e.g. if you made the factor from something that was originally a set of characters),
+    #then you can expect nonsense.
+    #If the factor did originally have something to do with integers,
+    #then you're probably going to be very confused because it hasn't subsetted with
+    #the numbers that you get from printing the factor.
+    #In short, it's almost never a good idea, but R lets you do it anyway.
+    #Now ask yourself: What is the point of having a categorical data type if
+    #it's not practical to subset with?
+    lapply(fList, function(f) levels(f)[f])
+    lapply(fList, function(f) as.numeric(levels(f))[f])
+    lapply(fList, function(f) as.numeric(as.character(f)))
+  ```
+- As you've probably noticed by now, factor variables are inherently complex enough that they need you to either carefully read their documentation or be an R master before you can use them with confidence. You cannot tell me that `as.numeric(levels(f))[f]` made perfect sense when you read it or that you would have come up with it yourself. It's arcane. Half of the reason why I let the code speak for itself above, rather than adopting my usual bullet point style, is because I hardly even trust myself to describe them. In fact, even whoever wrote the R FAQ seems to have not mastered the art. In [section 7.10](https://cran.r-project.org/doc/FAQ/R-FAQ.html#How-do-I-convert-factors-to-numeric_003f), they suggest `as.numeric(levels(f))[as.integer(f)]` for the same task as what we've covered above. Can you see the redundant function call?
+- When writing example code, factors want to be called `f`, just like functions do. This offends me.
+- On the bright side, it looks like R version 4 is steadily trying to fix factors. Every few updates, we see a minor change. For example, before version 4, you had to pass `stringsAsFactors = FALSE` to a lot of functions. This was to stop R creating factor when you hadn't asked for them. It was widely considered extremely annoying because there is nothing in the way that data frames print that signals to the reader that they're looking at a factor variable. For all you knew, you were looking at a character vector. You often would not discover your mistake until you had a serious error.
+
+Personally, I'm afraid to use factor variables. Their unpredictability makes any code that uses them dramatically more complex, even if you're confident that you know their rules.
+
+## Syntactic Sugar
+
+The syntactic sugar is a source of problems, often to such a great degree that your best solution is to completely avoid the sugar. I'll start with some small cases before splitting some of the bigger ones in to sections.
+
+- You usually only see this when dealing with `names()`, but having a function that is both a setter and getter is a guaranteed source of confusion and found more than once in R. For example, `names(output)` will give you the names of `output`, but `names(output) <- c("Alice", "Bob")` will change `output`'s names (it's sugar for some complicated `"names<-"` nonsense).
+  ```{r, echo=TRUE}
+  names(mtcars)
+  names(mtcars) <- LETTERS[1:11]
+  head(mtcars, 2)
+  ```
+  Now what do you think `names(foo) <- names(bar)` does? Seriously, can you guess? I can think of roughly four realistic guesses. Is it even valid syntax? Here's the truth:
+  ```{r, echo=TRUE}
+  names(mtcars) <- LETTERS[1:11]
+  a <- rep(c("example", "text"), length.out = 11)
+  names(a) <- LETTERS[12:22]
+  a
+  names(a) <- names(mtcars)
+  a
+  ```
+  A lot of people seem to make the correct guess here, but syntax shouldn't leave you guessing. Where possible, I try to stick to `setNames()`.
+- The syntactic sugar sometimes leads to surprising syntax. For example `names(output[2]) <- "foo"` doesn't work, but `names(output)[2] <- "foo"` does.
+- As is extremely well documented, `T` and `F` can be used in place of `TRUE` and `FALSE`, but you should never do this because `T` and `F` are just variables that can be overwritten in your code. Why let us do something that we never should? To my surprise, there's actually a sensible answer. [Section 3.3.3 of the R FAQ](https://cran.r-project.org/doc/FAQ/R-FAQ.html#Others) says that S had `T` and `F` as reserved words, but R changed that to allow variables called `"T"` and `"F"` to appear in your datasets. I can see the reasoning behind both S's approach and R's change to it, but I still think that R's approach of "*you can do this, but never do*" is obviously wrong. My suspicion is that the third option of "*just make `T` and `F` not mean anything until they're assigned to*" will never be taken, because the current (and dangerous) approach helps with backwards compatibility. I don't think that it's a good trade.
+- Although I like R's many functional programming tools, the temptation to try to use them to solve every problem is very strong. I've wasted countless hours trying to pick the right one of `sapply()`/`lapply()`/`mapply()`/`Filter()`/`Map()`... (not to mention their various arguments) when I really should've just written the `for` loop. This is more my fault than it is R's, but it's a curse that every intermediate R user will suffer from. It's a price that any R expert will tell you was worth it in the end. However, it's still a price that I don't enjoy paying. It wouldn't be so bad if R had less such functions, better error messages, or more consistency between these functions, but we've already discussed that can of worms. Don't think that I'm advocating for `purrr` here. It has so many functional programming tools that it arguably makes the situation worse. I'll cover its costs and benefits [later](#purrr).
+
+### Sequences
+
+The `:` operator is absolutely lovely... until it screws you. The solution is to prefer the `seq()` functions to using `:`. Some quick examples:
+
+- Stuff like `i in 1:n` is great, but if you accidentally have `n <= 0`, it silently gives behaviours that you probably don't want.
+  ```{r, echo=TRUE}
+  1:2
+  1:1
+  1:0
+  1:-1
+  ```
+  `seq_len()` is better behaved, so I try to stick to it.
+  ```{r, echo=TRUE}
+  seq_len(2)
+  seq_len(1)
+  seq_len(0)
+  #seq_len(-1) is an error.
+  ```
+- `:` has operator precedence issues. You might expect stuff like `-6/2:3` to generate `(-(6/2)):3` i.e. `-3:3`. It doesn't.
+  ```{r, echo=TRUE}
+  -6/2:3 #Treated as -6/(2:3)
+  ```
+
+I'll leave `-6/2:6/2` as an exercise for the reader. I'd like to keep things simple and say that the trick is that `:` is always evaluated first, but that's actually not true. Even if we're only talking about arithmetical operations, exponentiation is done before `:` is applied.
+
+```{r, echo=TRUE}
+3^1:5 #Treated as (3^1):5
+```
+
+- Can you guess what `data[-1:5]` returns? I can't either, so don't ever try it. If you must know, it's actually an error.
+
+As I've said, `seq()` and its related functions usually fix this issue. The only real disappointment with `seq()` itself is that its documentation warns against not naming its arguments, so you're forced to write the long-winded `seq(from = 0, to = 100, by = 6)` rather than just `seq(0, 100, 6)`.
+
+### Non-standard Evaluation
+
+The documentation for several functions with non-standard evaluation, e.g. `with()` and `subset()`, explicitly warns the user to not use them when programming. This is a source of a number of problems, both practically and in a meta sense:
+
+- First of all, the existence of functions that are not for programming use is abhorrent.
+- They're excellent syntactic sugar, so I hate not being able to use them! For example, I'd argue that `within(data, rm(colName1, colName2))` is the best way to remove unwanted columns from my data: It does not require me to quote or escape my column names, does not require me to put `data$` before everything, does not require me to pass that annoying `drop = FALSE` argument, warns me if I am trying to remove a column that is not in my data, and reads almost like English. All in all, that's some major advantages over using `[`. They both have some misbehaviour if your column names are duplicated, but that's not very relevant here.
+- The documentation for a lot of the functions that use non-standard evaluation warn you to take care with them, but they do very little to tell you how or why. I've searched high and low, but I sincerely believe that there is almost nothing in R's documentation that tells you what can go wrong with these functions. Seriously, if you can find it, let me know. I've even read the [Thomas Lumley article](https://developer.r-project.org/nonstandard-eval.pdf) that some of the docs tell you to check and I still can't find much of relevance. As with `.class2()`, I find R's habit of putting unexplained warnings in its documentation deeply maddening.
+- Because you don't know when it's safe to use these functions and when it isn't, you feel incredible anger when the perfect solution to your problem is to use one of them. You get in situations like "*I could either easily do this with `with()` or write out an `mapply()` with a long-winded anonymous function...*" and always have to choose to do things the hard way. It makes you want to never use R outside of the REPL. This is one part where the Tidyverse completely destroys base R.
+- So what can actually go wrong with them? To be honest, I don't really know. A lot of these functions internally rely on a function called `substitute()`, which has special behaviour when it tries to interact with anything defined in the global environment, so it's slightly difficult to invent easy-to-type examples of these functions misbehaving. All that I've managed to find is:
+  - I've been told that if something exists in the calling environment of your function with non-standard evaluation, but not in the data that you're trying to work on, then you're in trouble. I've yet to be able to invent an example that shows unexpected behaviour.
+  - Code like `subset(data, exampleCol > x)` will misbehave if `x` is a column in `data` but you intended it to come from the calling environment.
+  ```{r, echo=TRUE}
+  head(airquality)
+  head(subset(airquality, Wind * 5 > Temp))
+  Temp <- 90000000
+  head(subset(airquality, Wind * 5 > Temp))#Identical to the previous call.
+  ```
+  I think that this is the case that `with()`'s documentation is trying to warn you about. `subset()`'s documentation does not appear to contain any such warning, unless you're generous enough to count "*the non-standard evaluation of argument subset can have unanticipated consequences*". How hard would it have been to give an example like the one that I've just given?
+  - [*Advanced R* tries to explain some other issues](https://adv-r.hadley.nz/evaluation.html#base-evaluation), but the extent of them has never been completely clear to me.
+
+Of all the problems that I've written about, this section's probably bother me the most. So many of R's problems could be sidestepped if we could fearlessly use `with()` and `subset()` at all times, but R's nasty habit of not explaining the dangers that it warms you of leaves me in constant paranoia.
+
+## Missing Features
+
+Some things seems obviously missing from R:
+
+- For a Scheme-inspired language, the lack of any tail call optimisation or any macro system is strange. Then again, being a heavily functional language that looks like C is one of the best things about R. If it had tail call optimisation or Lisp-like macros, it'd probably start to look more like a weird statistical version of Lisp.
+- You can only break out of the innermost loop. Unless you refactor, there's no way to be many loops deep and break out of them all with one command.
+- R has no `do-while` loop. It's never bothered me, but I think that's because I've never used one in any language. I can see it bothering others, but if I need one, then I'm pretty sure that they're trivial to make from a `repeat` loop.
+- Without crude `if(FALSE){}` workarounds, there's no way to comment out blocks. [IDEs can fix this](https://github.com/ReeceGoding/Frustration-One-Year-With-R/issues/7).
+- Outside of packages, R lacks any real dictionary, associative array, or linked list type. The closest that we can get is matching elements to their names [like this](https://adv-r.hadley.nz/subsetting.html#lookup-tables). I've always thought that it seems like a hacky way to get what other languages have built in. You can also do it with environments, which apparently has O(1) lookup, but I've never seen anyone do it. That may have something to do with how the base R syntax for creating environments from scratch isn't as nice as its syntax for creating lists. You have to name and assign each element individually, e.g. `e <- new.env(); e$a <- 1;  e$b <- 2;  e$c <- 3`, rather than just `l <- list(a = 1, b = 2, c = 3)`. And if you're going to use a package to fix this syntax issue, then you might as well just use one that gives you actual hash tables.
+  - It looks like version 4.1.4 might be fixing this?
+- Given that R is a maths/stats language, I find the follow omissions surprising:
+  - There's no base function for counting the number of possible permutations of a collection of objects.
+  - Despite there being a function for finding the combinations that you can make from the elements of a vector, there's no function that does that with repetitions. For example, `combn(1:3, 2)` can't be convinced to include `c(1, 1)`, `c(2, 2)`, and `c(3, 3)`. `expand.grid(1:3, 1:3)` comes close, but that trick generates permutations rather than combinations.
+  - There's no built-in big integer class.
+  - Despite supporting equations, R offers no obvious way to simplify them.
+  - Although R has some matrix functionality built in, there's no `is.square()` function.
+  - There is no base R function to check if a number is a whole number. `is.integer()` checks for integer typing rather than if the input is in of itself an integer. The docs even show that `is.integer(1)` is `FALSE`. Worse still, these docs actually show you the code for a good `is.wholenumber()` function! Why couldn't that be in the base library?
+- Once you're aware of it, the previous issue starts coming up in weird places. This suggests that R's missing something in its error checks. Take a look:
+  ```{r, echo=TRUE}
+  seq_len(4.8) #Not an error
+  1:4.8
+  a <- 1:10
+  a[4.8]
+  a[-4.8]
+  sample(4.8)
+  ```
+  The pattern is that [R silently truncates the numeric index of choice towards 0](https://cran.r-project.org/doc/manuals/r-release/R-lang.html#Indexing-by-vectors).
+- The base libraries have no obvious dedicated functions for pivoting. [You can do it with `tapply()`](https://stackoverflow.com/a/30198488/), but nothing in the docs would make you guess that. In fact, virtually every occurrence of the word "pivot" in R's docs is talking about `chol()`. I think that you can pivot/unpivot with `stack()`/`unstack()`, but the only time I've ever seen those functions mentioned was in this [SQL article](https://www.sqlshack.com/data-science-in-sql-server-unpivoting-data/).
+
+Admittedly, few if any of these are major, but they're a bit annoying.
+
+## Miscellaneous Negatives
+
+And now for everything that I've got left in the bag.
+
+- The two language problem: Sooner or later, you'll run in to a memory issue, go to Stack Overflow, and be told that the solution is to use a package that lets R talk to C++. Julia claims to have solved this. I don't know if I believe it.
+- The index in a `for` loop uses the same environment as its caller, so loops like `for(i in 1:10)` will overwrite any variable called `i` in the parent environment and set it to `10` when the loop finishes.
+  ```{r, echo=TRUE}
+  i <- 2000
+  for(i in 1:10){}
+  i
+  ```
+  This sounds awful, but I've never encountered it in practice. After all, it sounds like bad practice to use the same variable name for two different things. Apparently the `for` loops also like to strip attributes, breaking S3 objects, but again, I've never encountered this. After all, idiomatic R it to prefer functions like `sapply()` to `for` loops.
+- *Advanced R* claims that R is a great language to metaprogram. I cannot deny that the Tidyverse is very strong evidence for that, but who would dare metaprogram a language as poorly documented and as inconsistent as I've claimed R is? Certainly not me. I can't even predict R's behaviour when I'm programming it, never mind metaprogramming! I've regretted most of my attempts at doing so. I usually get tripped up by some quirk of R's string-manipulation facilities and how the strings get parsed as expressions.
+- For a language that was inspired by Scheme, R's metaprogramming feels very limited. As far as I can tell, aside from the typical operation of building code from text that I'd expect any language to be capable of, it is only used to facilitate the creation of functions that evaluate their arguments in a non-standard way. Usually, this doesn't go any further than creating an ad-hoc environment where the function's arguments make sense, despite said arguments having no meaning in the calling environment. Typical examples are `with()` and modelling functions like `lm()`, which let you write code like `lm(mpg ~ wt, mtcars)`. Being able to say "*let me tell you what data I want you to treat like an environment, so I can refer to its variables as if they were objects in the calling environment*" is great, but it's nowhere near what a Lisp user would expect.
+- The `plot()` function has some strange defaults. For example, you need to have a plot before you can plot individual points, and it often doesn't know what to do in terms of how long/wide its axes should be. I also don't like how "*predict `mpg` from `wt`*" is `foo(mpg~wt)`, but "*plot `mpg` on the y-axis and `wt` on the x-axis*" is `plot(wt, mpg)`. I understand why both options are the way that they are, but it creates unpredictability.
+- I seem to have terrible luck with the documentation for R's libraries. Even when using popular packages that have been around for years, I often find documentation errors that are so basic that I can't explain how they've gone unnoticed. I've seen documentation that reports the wrong return types, imports unnecessary libraries in its example code, and completely fails to mention significant parameters! I try to fix these when I find them, so I can no longer name names, but it's a source of significant annoyance.
+- *Advanced R* points out that [good R code is rare](https://adv-r.hadley.nz/introduction.html#why-r), but I have a different take on it that I think explains my poor luck with R libraries: Statisticians don't want to write code or learn GitHub and programmers don't want to use any more R than they strictly need to. This means that nobody is really doing any bug fixing or even reporting. On the bright side, this makes it very easy to improve other people's R code and get accepted pull requests.
+- For obscure and maybe machine-dependent [C reasons](https://stackoverflow.com/questions/74798626/why-is-loginf-inf-j-equal-to-inf-0-785398-j-in-c-python-numpy/), you will not be able to guess the return value of `log(complex(real = Inf, imaginary = Inf))`. I also don't quite like how `complex(real = Inf, imaginary = Inf)` prints. Seeing `Inf+Infi` makes me think that I've forgotten some variable called "Infi". Luckily, I've never had a reason to really bother with R's complex numbers.
+
+

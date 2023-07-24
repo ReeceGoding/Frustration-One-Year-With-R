@@ -707,7 +707,7 @@ Overall, it's like R has no safe ways to subset. What is safe for one job is oft
 [You've heard the good](#vectorization), now for the bad. R's vectorization is probably the best thing about the language and it will work miracles when you're doing mathematics. However, it will trip you up in other areas. A lot of these points are minor, but when they cause you problems their source can be tough to track down. This is because R is working as intended and therefore not giving you any warnings or errors (spotting a pattern?). Furthermore, if you have correctly identified that you have a vectorization problem, then pretty much any function in R could be to blame, because most of R's functions are vectorized.
 
 * The commonality of vectors leads to some new syntax that must be memorised. For example, `if(x|y)` and `if(x||y)` are very different and using `&&` rather than `&` can be fatal. Compare the following:
-  ```{r, echo = TRUE}
+  ```{r, echo = TRUE, error = TRUE}
   mtcars[mtcars$mpg < 20 && mtcars$hp > 150,]
   mtcars[mtcars$mpg < 20 & mtcars$hp > 150,]
   ```
@@ -830,12 +830,13 @@ If R had outstanding documentation, then I could live with its inconsistencies. 
 * For a long time, I didn't know why many of my technical questions on Stack Overflow were answered by direct reference to R's code, without any mention of its documentation. I eventually learned that R's functions occasionally have undocumented behaviour, meaning that you can't trust anything other than the code. For example:
   * Where do the docs tell you that the `expr` argument in `replicate()` gets wrapped in an anonymous function, meaning that you can't use it to do `<-` variable assignment to its calling environment (e.g. code like `n <- 0; replicate(5, n <- n + 1)` does not change `n`)? You might just spot this if you check the R code, but even then it's not clear.
     ```{r, echo = TRUE}
-  replicate
+    replicate
     ```
+    
   * Where do `rep()`'s docs tell you that it's a special kind of generic where your extensions to it won't dispatch properly? Even the R code -- `function (x, ...)  .Primitive("rep")` -- won't help you here.
   * Where do `lapply()` and `Filter()`'s docs tell you that they don't play nice with the `names()` function? Again, even the R code won't help here.
     ```{r, echo = TRUE}
-  lapply
+    lapply
     ```
   
   You can sometimes find parts of the documentation that very vaguely hint to this misbehaviour, but such things are rarely specific or said at a non-expert level: Their meaning is only obvious in retrospect. On the rare occasion that the documentation is specific about the misbehaviour, it can be incomplete. For example, the documentation for `choose()` tells you that it behaves differently for small `k`, but what is "*small `k`*"? I think that it's 29 or less, but that assumes that I've found the correct C code (I think it's [this](https://github.com/wch/r-source/blob/trunk/src/nmath/choose.c)?) and read it correctly.
@@ -890,16 +891,18 @@ Let's talk about matrices. I've already discussed some oddities like how functio
   ```
   Not only are the function names inconsistent (why not `colNames()`?), the syntax is wildly so. Also, take a look at the incomprehensible error message that `colnames()` gives if you use `diag(3)` directly rather than assigning it to a variable beforehand.
   ```{r, echo = TRUE}
-  a <- diag(3)
-  colnames(a) <- c("Not", "A", "Problem")
- ## > colnames(diag(3)) <- c("Big", "Bad", "Bug")
- ## Error in colnames(diag(3)) <- c("Big", "Bad", "Bug") : 
- ##  target of assignment expands to non-language object
- ## > colnames(a <- diag(3)) <- c("Has", "Similar", "Problem")
- ## Error in colnames(a <- diag(3)) <- c("Has", "Similar", "Problem") : 
- ##  object 'a' not found
+    a <- diag(3)
+    colnames(a) <- c("Not", "A", "Problem")
+    ## > colnames(diag(3)) <- c("Big", "Bad", "Bug")
+    ## Error in colnames(diag(3)) <- c("Big", "Bad", "Bug") : 
+    ##  target of assignment expands to non-language object
+    ## > colnames(a <- diag(3)) <- c("Has", "Similar", "Problem")
+    ## Error in colnames(a <- diag(3)) <- c("Has", "Similar", "Problem") : 
+    ##  object 'a' not found
   ```
+  
   `setNames()` has no such issue.
+  
   ```{r, echo = TRUE}
   setNames(diag(3), c("Works", "Just", "Fine"))
   setNames(a <- diag(3), c("Works", "Just", "Fine"))

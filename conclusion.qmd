@@ -1,0 +1,11 @@
+
+
+# Conclusion
+
+If I were being generous, I would say that R teaches you some great lessons about functional programming while being a useful DSL and that its biggest fault is that it tries to do too much, ultimately becoming brutally inconsistent. I'd also say that the Tidyverse is a useful set of packages that, while unable to fix R and certainly not a panacea, do a lot to improve it within their specific domains. However, I'm not that generous.
+
+The most damning thing about R is that much of [*The R Inferno*](https://www.burns-stat.com/pages/Tutor/R_inferno.pdf) still holds true. The fact that a nearly decade-old document that credibly compared R to a journey in to Hell is still a useful reference manual speaks volumes about the language's attitude to change. To put it plainly, **R won't change**. If something about R frustrates you today, **it always will**. That's what kills the language for me. The popularity of the Tidyverse proves that R is broken and the continuing validity of the [*The R Inferno*](https://www.burns-stat.com/pages/Tutor/R_inferno.pdf) proves that it will stay that way. You may be able to put a blanket of sanity on top of it, as the best packages try to, but you won't fix it. Unless you find said packages so useful that they make R worth it, I find it impossible to argue against jumping ship. My ultimate conclusion on R is that it's good, but doomed by the unshifting weight of the countless little problems that I've documented here. Personally, I'm going to give Python a shot and I wouldn't blame you for doing the same. Let's hope that I don't end up writing a document of this size complaining about that.
+
+All that being said, I have no intention of uninstalling R or going out of my way to avoid it. I'd gladly use it professionally and I've learned enough of its semantic semtex to get really damn good at using R to do in few lines what other languages would do in many. I wasn't joking when I said that it's the best desktop calculator that I've ever used. But would I recommend learning it to anyone else? Absolutely not. We can do so much better.
+
+

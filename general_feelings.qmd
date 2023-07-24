@@ -1,0 +1,14 @@
+
+
+# General Feelings
+
+My overall feelings about R are tough to quantify. As I mentioned near the start, its ultimate problem is the sum of its little problems. However, if I must speak generally, then I think that the problem with R is that it's always some mix of the following:
+
+1. A statistics language with countless useful libraries and an excellent collection of mathematical tools.
+2. A Scheme-inspired language that tries to be functional while maintaining a C-like syntax.
+3. Decades of haphazard patches for S.
+4. A collection of [semantic semtex](https://wiki.c2.com/?SemanticSemtex) that is powerful in the hands of a master and crippling in the hands of a novice.
+
+When it's anything but #3, R is great. Statisticians and mathematicians love it for #1 and programmers love it for #2 and #4. If it weren't for #3, R would be an amazing -- albeit, domain-specific -- language, but #3 is such a big factor that it makes the language unpredictable, inconsistent, and infuriating. Mixed with #4, it makes being an R novice hellish. It gives me little doubt that R is not the ideal tool for many of the jobs that it wants to do, but #1 and #2 leave me with equally little doubt that R can be a very good tool.
+
+
