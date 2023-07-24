@@ -9,5 +9,6 @@ URL: https://ReeceGoding.github.io/Frustration-One-Year-With-R/index.html
 Encoding: UTF-8
 Imports:
   dplyr,
+  purrr,
   rlang,
   rmarkdown
