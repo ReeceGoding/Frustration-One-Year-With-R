@@ -159,26 +159,26 @@ This kind of makes sense, but it will trip you up.
 Not only is this behaviour inconsistent, it is **silent**; No warnings or errors are thrown by the above code.
 Tibbles are much better about this:
 
-```{r, echo=TRUE}
-library(tibble)
-#We can't repeat our original first line, because tibble(x = 1:5, x = 11:15) throws an error: {#sec-we-can-t-repeat-our-original-first-line-because-tibble-x-1-5-x-11-15-throws-an-error}
-## > tibble(x = 1:5, x = 11:15) {#sec-tibble-x-1-5-x-11-15}
-## Error: Column name `x` must not be duplicated. {#sec-error-column-name-x-must-not-be-duplicated}
-## Use .name_repair to specify repair. {#sec-use-name-repair-to-specify-repair}
-#We follow the error's advice. {#sec-we-follow-the-error-s-advice}
-#The .name_repair argument provides a few useful options, so we must pick one. {#sec-the-name-repair-argument-provides-a-few-useful-options-so-we-must-pick-one}
-correctNames <- tibble(x = 1:5, x = 11:15, .name_repair = "minimal")
-correctNames
-correctNames[1:3,]#Good
-correctNames[1:2]#Still good!
-```
+  ```{r, echo=TRUE}
+  library(tibble)
+  #We can't repeat our original first line, because tibble(x = 1:5, x = 11:15) throws an error: {#sec-we-can-t-repeat-our-original-first-line-because-tibble-x-1-5-x-11-15-throws-an-error}
+  ## > tibble(x = 1:5, x = 11:15) {#sec-tibble-x-1-5-x-11-15}
+  ## Error: Column name `x` must not be duplicated. {#sec-error-column-name-x-must-not-be-duplicated}
+  ## Use .name_repair to specify repair. {#sec-use-name-repair-to-specify-repair}
+  #We follow the error's advice. {#sec-we-follow-the-error-s-advice}
+  #The .name_repair argument provides a few useful options, so we must pick one. {#sec-the-name-repair-argument-provides-a-few-useful-options-so-we-must-pick-one}
+  correctNames <- tibble(x = 1:5, x = 11:15, .name_repair = "minimal")
+  correctNames
+  correctNames[1:3,]#Good
+  correctNames[1:2]#Still good!
+  ```
 
 This may seem like an isolated example. It isn't. A related example is that the `check.names` argument in `data.frame()` is very insistent on silently doing things, even to the point of overruling arguments that you explicitly set. For example, these column names aren't what I asked for.
 
-```{r, echo=TRUE}
- as.data.frame(list(1, 2, 3, 4, 5), col.names = paste("foo=bar", 6:10))
- as.data.frame(list(1, 2, 3, 4, 5), col.names = paste("foo=bar", 6:10), check.names = FALSE)#The fix.
-```
+  ```{r, echo=TRUE}
+   as.data.frame(list(1, 2, 3, 4, 5), col.names = paste("foo=bar", 6:10))
+   as.data.frame(list(1, 2, 3, 4, 5), col.names = paste("foo=bar", 6:10), check.names = FALSE)#The fix.
+  ```
 
 I think R does this to ensure your names are suitable for subsetting. Subsetting with non-unique or non-syntactic column names could be a pain, but the decision to not inform the user of this correction is baffling. Even if you're fortunate enough to notice the silent changes, the lack of a warning message will leave you with no idea how to correct them. You could perhaps argue that duplicated names are the user's fault and they deserve what they get, but that argument falls apart for non-syntactic names. Who hasn't put a space or an equals sign in their column names before? Mind, tibbles aren't much better when it comes to non-syntactic names. Neither `tibble("Example col" = 4)` nor `data.frame("Example col" = 4)` warn you of the name change.
 
@@ -797,26 +797,26 @@ Let's talk about matrices. I've already discussed some oddities like how functio
 
 At worst, it doesn't do anything like what you wanted.
 
-```{r, echo=TRUE}
-mat <- matrix(1:9, nrow = 3, byrow = TRUE)
-sapply(mat, sum)
-```
+  ```{r, echo=TRUE}
+  mat <- matrix(1:9, nrow = 3, byrow = TRUE)
+  sapply(mat, sum)
+  ```
 
 The trick for avoiding this is to use numbers as your data argument and let subsetting be the function.
 
-```{r, echo=TRUE}
-mat <- matrix(1:9, nrow = 3, byrow = TRUE)
-sapply(1:3, function(x) sum(mat[x, ]))
-sapply(1:3, function(x) max(mat[x, ]))
-```
+  ```{r, echo=TRUE}
+  mat <- matrix(1:9, nrow = 3, byrow = TRUE)
+  sapply(1:3, function(x) sum(mat[x, ]))
+  sapply(1:3, function(x) max(mat[x, ]))
+  ```
 
 Better yet, just use `apply()`.
 
-```{r, echo=TRUE}
-mat <- matrix(1:9, nrow = 3, byrow = TRUE)
-apply(mat, MARGIN = 1, sum)
- apply(mat, MARGIN = 1, max)
-```
+  ```{r, echo=TRUE}
+  mat <- matrix(1:9, nrow = 3, byrow = TRUE)
+  apply(mat, MARGIN = 1, sum)
+   apply(mat, MARGIN = 1, max)
+  ```
 
 But why did we have the learn any of this in the first place?
 
@@ -1077,9 +1077,9 @@ The `:` operator is absolutely lovely... until it screws you. The solution is to
 
 I'll leave `-6/2:6/2` as an exercise for the reader. I'd like to keep things simple and say that the trick is that `:` is always evaluated first, but that's actually not true. Even if we're only talking about arithmetical operations, exponentiation is done before `:` is applied.
 
-```{r, echo=TRUE}
-3^1:5 #Treated as (3^1):5
-```
+  ```{r, echo=TRUE}
+  3^1:5 #Treated as (3^1):5
+  ```
 
 - Can you guess what `data[-1:5]` returns? I can't either, so don't ever try it. If you must know, it's actually an error.
 
