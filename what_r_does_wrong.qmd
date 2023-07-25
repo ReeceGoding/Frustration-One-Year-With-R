@@ -1041,7 +1041,7 @@ The `:` operator is absolutely lovely... until it screws you. The solution is to
   ```{r, echo=TRUE}
   -6/2:3 #Treated as -6/(2:3)
   ```
-I'll leave `-6/2:6/2` as an exercise for the reader. I'd like to keep things simple and say that the trick is that `:` is always evaluated first, but that's actually not true. Even if we're only talking about arithmetical operations, exponentiation is done before `:` is applied.
+  I'll leave `-6/2:6/2` as an exercise for the reader. I'd like to keep things simple and say that the trick is that `:` is always evaluated first, but that's actually not true. Even if we're only talking about arithmetical operations, exponentiation is done before `:` is applied.
   ```{r, echo=TRUE}
   3^1:5 #Treated as (3^1):5
   ```
