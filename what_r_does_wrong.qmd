@@ -242,9 +242,7 @@ and you will see that one of these is not a matrix. Data frames have the same is
   frame[, -1, drop=FALSE]
   frame[-1]#1D subsetting
   ```
-
 The Tidyverse, specifically `tibble`, does its best to remove this.
-
   ```{r, echo=TRUE}
   library(tibble)
   mat <- cbind(1:4, 4:1)
@@ -254,7 +252,6 @@ The Tidyverse, specifically `tibble`, does its best to remove this.
   tib[-1]
   tib[, -1, drop=TRUE]
   ```
-
 You can think of tibbles as having `drop=FALSE` as their default. I can't explain why base R doesn't do the same. It's got to either be some sort of compromise for matrix algebra or for making working in your console nicer.
 
 - Update: Section 6.8 of the *Software for Data Analysis: Programming with R* book by John Chambers offers a partial explanation: "*The default is, and always has been, `drop=TRUE`; probably an unwise decision on our part long ago, but now one of those back-compatibility burdens that are unlikely to be changed.*"
@@ -282,7 +279,6 @@ You can think of tibbles as having `drop=FALSE` as their default. I can't explai
   rowTib
   rowTib[,]
   ```
-
 Can you guess why? It's because the use of `[` makes R check if it should be dropping dimensions. This makes `object` and `object[,,drop=FALSE]` equivalent, whereas `object[,]` is a vector rather than whatever it was originally. Tibbles, of course, don't have this issue.
 
 - If you've struggled to read this section, then you're probably now aware of another point: It's really easy to get the commas for `drop=FALSE` mixed up. What do you think `data[4, drop=FALSE]` is? If `data` is a data frame, you get column 4 and a warning that the `drop` argument was ignored. Did you expect row 4? Whether you did or not, you should be able to see why somebody may come to the opposite answer. Although I see no sensible alternative, the `drop` argument needing its own comma is terrible syntax for a language where a stray comma is the difference between your data's life and death. This is made even worse by the syntax for `[` occasionally needing stray commas. Expressions like `data[4,]` are commonplace in R, so it's far too easy to forget that you needed the extra comma for the `drop` argument.
@@ -444,7 +440,6 @@ This list also reveals another issue with subsetting: There's too many ways to d
   namedVect <- setNames(letters, LETTERS)
   namedVect[!names(namedVect) %in% c("A", "Z")]
   ```
-
 However, this is a bad habit for non-atomic vectors because, unless you take the precautions [mentioned earlier](#sec-removing-dimensions), `[` likes to remove duplicated names and unnecessary dimensions from your data.
 
 - Don't think that functional programming will save you from my previous point. The base library's higher-order functions don't play nice with the `names()` function. I think it's got something to do with `lapply()` using `X[[i]]` under the hood (see its documentation).
@@ -471,7 +466,6 @@ I've already given a few examples of R either silently doing nothing or silently
   x[-20]
   identical(x, x[-20])
   ```
-
 Given that `x[20]` is `NA` -- a questionable decision in of itself -- is this the behaviour that you expected?
 
 - Subassigning `NULL` to a column that your data does not have does not give a warning or error. For example, trying to access `mtcars["weight"]` is an error, but `mtcars["weight"] <- NULL` silently does nothing. `$` and `$<-` have the same issue.
@@ -671,7 +665,6 @@ If R had outstanding documentation, then I could live with its inconsistencies. 
 - For a long time, I didn't know why many of my technical questions on Stack Overflow were answered by direct reference to R's code, without any mention of its documentation. I eventually learned that R's functions occasionally have undocumented behaviour, meaning that you can't trust anything other than the code. For example:
   
   - Where do the docs tell you that the `expr` argument in `replicate()` gets wrapped in an anonymous function, meaning that you can't use it to do `<-` variable assignment to its calling environment (e.g. code like `n <- 0; replicate(5, n <- n + 1)` does not change `n`)? You might just spot this if you check the R code, but even then it's not clear.
-    
     ```{r, echo=TRUE}
     replicate
     ```
@@ -679,11 +672,9 @@ If R had outstanding documentation, then I could live with its inconsistencies. 
   - Where do `rep()`'s docs tell you that it's a special kind of generic where your extensions to it won't dispatch properly? Even the R code -- `function (x, ...)  .Primitive("rep")` -- won't help you here.
   
   - Where do `lapply()` and `Filter()`'s docs tell you that they don't play nice with the `names()` function? Again, even the R code won't help here.
-    
     ```{r, echo=TRUE}
     lapply
     ```
-  
   You can sometimes find parts of the documentation that very vaguely hint to this misbehaviour, but such things are rarely specific or said at a non-expert level: Their meaning is only obvious in retrospect. On the rare occasion that the documentation is specific about the misbehaviour, it can be incomplete. For example, the documentation for `choose()` tells you that it behaves differently for small `k`, but what is "*small `k`*"? I think that it's 29 or less, but that assumes that I've found the correct C code (I think it's [this](https://github.com/wch/r-source/blob/trunk/src/nmath/choose.c)?) and read it correctly.
 
 - In the same vein to the `choose()` example, functions in the base stats library do not always tell you which calculation method they used. This can make you falsely assume that a figure was calculated exactly. For example, `prop.test()` computes an approximation, but the only mention of this in its documentation is the See Also section saying "*`binom.test()` for an exact test of a binomial hypothesis*". Not only is this in a terrible place, it only suggests that an approximation has been used in `prop.test()`. The details of the approximation are left for the reader to guess.
@@ -753,7 +744,6 @@ There are several inconsistencies in R's functions and how you use them. This me
 Let's talk about matrices. I've already discussed some oddities like how functions like `[`, `$` and `length()` treat them in ways that seem inconsistent with either the rest of the language or your expectations, but let's go deeper:
 
 - [As covered earlier](#sec-named-atomic-vectors), matrices want to have rownames and colnames rather than names. This gives us a few more inconsistencies to deal with that I didn't mention at the time. The rest of the language has trained you to use `setNames(data, names)`. When you do this, `data` is returned with its column names changed without any changes to `data`. However, matrices want `colnames(data) <- names` and the obvious equivalent for `rownames()`. This modifies `data` and does not return it.
-  
   ```{r, echo=TRUE}
   a <- b <- diag(3)
   (colnames(a) <- c("I", "Return", "Me"))
@@ -761,9 +751,7 @@ Let's talk about matrices. I've already discussed some oddities like how functio
   setNames(b, c("I", "Return", "b"))
   b#Not changed
   ```
-  
   Not only are the function names inconsistent (why not `colNames()`?), the syntax is wildly so. Also, take a look at the incomprehensible error message that `colnames()` gives if you use `diag(3)` directly rather than assigning it to a variable beforehand.
-  
   ```{r, echo=TRUE}
     a <- diag(3)
     colnames(a) <- c("Not", "A", "Problem")
@@ -774,14 +762,11 @@ Let's talk about matrices. I've already discussed some oddities like how functio
     ## Error in colnames(a <- diag(3)) <- c("Has", "Similar", "Problem") : 
     ##  object 'a' not found
   ```
-  
   `setNames()` has no such issue.
-  
   ```{r, echo=TRUE}
   setNames(diag(3), c("Works", "Just", "Fine"))
   setNames(a <- diag(3), c("Works", "Just", "Fine"))
   ```
-  
   In truth, I don't mind either `colnames()` or `setNames()`. I just wish that R would pick one way of handling names and stick to it.
 
 - Unlike anything else in R that I can think of, matrices are happy to let you work by row and even have dedicated functions for it, with `rowSums()` and `apply(..., MARGIN = 1)` being the obvious examples. There is a good reasons for this difference -- matrices are always one type, unlike things like data frames -- but it's still an inconsistency. This inconsistency leads to code that is tough to justify. For instance, I frequently find that I want to treat the output of `expand.grid()` as a matrix. `unique(t(apply(expand.grid(1:4, 1:4, 1:4, 1:4), 1, sort)))` is one of my recent examples. This isn't too bad, but I honestly have no idea why I needed the `t()`. Experience has taught me not to question it, which is pretty bad in of itself. R's inconsistency eventually makes you either fall in to the habit of not questioning sudden transformations of your data or forces you to become completely paralysed when trying to understand what ought to be trivial operations in your code. Doubts like "*is there really no better way? R is supposed to be good with this sort of stuff*" become frequent when wanting to work by row.
@@ -789,35 +774,27 @@ Let's talk about matrices. I've already discussed some oddities like how functio
   - March 2023 update: I don't think that there's anywhere in R's docs that tell you that `expand.grid()` is used to make Cartesian products. This compares poorly to languages such as Racket, which calls the practically equivalent function `cartesian-product`. Similarly, Python just calls it `product`. In both cases, they return a collection of lists/tuples where each list/tuple would be a row in `expand.grid()`'s data frame. Nested collections aren't the easiest things to deal with, but they seem to produce more intuitive code than the messes that you get from trying to treat a data frame like a matrix. Maybe the lesson here is that you should iterate through a data frame's rows the hard way rather than using functions that let you think of it as a matrix? I think that this explains the doubt that I've mentioned above; R's data structures have a habit of making the right way the hard way.
 
 - So what happens if, when manipulating a matrix, you write the `sapply()` that the rest of the language has taught you to expect? At best, it gets treated like a vector in column-order.
-  
   ```{r, echo=TRUE}
   (mat <- matrix(1:9, nrow = 3, byrow = TRUE))
   sapply(mat, max)
   ```
-
 At worst, it doesn't do anything like what you wanted.
-
   ```{r, echo=TRUE}
   mat <- matrix(1:9, nrow = 3, byrow = TRUE)
   sapply(mat, sum)
   ```
-
 The trick for avoiding this is to use numbers as your data argument and let subsetting be the function.
-
   ```{r, echo=TRUE}
   mat <- matrix(1:9, nrow = 3, byrow = TRUE)
   sapply(1:3, function(x) sum(mat[x, ]))
   sapply(1:3, function(x) max(mat[x, ]))
   ```
-
 Better yet, just use `apply()`.
-
   ```{r, echo=TRUE}
   mat <- matrix(1:9, nrow = 3, byrow = TRUE)
   apply(mat, MARGIN = 1, sum)
    apply(mat, MARGIN = 1, max)
   ```
-
 But why did we have the learn any of this in the first place?
 
 - Your turn: What does `seq_along(diag(3))` return? `1:3` or `1:9`? What if you added a row? What if you added a column? Or is the name of that function `seq.along()`? Are you sure? Tempted to check the docs? Which docs? Feeling helpless? You should!
@@ -966,7 +943,6 @@ This is tough to explain, but I'll try. If you consult `?"internal generic"`, yo
   class(mtcars)
   is.object(mtcars)
   ```
-
 This means that `length(someDataFrame)` cannot possibly dispatch to some `length.list()` internal method. Further inspection reveals that there is no S3 (i.e. non-internal) `length.data.frame()` method. What actually happens is that R tries to find `length.data.frame()`, fails, and then tries to find `length.default()`, only to fail again and get pointed to the internal C code that presumably treats data frames just like lists. This happens even though data frames do not have implicit classes. Enjoying the complexity?
 
 - So what happens if you try to write a `length.data.frame()` method -- something that is totally allowed because data frames return `TRUE` for `is.object()` and `length()` is an internal generic function -- and have `length()` dispatch to it? You'll probably break R. I once redefined the length of a data frame to be its number of rows and I got a stack usage error. Please, take a few seconds to appreciate all of the complexity that we've had to work through just for R's most basic object system.
@@ -1074,9 +1050,7 @@ The `:` operator is absolutely lovely... until it screws you. The solution is to
   ```{r, echo=TRUE}
   -6/2:3 #Treated as -6/(2:3)
   ```
-
 I'll leave `-6/2:6/2` as an exercise for the reader. I'd like to keep things simple and say that the trick is that `:` is always evaluated first, but that's actually not true. Even if we're only talking about arithmetical operations, exponentiation is done before `:` is applied.
-
   ```{r, echo=TRUE}
   3^1:5 #Treated as (3^1):5
   ```
