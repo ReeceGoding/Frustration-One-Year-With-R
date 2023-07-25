@@ -155,9 +155,8 @@ This kind of makes sense, but it will trip you up.
   correctNames[1:2]#What?
   ```
 
-Not only is this behaviour inconsistent, it is **silent**; No warnings or errors are thrown by the above code.
-Tibbles are much better about this:
-
+  Not only is this behaviour inconsistent, it is **silent**; No warnings or errors are thrown by the above code.
+  Tibbles are much better about this:
   ```{r, echo=TRUE}
   library(tibble)
   #We can't repeat our original first line, because tibble(x = 1:5, x = 11:15) throws an error: {#sec-we-can-t-repeat-our-original-first-line-because-tibble-x-1-5-x-11-15-throws-an-error}
@@ -171,22 +170,18 @@ Tibbles are much better about this:
   correctNames[1:3,]#Good
   correctNames[1:2]#Still good!
   ```
-
-This may seem like an isolated example. It isn't. A related example is that the `check.names` argument in `data.frame()` is very insistent on silently doing things, even to the point of overruling arguments that you explicitly set. For example, these column names aren't what I asked for.
-
+  This may seem like an isolated example. It isn't. A related example is that the `check.names` argument in `data.frame()` is very insistent on silently doing things, even to the point of overruling arguments that you explicitly set. For example, these column names aren't what I asked for.
   ```{r, echo=TRUE}
    as.data.frame(list(1, 2, 3, 4, 5), col.names = paste("foo=bar", 6:10))
    as.data.frame(list(1, 2, 3, 4, 5), col.names = paste("foo=bar", 6:10), check.names = FALSE)#The fix.
   ```
-
-I think R does this to ensure your names are suitable for subsetting. Subsetting with non-unique or non-syntactic column names could be a pain, but the decision to not inform the user of this correction is baffling. Even if you're fortunate enough to notice the silent changes, the lack of a warning message will leave you with no idea how to correct them. You could perhaps argue that duplicated names are the user's fault and they deserve what they get, but that argument falls apart for non-syntactic names. Who hasn't put a space or an equals sign in their column names before? Mind, tibbles aren't much better when it comes to non-syntactic names. Neither `tibble("Example col" = 4)` nor `data.frame("Example col" = 4)` warn you of the name change.
+  I think R does this to ensure your names are suitable for subsetting. Subsetting with non-unique or non-syntactic column names could be a pain, but the decision to not inform the user of this correction is baffling. Even if you're fortunate enough to notice the silent changes, the lack of a warning message will leave you with no idea how to correct them. You could perhaps argue that duplicated names are the user's fault and they deserve what they get, but that argument falls apart for non-syntactic names. Who hasn't put a space or an equals sign in their column names before? Mind, tibbles aren't much better when it comes to non-syntactic names. Neither `tibble("Example col" = 4)` nor `data.frame("Example col" = 4)` warn you of the name change.
 
 - For what I believe to be memory reasons, objects of greater than one dimension are stored in column order rather than row order. Quick, what output do you expect from `matrix(1:9, 3, 3)`?
   ```{r, echo=TRUE}
   matrix(1:9, 3, 3)
   ```
-
-This gives us a matrix with first row `c(1, 4, 7)`. This goes against the usual English convention of reading from left to right. It is also inconsistent with functions like `apply()`, where `MARGIN = 1` corresponds to their by-row version and `MARGIN = 2` is for by-column (if R privileges columns, shouldn't they be the `= 1` case?). This means that you can never really be sure if R is working in column order or row order. This is bad enough on its own, but it can also be a source of subtle bugs when working with matrices. Many mathematical functions don't see any difference between a matrix and its transpose.
+  This gives us a matrix with first row `c(1, 4, 7)`. This goes against the usual English convention of reading from left to right. It is also inconsistent with functions like `apply()`, where `MARGIN = 1` corresponds to their by-row version and `MARGIN = 2` is for by-column (if R privileges columns, shouldn't they be the `= 1` case?). This means that you can never really be sure if R is working in column order or row order. This is bad enough on its own, but it can also be a source of subtle bugs when working with matrices. Many mathematical functions don't see any difference between a matrix and its transpose.
 
 - There is no nice way to access the last element of a vector. The idiomatic way is `x[length(x)]`. The only good part of this is that `x[length(x) - 0:n]` is a very nice way to get the last `n + 1` elements. You could use `tail()`, but Stack Overflow tells me it's very slow.
 - The `sort()` and `order()` functions are the main ways to sort stuff in R. If you're trying to sort some data by a particular variable, then R counter-intuitively wants you to use `order()` rather than `sort()`. The syntax for `order()` doesn't help matters. It returns a permutation, so rather than `order(x, params)`, you will want `x[order(params),]`. My only explanation for this is that it makes `order()` much easier to use with the `with()` function. For example, `data[with(data, order(col1, col2, col3)),]` is perhaps more pleasant to write than the hypothetical `order(data, data$col1, data$col2, data$col3)`. The Tidyverse's `dplyr` solves these problems: `dplyr::arrange(data, col1, col2, col3)` does what you think. I'd much rather use `arrange(mtcars, cyl, disp)` than `mtcars[with(mtcars, order(cyl, disp)),]`.
@@ -196,8 +191,7 @@ This gives us a matrix with first row `c(1, 4, 7)`. This goes against the usual 
   duplicated(head(Nile))
   head(Nile)[duplicated(head(Nile))]
   ```
-
-This means that you will usually be asking for `items[bools]` (and maybe `[,bools]` or `[bools,]`...) in order to get the items that you want. There is great power in being able to do this, but having to do it is annoying and can catch you off guard. For example, what do you expect `lower.tri()` to return when called on a matrix? What you wanted from `lower.tri(mat)` is probably what you get from `mat[lower.tri(mat)]`. Also, don't expect a helpful error message if your construction of `bools` is wrong. As I'll discuss later on, [the vector recycling](#sec-vectorization-again) rules will often make an incorrect construction give sensible-looking output.
+  This means that you will usually be asking for `items[bools]` (and maybe `[,bools]` or `[bools,]`...) in order to get the items that you want. There is great power in being able to do this, but having to do it is annoying and can catch you off guard. For example, what do you expect `lower.tri()` to return when called on a matrix? What you wanted from `lower.tri(mat)` is probably what you get from `mat[lower.tri(mat)]`. Also, don't expect a helpful error message if your construction of `bools` is wrong. As I'll discuss later on, [the vector recycling](#sec-vectorization-again) rules will often make an incorrect construction give sensible-looking output.
 
 - For reasons that I cannot explain, `aperm(x, params)` is the correct syntax, not `x[aperm(params)]` or anything like it. I think that it's trying to be consistent with R's ideas of how to manipulate matrices, but it's yet another source of confusion. I don't want to have to think about if I'm treating my data like a matrix or like a data frame.
 - Good luck trying to figure out how to find a particular sequence of elements within a vector. For example, try finding if/where the unbroken vector `1:3` has occurred in `sample(6, 100, replace = TRUE)`. You're best off just writing the `for` loop.
@@ -231,9 +225,7 @@ This issue is notorious: R likes to remove unnecessary dimensions from your data
   mat[, -1]
   mat[, -1, drop=FALSE]
   ```
-
   and you will see that one of these is not a matrix. Data frames have the same issue unless you do all of your subsetting in a 1D form.
-
   ```{r, echo=TRUE}
   mat <- cbind(1:4, 4:1)
   (frame <- as.data.frame(mat))
@@ -278,7 +270,7 @@ This issue is notorious: R likes to remove unnecessary dimensions from your data
   rowTib
   rowTib[,]
   ```
-Can you guess why? It's because the use of `[` makes R check if it should be dropping dimensions. This makes `object` and `object[,,drop=FALSE]` equivalent, whereas `object[,]` is a vector rather than whatever it was originally. Tibbles, of course, don't have this issue.
+  Can you guess why? It's because the use of `[` makes R check if it should be dropping dimensions. This makes `object` and `object[,,drop=FALSE]` equivalent, whereas `object[,]` is a vector rather than whatever it was originally. Tibbles, of course, don't have this issue.
 
 - If you've struggled to read this section, then you're probably now aware of another point: It's really easy to get the commas for `drop=FALSE` mixed up. What do you think `data[4, drop=FALSE]` is? If `data` is a data frame, you get column 4 and a warning that the `drop` argument was ignored. Did you expect row 4? Whether you did or not, you should be able to see why somebody may come to the opposite answer. Although I see no sensible alternative, the `drop` argument needing its own comma is terrible syntax for a language where a stray comma is the difference between your data's life and death. This is made even worse by the syntax for `[` occasionally needing stray commas. Expressions like `data[4,]` are commonplace in R, so it's far too easy to forget that you needed the extra comma for the `drop` argument.
 
@@ -465,7 +457,7 @@ I've already given a few examples of R either silently doing nothing or silently
   x[-20]
   identical(x, x[-20])
   ```
-Given that `x[20]` is `NA` -- a questionable decision in of itself -- is this the behaviour that you expected?
+  Given that `x[20]` is `NA` -- a questionable decision in of itself -- is this the behaviour that you expected?
 
 - Subassigning `NULL` to a column that your data does not have does not give a warning or error. For example, trying to access `mtcars["weight"]` is an error, but `mtcars["weight"] <- NULL` silently does nothing. `$` and `$<-` have the same issue.
 - Using `within()` to remove unwanted columns from your data, e.g. `within(data, rm(colName1, colName2))`, does nothing to any columns with duplicated names. Again, no warning or error...
