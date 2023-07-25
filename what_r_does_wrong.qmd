@@ -235,25 +235,25 @@ This issue is notorious: R likes to remove unnecessary dimensions from your data
 
 and you will see that one of these is not a matrix. Data frames have the same issue unless you do all of your subsetting in a 1D form.
 
-```{r, echo=TRUE}
-mat <- cbind(1:4, 4:1)
-(frame <- as.data.frame(mat))
-frame[, -1]
-frame[, -1, drop=FALSE]
-frame[-1]#1D subsetting
-```
+  ```{r, echo=TRUE}
+  mat <- cbind(1:4, 4:1)
+  (frame <- as.data.frame(mat))
+  frame[, -1]
+  frame[, -1, drop=FALSE]
+  frame[-1]#1D subsetting
+  ```
 
 The Tidyverse, specifically `tibble`, does its best to remove this.
 
-```{r, echo=TRUE}
-library(tibble)
-mat <- cbind(1:4, 4:1)
-(tib <- as_tibble(mat))
-tib[, -1]
-tib[, -1, drop=FALSE]
-tib[-1]
-tib[, -1, drop=TRUE]
-```
+  ```{r, echo=TRUE}
+  library(tibble)
+  mat <- cbind(1:4, 4:1)
+  (tib <- as_tibble(mat))
+  tib[, -1]
+  tib[, -1, drop=FALSE]
+  tib[-1]
+  tib[, -1, drop=TRUE]
+  ```
 
 You can think of tibbles as having `drop=FALSE` as their default. I can't explain why base R doesn't do the same. It's got to either be some sort of compromise for matrix algebra or for making working in your console nicer.
 
