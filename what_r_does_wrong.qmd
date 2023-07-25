@@ -788,13 +788,13 @@ Let's talk about matrices. I've already discussed some oddities like how functio
   sapply(1:3, function(x) sum(mat[x, ]))
   sapply(1:3, function(x) max(mat[x, ]))
   ```
-Better yet, just use `apply()`.
+  Better yet, just use `apply()`.
   ```{r, echo=TRUE}
   mat <- matrix(1:9, nrow = 3, byrow = TRUE)
   apply(mat, MARGIN = 1, sum)
    apply(mat, MARGIN = 1, max)
   ```
-But why did we have the learn any of this in the first place?
+  But why did we have the learn any of this in the first place?
 
 - Your turn: What does `seq_along(diag(3))` return? `1:3` or `1:9`? What if you added a row? What if you added a column? Or is the name of that function `seq.along()`? Are you sure? Tempted to check the docs? Which docs? Feeling helpless? You should!
 - Many functions that are designed for matrices should be forgotten about everywhere else. Several guides warn against using `apply()` on non-matrices and I wouldn't dare use `t()` on a non-matrix. Try `t(iris)`.
