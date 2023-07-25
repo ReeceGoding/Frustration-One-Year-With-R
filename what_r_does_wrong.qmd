@@ -18,7 +18,6 @@ We'll start gentle. R's list type is an unavoidable part of the language, but it
   ```{r, echo=TRUE}
   c(list(1, 2, 3), LETTERS[1:5])
   ```
-
 The same output is given by `append()`. To get `list(1, 2, 3, LETTERS[1:5])`, you must do something like `x <- list(1, 2, 3); x[[4]] <- LETTERS[1:5]`.
 
 - Note the use of `[[4]]` and not `[4]` above. Using `[4]` gets you a warning and the output `list(1, 2, 3, "A")`. The `[` version is intended for cases like `x[4:8] <- LETTERS[1:5]`, which gives the same output as `c()` did above. The `[`/`[[` distinction is a beginner's nightmare, as is R's tendency to give you many ways to do the same thing.
@@ -778,12 +777,12 @@ Let's talk about matrices. I've already discussed some oddities like how functio
   (mat <- matrix(1:9, nrow = 3, byrow = TRUE))
   sapply(mat, max)
   ```
-At worst, it doesn't do anything like what you wanted.
+  At worst, it doesn't do anything like what you wanted.
   ```{r, echo=TRUE}
   mat <- matrix(1:9, nrow = 3, byrow = TRUE)
   sapply(mat, sum)
   ```
-The trick for avoiding this is to use numbers as your data argument and let subsetting be the function.
+  The trick for avoiding this is to use numbers as your data argument and let subsetting be the function.
   ```{r, echo=TRUE}
   mat <- matrix(1:9, nrow = 3, byrow = TRUE)
   sapply(1:3, function(x) sum(mat[x, ]))
