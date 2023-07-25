@@ -232,7 +232,7 @@ This issue is notorious: R likes to remove unnecessary dimensions from your data
   mat[, -1, drop=FALSE]
   ```
 
-and you will see that one of these is not a matrix. Data frames have the same issue unless you do all of your subsetting in a 1D form.
+  and you will see that one of these is not a matrix. Data frames have the same issue unless you do all of your subsetting in a 1D form.
 
   ```{r, echo=TRUE}
   mat <- cbind(1:4, 4:1)
@@ -241,7 +241,7 @@ and you will see that one of these is not a matrix. Data frames have the same is
   frame[, -1, drop=FALSE]
   frame[-1]#1D subsetting
   ```
-The Tidyverse, specifically `tibble`, does its best to remove this.
+  The Tidyverse, specifically `tibble`, does its best to remove this.
   ```{r, echo=TRUE}
   library(tibble)
   mat <- cbind(1:4, 4:1)
@@ -251,7 +251,7 @@ The Tidyverse, specifically `tibble`, does its best to remove this.
   tib[-1]
   tib[, -1, drop=TRUE]
   ```
-You can think of tibbles as having `drop=FALSE` as their default. I can't explain why base R doesn't do the same. It's got to either be some sort of compromise for matrix algebra or for making working in your console nicer.
+  You can think of tibbles as having `drop=FALSE` as their default. I can't explain why base R doesn't do the same. It's got to either be some sort of compromise for matrix algebra or for making working in your console nicer.
 
 - Update: Section 6.8 of the *Software for Data Analysis: Programming with R* book by John Chambers offers a partial explanation: "*The default is, and always has been, `drop=TRUE`; probably an unwise decision on our part long ago, but now one of those back-compatibility burdens that are unlikely to be changed.*"
 - The `drop` argument is even stranger than I'm letting on. Its defaults differ depending on whether there may only be one column remaining or if there may only be one row. To quote the documentation (`?"[.data.frame"`): "*The default is to drop if only one column is left, but **not** to drop if only one row is left*". Unlike the previous point, I can sort of make sense of this. For example, a single column can only ever be one type (even if that may be a container for mixed types, such as a list) but a single row could easily be a mix of types. Dropping on a row of mixed types will just give you a really ugly list, so you'd much rather have a data frame. With a column, it's only with years of experience that the community has realised that they probably still want the data frame; It's nowhere near as obvious that the vector is not preferable.
